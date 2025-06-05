@@ -1,1 +1,1 @@
-# CaT_EchipaTeam
+# CaT_EchipaTeam 1. `npm i` 2. `npm run dev` → http://localhost:8000

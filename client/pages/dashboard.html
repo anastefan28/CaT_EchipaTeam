@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampSpot - Discover Your Next Adventure</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">CampSpot</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Discover</a>
+                <a href="campsites.html" class="nav-link">All Campsites</a>
+                <a href="#" class="nav-link">Community</a>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar" onclick="toggleUserMenu()">JD</div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Perfect Campsite</h1>
+            <p>Discover amazing camping destinations, connect with nature lovers, and create unforgettable memories</p>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <form class="search-form" id="searchForm">
+            <div class="search-group">
+                <label for="location">Where</label>
+                <input type="text" id="location" name="location" placeholder="City, region, or park name">
+            </div>
+            <div class="search-group">
+                <label for="checkin">Check-in</label>
+                <input type="date" id="checkin" name="checkin">
+            </div>
+            <div class="search-group">
+                <label for="guests">Guests</label>
+                <select id="guests" name="guests">
+                    <option value="1">1 person</option>
+                    <option value="2">2 people</option>
+                    <option value="4">4 people</option>
+                    <option value="6">6 people</option>
+                    <option value="8">8+ people</option>
+                </select>
+            </div>
+            <button type="submit" class="search-btn">🔍 Search</button>
+        </form>
+    </section>
+
+    <!-- Content Container with Sidebar -->
+    <div class="content-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-menu">
+                <h3 class="sidebar-title">Quick Actions</h3>
+                <a href="bookings.html" class="sidebar-item">
+                    <span class="sidebar-icon">📅</span>
+                    <span class="sidebar-text">My Bookings</span>
+                </a>
+                <a href="profile.html" class="sidebar-item">
+                    <span class="sidebar-icon">👤</span>
+                    <span class="sidebar-text">Account Details</span>
+                </a>
+                <a href="campsites.html" class="sidebar-item">
+                    <span class="sidebar-icon">🗺️</span>
+                    <span class="sidebar-text">Browse All Campsites</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <span class="sidebar-icon">💬</span>
+                    <span class="sidebar-text">Community</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Interactive Map Section -->
+            <section class="section">
+                <h2 class="section-title">Explore Campsites on Map</h2>
+                <div class="map-container">
+                    <div class="map-header">
+                        <h3>Interactive Campsite Map</h3>
+                        <button class="map-toggle" onclick="toggleMap()">Expand Map</button>
+                    </div>
+                    <div id="map"></div>
+                </div>
+            </section>
+
+            <!-- Popular Campsites -->
+            <section class="section">
+                <h2 class="section-title">Most Popular Campsites</h2>
+                <div class="campsites-grid">
+                    <div class="campsite-card" onclick="goToCampsite(1)">
+                        <div class="campsite-image">🏔️</div>
+                        <div class="campsite-content">
+                            <h3 class="campsite-title">Mountain View Campground</h3>
+                            <div class="campsite-location">📍 Rocky Mountain National Park</div>
+                            <div class="rating">
+                                <span class="stars">⭐⭐⭐⭐⭐</span>
+                                <span>4.8 (124 reviews)</span>
+                            </div>
+                            <div class="campsite-price">$45/night</div>
+                        </div>
+                    </div>
+                    
+                    <div class="campsite-card" onclick="goToCampsite(2)">
+                        <div class="campsite-image">🌊</div>
+                        <div class="campsite-content">
+                            <h3 class="campsite-title">Lakeside Paradise</h3>
+                            <div class="campsite-location">📍 Lake Tahoe, California</div>
+                            <div class="rating">
+                                <span class="stars">⭐⭐⭐⭐⭐</span>
+                                <span>4.9 (89 reviews)</span>
+                            </div>
+                            <div class="campsite-price">$55/night</div>
+                        </div>
+                    </div>
+                    
+                    <div class="campsite-card" onclick="goToCampsite(3)">
+                        <div class="campsite-image">🌲</div>
+                        <div class="campsite-content">
+                            <h3 class="campsite-title">Forest Retreat</h3>
+                            <div class="campsite-location">📍 Yellowstone National Park</div>
+                            <div class="rating">
+                                <span class="stars">⭐⭐⭐⭐⭐</span>
+                                <span>4.7 (156 reviews)</span>
+                            </div>
+                            <div class="campsite-price">$38/night</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

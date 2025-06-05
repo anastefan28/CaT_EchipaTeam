@@ -1,5 +1,5 @@
 import { generateAuthUrl } from '../config/google.js';
-import { handleGoogleCallback } from '../controllers/authController.js';
+import { handleGoogleCallback, handleLogin, handleRegister } from '../controllers/authController.js';
 import { parse } from 'url';
 
 export async function authRoute(req, res) {
@@ -14,4 +14,10 @@ export async function authRoute(req, res) {
   if (pathname === '/api/auth/google/callback') {
     return handleGoogleCallback(req, res);
   }
+
+  if(pathname === '/api/auth/login')
+    return handleLogin(req, res);
+
+  if(pathname === '/api/auth/register')
+    return handleRegister(req, res);
 }

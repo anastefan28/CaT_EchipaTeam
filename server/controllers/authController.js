@@ -45,14 +45,13 @@ export async function handleLogin(req, res) {
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
       const { email, password } = JSON.parse(body);
-
       if (!email || !password) {
         sendJson(res, 400,{error: 'Email and password are required.' });
       }
-
       const user = await findUserByEmail(email);
-      if (!user || !(await validatePassword(password, user.password))) {
+      if (user.password_hash===undefined || !(await validatePassword(password, user.password_hash))) {
         sendJson(res, 401, { error: 'Invalid credentials. If you don’t have an account, please register first.' });
+        return;
       }
       const token = generateJWT(user);
 

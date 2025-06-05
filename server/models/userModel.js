@@ -18,7 +18,7 @@ export async function createOAuthUser({ email, username, oauth_provider, oauth_s
 
 export async function findUserByEmail(email) {
   const result = await pool.query(
-    'SELECT * FROM users WHERE email = $1',
+    'SELECT * FROM users WHERE email = LOWER($1)',
     [email]
   );
   return result.rows[0];

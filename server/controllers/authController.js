@@ -103,3 +103,11 @@ export async function handleRegister(req, res) {
     sendJson(res, 500, { error: 'Internal server error' });
   }
 }
+
+export function handleLogout(req, res) {
+  res.writeHead(302, {
+    'Set-Cookie': 'token=; HttpOnly; Path=/; Max-Age=0',
+    Location: '/',
+  });
+  res.end();
+}

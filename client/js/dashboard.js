@@ -94,38 +94,11 @@ function goToCampsite(id) {
     window.location.href = `campsite.html?id=${id}`;
 }
 
-function toggleUserMenu() {
-    // Simple user menu - could be expanded
-    const options = [
-        'Profile Settings',
-        'My Bookings',
-        'Messages',
-        'Help & Support',
-        'Logout'
-    ];
-
-    const choice = prompt('User Menu:\n' + options.map((opt, i) => `${i + 1}. ${opt}`).join('\n') + '\n\nEnter number:');
-
-    switch (choice) {
-        case '1':
-            window.location.href = 'profile.html';
-            break;
-        case '2':
-            window.location.href = 'bookings.html';
-            break;
-        case '3':
-            alert('Messages feature coming soon!');
-            break;
-        case '4':
-            alert('Help & Support feature coming soon!');
-            break;
-        case '5':
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'index.html';
-            }
-            break;
-    }
-}
+document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+    e.preventDefault(); 
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/index';
+});
 
 // Set minimum date for check-in to today
 const today = new Date().toISOString().split('T')[0];

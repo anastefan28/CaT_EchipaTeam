@@ -64,11 +64,9 @@ body {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(
-      135deg,
+  background: linear-gradient(135deg,
       rgba(46, 125, 50, 0.9),
-      rgba(76, 175, 80, 0.9)
-    ),
+      rgba(76, 175, 80, 0.9)),
     url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%234CAF50" width="1200" height="600"/><path fill="%23388E3C" d="M0,400 Q300,350 600,400 T1200,400 L1200,600 L0,600 Z"/></svg>');
   background-size: cover;
   background-position: center;
@@ -101,14 +99,14 @@ body {
   padding: 30px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   margin: -50px auto 0;
-  max-width: 900px;
+  max-width: 1000px;
   position: relative;
   z-index: 10;
 }
 
 .search-form {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
   gap: 20px;
   align-items: end;
 }

@@ -26,34 +26,68 @@ document.getElementById('googleRegister').addEventListener('click', () => {
     window.location.href = '/api/auth/google';
 });
 // Form submissions
-loginForm.addEventListener('submit', (e) => {
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    loginError.classList.add('hidden');
+    loginError.textContent = '';
+
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    // Simulate login
-    if (email && password) {
-        alert('Login successful! Redirecting to dashboard...');
-        window.location.href = 'dashboard.html';
-    }
-});
+    try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-registerForm.addEventListener('submit', (e) => {
+    if (res.ok) {
+      window.location.href = '/dashboard'; 
+    } else {
+        const data = await res.json();
+        loginError.textContent = data.error || 'Login failed. Try again.';
+        loginError.classList.remove('hidden');    
+    }
+  } catch (err) {
+    loginError.textContent = 'Server error. Please try again later.';
+    loginError.classList.remove('hidden');
+  }
+});
+const registerError = document.getElementById('registerError');
+
+registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    registerError.classList.add('hidden');
+    registerError.textContent = '';
+
     const name = document.getElementById('registerName').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
     if (password !== confirmPassword) {
-        alert('Passwords do not match!');
+        registerError.textContent = 'Passwords do not match.';
+        registerError.classList.remove('hidden');
         return;
     }
 
-    // Simulate registration
-    if (name && email && password) {
-        alert('Registration successful! Redirecting to dashboard...');
-        window.location.href = 'dashboard.html';
+    try {
+        const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: name, email, password }),
+        });
+
+        if (res.ok) {
+        window.location.href = '/dashboard';
+        } else {
+        const data = await res.json();
+        registerError.textContent = data.error || 'Registration failed.';
+        registerError.classList.remove('hidden');
+        }
+    } catch {
+        registerError.textContent = 'Server error. Please try again later.';
+        registerError.classList.remove('hidden');
     }
 });
 

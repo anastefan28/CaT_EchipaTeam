@@ -20,12 +20,12 @@ body {
 }
 
 .nav {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  max-width: 1200px;
+  margin: auto;
   height: 70px;
 }
 
@@ -45,42 +45,21 @@ body {
 
 .nav-links {
   display: flex;
-  gap: 30px;
-  align-items: center;
+  gap: 20px;
 }
 
-.nav-link {
+.nav-item {
   text-decoration: none;
-  color: #666;
+  color: #2e7d32;
   font-weight: 500;
-  transition: color 0.3s ease;
   padding: 8px 16px;
   border-radius: 20px;
   transition: all 0.3s ease;
 }
 
-.nav-link:hover {
-  color: #2e7d32;
+.nav-item:hover {
+  color: #1b5e20;
   background: #f0f8f0;
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
 }
 
 /* Hero Section */
@@ -180,68 +159,14 @@ body {
 
 /* Layout Container */
 .content-container {
-  display: flex;
   max-width: 1200px;
   margin: 60px auto;
   padding: 0 20px;
-  gap: 30px;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  flex-shrink: 0;
-}
-
-.sidebar-menu {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 90px;
-}
-
-.sidebar-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2e7d32;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #f0f8f0;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #666;
-  transition: all 0.3s ease;
-  margin-bottom: 8px;
-}
-
-.sidebar-item:hover {
-  background: #f0f8f0;
-  color: #2e7d32;
-  transform: translateX(5px);
-}
-
-.sidebar-icon {
-  font-size: 1.3rem;
-  width: 24px;
-  text-align: center;
-}
-
-.sidebar-text {
-  font-weight: 500;
 }
 
 /* Main Content */
 .main-content {
-  flex: 1;
+  width: 100%;
 }
 
 .section {
@@ -358,26 +283,7 @@ body {
   color: #4caf50;
 }
 
-@media (max-width: 968px) {
-  .content-container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-  }
-
-  .sidebar-menu {
-    position: relative;
-    top: auto;
-  }
-
-  .sidebar-item {
-    justify-content: center;
-    text-align: center;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
   .search-form {
     grid-template-columns: 1fr;
@@ -389,27 +295,11 @@ body {
   }
 
   .nav-links {
-    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .campsites-grid {
     grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    order: -1;
-  }
-
-  .sidebar-menu {
-    display: flex;
-    overflow-x: auto;
-    padding: 15px;
-  }
-
-  .sidebar-item {
-    flex-shrink: 0;
-    white-space: nowrap;
-    margin-right: 10px;
-    margin-bottom: 0;
   }
 }

@@ -8,6 +8,7 @@
     "db:migrate": "node server/db.js --migrate"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cookie": "^1.0.2",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",

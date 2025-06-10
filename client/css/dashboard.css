@@ -1,303 +1,303 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8fafc;
-  color: #333;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	background: #f8fafc;
+	color: #333;
 }
 
 /* Header */
 .header {
-  background: white;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+	background: white;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 1000;
 }
 
 .nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  max-width: 1200px;
-  margin: auto;
-  height: 70px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+	max-width: 1200px;
+	margin: auto;
+	height: 70px;
 }
 
 .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #2e7d32;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+	font-size: 1.8rem;
+	font-weight: bold;
+	color: #2e7d32;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .logo::before {
-  content: "🏕️";
-  font-size: 1.5rem;
+	content: "🏕️";
+	font-size: 1.5rem;
 }
 
 .nav-links {
-  display: flex;
-  gap: 20px;
+	display: flex;
+	gap: 20px;
 }
 
 .nav-item {
-  text-decoration: none;
-  color: #2e7d32;
-  font-weight: 500;
-  padding: 8px 16px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
+	text-decoration: none;
+	color: #2e7d32;
+	font-weight: 500;
+	padding: 8px 16px;
+	border-radius: 20px;
+	transition: all 0.3s ease;
 }
 
 .nav-item:hover {
-  color: #1b5e20;
-  background: #f0f8f0;
+	color: #1b5e20;
+	background: #f0f8f0;
 }
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg,
-      rgba(46, 125, 50, 0.9),
-      rgba(76, 175, 80, 0.9)),
-    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%234CAF50" width="1200" height="600"/><path fill="%23388E3C" d="M0,400 Q300,350 600,400 T1200,400 L1200,600 L0,600 Z"/></svg>');
-  background-size: cover;
-  background-position: center;
-  padding: 80px 20px;
-  text-align: center;
-  color: white;
+	background: linear-gradient(135deg,
+			rgba(46, 125, 50, 0.9),
+			rgba(76, 175, 80, 0.9)),
+		url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%234CAF50" width="1200" height="600"/><path fill="%23388E3C" d="M0,400 Q300,350 600,400 T1200,400 L1200,600 L0,600 Z"/></svg>');
+	background-size: cover;
+	background-position: center;
+	padding: 80px 20px;
+	text-align: center;
+	color: white;
 }
 
 .hero-content {
-  max-width: 800px;
-  margin: 0 auto;
+	max-width: 800px;
+	margin: 0 auto;
 }
 
 .hero h1 {
-  font-size: 3.5rem;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	font-size: 3.5rem;
+	margin-bottom: 20px;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero p {
-  font-size: 1.3rem;
-  margin-bottom: 40px;
-  opacity: 0.9;
+	font-size: 1.3rem;
+	margin-bottom: 40px;
+	opacity: 0.9;
 }
 
 /* Search Section */
 .search-section {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  margin: -50px auto 0;
-  max-width: 1000px;
-  position: relative;
-  z-index: 10;
+	background: white;
+	border-radius: 20px;
+	padding: 30px;
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+	margin: -50px auto 0;
+	max-width: 1000px;
+	position: relative;
+	z-index: 10;
 }
 
 .search-form {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr auto;
-  gap: 20px;
-  align-items: end;
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr auto;
+	gap: 20px;
+	align-items: end;
 }
 
 .search-group {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .search-group label {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #555;
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: #555;
 }
 
 .search-group input,
 .search-group select {
-  padding: 15px;
-  border: 2px solid #e1e1e1;
-  border-radius: 10px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+	padding: 15px;
+	border: 2px solid #e1e1e1;
+	border-radius: 10px;
+	font-size: 16px;
+	transition: border-color 0.3s ease;
 }
 
 .search-group input:focus,
 .search-group select:focus {
-  outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+	outline: none;
+	border-color: #4caf50;
+	box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
 .search-btn {
-  padding: 15px 30px;
-  background: linear-gradient(135deg, #4caf50, #2e7d32);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  height: fit-content;
+	padding: 15px 30px;
+	background: linear-gradient(135deg, #4caf50, #2e7d32);
+	color: white;
+	border: none;
+	border-radius: 10px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: transform 0.2s ease;
+	height: fit-content;
 }
 
 .search-btn:hover {
-  transform: translateY(-2px);
+	transform: translateY(-2px);
 }
 
 /* Layout Container */
 .content-container {
-  max-width: 1200px;
-  margin: 60px auto;
-  padding: 0 20px;
+	max-width: 1200px;
+	margin: 60px auto;
+	padding: 0 20px;
 }
 
 /* Main Content */
 .main-content {
-  width: 100%;
+	width: 100%;
 }
 
 .section {
-  margin-bottom: 60px;
+	margin-bottom: 60px;
 }
 
 .section-title {
-  font-size: 2.2rem;
-  margin-bottom: 30px;
-  color: #2e7d32;
-  text-align: center;
+	font-size: 2.2rem;
+	margin-bottom: 30px;
+	color: #2e7d32;
+	text-align: center;
 }
 
 /* Interactive Map */
 .map-container {
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  margin-bottom: 40px;
+	background: white;
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	margin-bottom: 40px;
 }
 
 .map-header {
-  padding: 20px 30px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e1e1e1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+	padding: 20px 30px;
+	background: #f8f9fa;
+	border-bottom: 1px solid #e1e1e1;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .map-toggle {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
+	background: #4caf50;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 20px;
+	cursor: pointer;
+	font-weight: 500;
 }
 
 #map {
-  height: 400px;
-  width: 100%;
+	height: 400px;
+	width: 100%;
 }
 
 .map-expanded {
-  height: 600px !important;
+	height: 600px !important;
 }
 
 /* Popular Campsites */
 .campsites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 30px;
 }
 
 .campsite-card {
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  cursor: pointer;
+	background: white;
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease;
+	cursor: pointer;
 }
 
 .campsite-card:hover {
-  transform: translateY(-5px);
+	transform: translateY(-5px);
 }
 
 .campsite-image {
-  height: 200px;
-  background: linear-gradient(45deg, #4caf50, #81c784);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: white;
+	height: 200px;
+	background: linear-gradient(45deg, #4caf50, #81c784);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 3rem;
+	color: white;
 }
 
 .campsite-content {
-  padding: 25px;
+	padding: 25px;
 }
 
 .campsite-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: #2e7d32;
+	font-size: 1.4rem;
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: #2e7d32;
 }
 
 .campsite-location {
-  color: #666;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+	color: #666;
+	margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 
 .rating {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 15px;
 }
 
 .stars {
-  color: #ffc107;
+	color: #ffc107;
 }
 
 .campsite-price {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #4caf50;
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: #4caf50;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .search-form {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
+	.search-form {
+		grid-template-columns: 1fr;
+		gap: 15px;
+	}
 
-  .hero h1 {
-    font-size: 2.5rem;
-  }
+	.hero h1 {
+		font-size: 2.5rem;
+	}
 
-  .nav-links {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+	.nav-links {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
 
-  .campsites-grid {
-    grid-template-columns: 1fr;
-  }
+	.campsites-grid {
+		grid-template-columns: 1fr;
+	}
 }

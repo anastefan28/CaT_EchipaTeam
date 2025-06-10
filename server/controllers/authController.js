@@ -5,15 +5,84 @@ import { serialize } from 'cookie';
 import { findUserByEmail, validatePassword, createUser } from '../models/userModel.js';
 import { sendJson, json } from '../utils/json.js';
 import bcrypt from 'bcrypt';
+import { AppError } from '../utils/appError.js';
+
+export async function handleLogin(req, res) {
+	const { email, password } = await json(req);
+	if (!email || !password) {
+		throw new AppError('Email and password are required.', 400);
+	}
+
+	const user = await findUserByEmail(email);
+	if (user.password_hash===null || !(await validatePassword(password, user.password_hash))) {
+		throw new AppError('Invalid credentials. If you don’t have an account, please register first.', 401);
+	}
+
+	const token = generateJWT(user);
+	res.writeHead(200, {
+		'Set-Cookie': serialize('token', token, {
+			httpOnly: true,
+			path: '/',
+			sameSite: 'strict',
+			secure: process.env.NODE_ENV === 'production'
+		}),
+		'Content-Type': 'application/json'
+	});
+
+	sendJson(res, 200, {
+		success: true,
+		_links: {
+			dashboard: '/dashboard',
+			profile: '/api/me',
+			logout: '/api/auth/logout'
+		}
+	});
+}
+
+
+export async function handleRegister(req, res) {
+  const { username, email, password } = await json(req);
+
+  if (!username || !email || !password) {
+    throw new AppError('All fields are required.', 400);
+  }
+
+  const existing = await findUserByEmail(email);
+  if (existing) {
+    throw new AppError('Email is already registered.', 409);
+  }
+
+  const hashed = await bcrypt.hash(password, 10);
+  const user = await createUser({ username, email, password: hashed });
+  const token = generateJWT(user);
+
+  res.writeHead(302, {
+    'Set-Cookie': serialize('token', token, {
+      httpOnly: true,
+      path: '/',
+      maxAge: 3600
+    }),
+    Location: '/dashboard'
+  });
+  res.end();
+}
+
+export function handleLogout(req, res) {
+  res.writeHead(302, {
+    'Set-Cookie': 'token=; HttpOnly; Path=/; Max-Age=0',
+    Location: '/',
+  });
+  res.end();
+}
 
 export async function handleGoogleCallback(req, res) {
   const params = googleClient.callbackParams(req);
-
   const tokenSet = await googleClient.callback(
     'http://localhost:8000/api/auth/google/callback',
     params,
     { nonce }
   );
+
   const userinfo = await googleClient.userinfo(tokenSet.access_token);
 
   let user = await findUserByOAuthSub(userinfo.sub);
@@ -34,80 +103,6 @@ export async function handleGoogleCallback(req, res) {
       maxAge: 3600,
     }),
     Location: '/dashboard'
-  });
-  res.end();
-}
-
-
-export async function handleLogin(req, res) {
-  try {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', async () => {
-      const { email, password } = JSON.parse(body);
-      if (!email || !password) {
-        sendJson(res, 400,{error: 'Email and password are required.' });
-      }
-      const user = await findUserByEmail(email);
-      if (user.password_hash===undefined || !(await validatePassword(password, user.password_hash))) {
-        sendJson(res, 401, { error: 'Invalid credentials. If you don’t have an account, please register first.' });
-        return;
-      }
-      const token = generateJWT(user);
-
-      res.writeHead(302, {
-        'Set-Cookie': serialize('token', token, {
-          httpOnly: true,
-          path: '/',
-          maxAge: 3600,
-        }),
-        Location: '/dashboard'
-      });
-      res.end();
-    });
-  } catch (err) {
-    console.error(err);
-    sendJson(res,500,{ error: 'Server error' });
-  }
-}
-
-export async function handleRegister(req, res) {
-  try {
-    const body = await json(req);
-    const { username, email, password } = body;
-
-    if (!username || !email || !password) {
-      return sendJson(res, 400, { error: 'All fields are required.' });
-    }
-
-    const existing = await findUserByEmail(email);
-    if (existing) {
-      return sendJson(res, 409, { error: 'Email is already registered.' });
-    }
-
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await createUser({ username, email, password: hashed });
-    const token = generateJWT(user);
-
-    res.writeHead(302, {
-      'Set-Cookie': serialize('token', token, {
-        httpOnly: true,
-        path: '/',
-        maxAge: 3600
-      }),
-      Location: '/dashboard'
-    });
-    res.end();
-  } catch (err) {
-    console.error(err);
-    sendJson(res, 500, { error: 'Internal server error' });
-  }
-}
-
-export function handleLogout(req, res) {
-  res.writeHead(302, {
-    'Set-Cookie': 'token=; HttpOnly; Path=/; Max-Age=0',
-    Location: '/',
   });
   res.end();
 }

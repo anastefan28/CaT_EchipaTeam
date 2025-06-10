@@ -1,6 +1,8 @@
-import { authRoute } from './routes/auth.js';
-import{meRoute} from './routes/me.js';
+import { authRoute } from './routes/authRoute.js';
+import { userRoute } from './routes/userRoute.js';
+import { campsiteRoute } from './routes/campsiteRoute.js';
 export const routes = {
-  '/api/auth': authRoute,
-  '/api/me': meRoute,
+	'/api/auth': authRoute,
+	'/api/me': userRoute,
+	'/api/campsites': campsiteRoute ,
 };

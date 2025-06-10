@@ -5,7 +5,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Sample campsite locations
 const campsites = [
     {
         name: "Mountain View Campground",
@@ -39,7 +38,6 @@ const campsites = [
     }
 ];
 
-// Add markers to map
 campsites.forEach((campsite, index) => {
     const marker = L.marker(campsite.location).addTo(map);
     marker.bindPopup(`
@@ -52,23 +50,22 @@ campsites.forEach((campsite, index) => {
             `);
 });
 
-// Search form submission
 document.getElementById('searchForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const location = document.getElementById('location').value;
     const checkin = document.getElementById('checkin').value;
+    const checkout = document.getElementById('checkout').value;
     const guests = document.getElementById('guests').value;
 
-    // Redirect to campsites page with search parameters
     const params = new URLSearchParams({
         location: location,
         checkin: checkin,
+        checkout: checkout,
         guests: guests
     });
     window.location.href = `campsites.html?${params.toString()}`;
 });
 
-// Toggle map size
 function toggleMap() {
     const mapElement = document.getElementById('map');
     const toggleBtn = document.querySelector('.map-toggle');
@@ -83,23 +80,25 @@ function toggleMap() {
         isMapExpanded = true;
     }
 
-    // Refresh map after size change
     setTimeout(() => {
         map.invalidateSize();
     }, 300);
 }
 
-// Navigation functions
 function goToCampsite(id) {
     window.location.href = `campsite.html?id=${id}`;
 }
 
 document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-    e.preventDefault(); 
-    await fetch('/api/auth/logout', { method: 'POST' });
+    e.preventDefault();
+    try {
+        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        if (!res.ok) throw new Error('Logout failed');
+    } catch (err) {
+        console.warn('Logout request failed:', err);
+    }
     window.location.href = '/index';
 });
 
-// Set minimum date for check-in to today
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('checkin').setAttribute('min', today);

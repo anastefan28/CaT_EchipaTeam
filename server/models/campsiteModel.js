@@ -26,7 +26,7 @@ export async function getCampsites(filters) {
 
   if (location) {
     values.push(`%${location.toLowerCase()}%`);
-    conditions.push(`LOWER(cs.name) LIKE $${values.length} OR LOWER(cs.description) LIKE $${values.length}`);
+    conditions.push(`LOWER(cs.name) LIKE $${values.length}`);
   }
   if (guests) {
     values.push(guests);

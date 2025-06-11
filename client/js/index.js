@@ -83,6 +83,7 @@ registerForm?.addEventListener('submit', async (e) => {
 		await postJSON('/api/auth/register', { username: name, email, password });
 		window.location.href = '/dashboard';
 	} catch (err) {
+		console.error('Registration error:', err);
 		showError(registerError, err.message || 'Registration failed.');
 	}
 });

@@ -15,7 +15,6 @@ export function serveStatic(req, res) {
 	if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
 		const fileContent = fs.readFileSync(filePath);
 		const contentType = getContentType(filePath);
-
 		res.writeHead(200, { 'Content-Type': contentType });
 		res.end(fileContent);
 		return true;

@@ -28,17 +28,8 @@ export async function handleLogin(req, res) {
 		}),
 		'Content-Type': 'application/json'
 	});
-
-	sendJson(res, 200, {
-		success: true,
-		_links: {
-			dashboard: '/dashboard',
-			profile: '/api/me',
-			logout: '/api/auth/logout'
-		}
-	});
+  res.end(JSON.stringify({ success: true, user: { id: user.id, username: user.username, email: user.email } }));
 }
-
 
 export async function handleRegister(req, res) {
   const { username, email, password } = await json(req);
@@ -56,15 +47,15 @@ export async function handleRegister(req, res) {
   const user = await createUser({ username, email, password: hashed });
   const token = generateJWT(user);
 
-  res.writeHead(302, {
+  res.writeHead(201, {
     'Set-Cookie': serialize('token', token, {
       httpOnly: true,
       path: '/',
       maxAge: 3600
     }),
-    Location: '/dashboard'
+    'Content-Type': 'application/json'
   });
-  res.end();
+  res.end(JSON.stringify({ success: true }));
 }
 
 export function handleLogout(req, res) {

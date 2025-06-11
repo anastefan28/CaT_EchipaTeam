@@ -1,27 +1,20 @@
 import { verifyJWT , getJWT} from "../utils/jwt.js";
 import { getUserById } from "../models/userModel.js";
+import { sendJson } from "../utils/json.js";
+import { AppError } from "../utils/appError.js";
+
 export async function handleMe(req, res) {
-  try {
-    const token = getJWT(req);
-    const payload = verifyJWT(token);
-    if (!payload) {
-      console.error('Invalid token payload');
-      res.writeHead(401);
-      return res.end(JSON.stringify({ error: 'Invalid token' }));
-    }
-
-    const user = await getUserById(payload.id);
-    if (!user) {
-      res.writeHead(404);
-      return res.end(JSON.stringify({ error: 'User not found' }));
-    }
-
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(user));
-
-  } catch (err) {
-    console.error('Error in handleMe:', err);
-    res.writeHead(500);
-    res.end(JSON.stringify({ error: 'Internal Server Error' }));
+  const token = getJWT(req);
+  const payload = verifyJWT(token);
+  if (!payload) {
+    throw new AppError('Invalid token', 401);
   }
+
+  const user = await getUserById(payload.id);
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  sendJson(res, 200, user);
 }
+

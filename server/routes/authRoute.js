@@ -1,0 +1,34 @@
+import { generateAuthUrl } from "../config/google.js";
+import {
+	handleGoogleCallback,
+	handleLogin,
+	handleRegister,
+	handleLogout,
+} from "../controllers/authController.js";
+import { parse } from "url";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendJson } from "../utils/json.js";
+
+export async function authRoute(req, res) {
+	const { pathname } = parse(req.url, true);
+	const { method } = req;
+	if (pathname === "/api/auth/google") {
+		const url = generateAuthUrl();
+		res.writeHead(302, { Location: url });
+		return res.end();
+	}
+	if (pathname === "/api/auth/google/callback") {
+		return handleGoogleCallback(req, res);
+	}
+	if (pathname === "/api/auth/login" && method === "POST") {
+		return asyncHandler(handleLogin)(req, res);
+	}
+
+	if (method === "POST" && pathname === "/api/auth/register")
+		return asyncHandler(handleRegister)(req, res);
+
+	if (method === "POST" && pathname === "/api/auth/logout")
+		return asyncHandler(handleLogout)(req, res);
+
+	sendJson(res, 405, { error: "Method not allowed" });
+}

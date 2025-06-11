@@ -1,85 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CampSpot - Account Details</title>
-  <link rel="stylesheet" href="../css/profile.css" />
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>CampSpot - Account Details</title>
+	<link rel="stylesheet" href="../css/profile.css" />
 </head>
+
 <body>
-  <header class="header">
-    <nav class="nav">
-      <a href="index.html" class="logo">CampSpot</a>
-      <div class="nav-links">
-        <a href="bookings.html" class="nav-item">📅 My Bookings</a>
-        <a href="profile.html" class="nav-item active">👤 Account Details</a>
-        <a href="campsites.html" class="nav-item">🗺️ Browse Campsites</a>
-        <a href="#" class="nav-item">💬 Community</a>
-        <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
-      </div>
-    </nav>
-  </header>
+	<header class="header">
+		<nav class="nav">
+			<a href="/dashboard" class="logo">CampSpot</a>
+			<div class="nav-links">
+				<a href="/bookings" class="nav-item">📅 My Bookings</a>
+				<a href="/profile" class="nav-item active">👤 Account Details</a>
+				<a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
+				<a href="#" class="nav-item">💬 Community</a>
+				<a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+			</div>
+		</nav>
+	</header>
 
-  <div class="main-container">
-    <div class="page-header">
-      <h1 class="page-title">Account Details</h1>
-      <p class="page-subtitle">Manage your profile information and settings</p>
-    </div>
+	<div class="main-container">
+		<div class="page-header">
+			<h1 class="page-title">Account Details</h1>
+			<p class="page-subtitle">Manage your profile information and settings</p>
+		</div>
 
-    <div class="account-grid">
-      <!-- Profile Information -->
-      <div class="account-card">
-        <div class="card-header">
-          <div class="card-icon">👤</div>
-          <h2 class="card-title">Profile Information</h2>
-        </div>
+		<div class="account-grid">
+			<div class="account-card">
+				<div class="card-header">
+					<div class="card-icon">👤</div>
+					<h2 class="card-title">Profile Information</h2>
+				</div>
 
-        <form id="profileForm">
-          <div class="form-group">
-            <label class="form-label" for="username">Username</label>
-            <input type="text" id="username" class="form-input" placeholder="Enter your username" />
-          </div>
+				<form id="profileForm">
+					<div class="form-group">
+						<label class="form-label" for="username">Username</label>
+						<input type="text" id="username" class="form-input" placeholder="Enter your username" />
+					</div>
 
-          <div class="form-group">
-            <label class="form-label" for="email">Email Address</label>
-            <input type="email" id="email" class="form-input readonly" readonly />
-            <small style="color: #666; font-size: 0.9rem;">Email cannot be changed directly. Contact support if needed.</small>
-          </div>
+					<div class="form-group">
+						<label class="form-label" for="email">Email Address</label>
+						<input type="email" id="email" class="form-input readonly" readonly />
+						<small style="color: #666; font-size: 0.9rem;">Email cannot be changed directly. Contact support
+							if needed.</small>
+					</div>
 
-          <button type="submit" class="btn btn-primary">Update Profile</button>
-        </form>
-      </div>
+					<button type="submit" class="btn btn-primary">Update Profile</button>
+				</form>
+			</div>
 
-      <!-- Account Information -->
-      <div class="account-card">
-        <div class="card-header">
-          <div class="card-icon">ℹ️</div>
-          <h2 class="card-title">Account Information</h2>
-        </div>
+			<div class="account-card">
+				<div class="card-header">
+					<div class="card-icon">ℹ️</div>
+					<h2 class="card-title">Account Information</h2>
+				</div>
 
-        <div class="info-row">
-          <span class="info-label">Account Status</span>
-          <span class="info-value" id="statusBadge"></span>
-        </div>
+				<div class="info-row">
+					<span class="info-label">Account Status</span>
+					<span class="info-value" id="statusBadge"></span>
+				</div>
 
-        <div class="info-row">
-          <span class="info-label">Member Since</span>
-          <span class="info-value" id="memberSince"></span>
-        </div>
+				<div class="info-row">
+					<span class="info-label">Member Since</span>
+					<span class="info-value" id="memberSince"></span>
+				</div>
 
-        <div class="info-row">
-          <span class="info-label">Account Type</span>
-          <span class="info-value" id="accountType"></span>
-        </div>
+				<div class="info-row">
+					<span class="info-label">Account Type</span>
+					<span class="info-value" id="accountType"></span>
+				</div>
 
-        <div class="info-row">
-          <span class="info-label">User ID</span>
-          <span class="info-value" id="userId"></span>
-        </div>
-      </div>
-    </div>
-  </div>
+				<div class="info-row">
+					<span class="info-label">User ID</span>
+					<span class="info-value" id="userId"></span>
+				</div>
+			</div>
+		</div>
+	</div>
 
-  <script src="../js/profile.js"></script>
+	<script src="../js/profile.js"></script>
 </body>
+
 </html>

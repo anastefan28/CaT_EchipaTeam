@@ -1,8 +1,34 @@
+
 const loginToggle = document.getElementById('loginToggle');
 const registerToggle = document.getElementById('registerToggle');
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
+const registerError = document.getElementById('registerError');
+const loginError = document.getElementById('loginError');
 
+function showError(el, msg) {
+	if (el) {
+		el.textContent = msg;
+		el.classList.remove('hidden');
+	}
+}
+
+function hideError(el) {
+	if (el) {
+		el.textContent = '';
+		el.classList.add('hidden');
+	}
+}
+async function postJSON(url, body) {
+	const res = await fetch(url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
+	const data = await res.json();
+	if (!res.ok) throw new Error(data.error || 'Unexpected error');
+	return data;
+}
 loginToggle.addEventListener('click', () => {
     loginToggle.classList.add('active');
     registerToggle.classList.remove('active');
@@ -17,81 +43,50 @@ registerToggle.addEventListener('click', () => {
     loginForm.classList.add('hidden');
 });
 
-// Google OAuth simulation
 document.getElementById('googleLogin').addEventListener('click', () => {
-    window.location.href = '/api/auth/google'; 
+    window.location.href = '/api/auth/google';
 });
 
 document.getElementById('googleRegister').addEventListener('click', () => {
     window.location.href = '/api/auth/google';
 });
-// Form submissions
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    loginError.classList.add('hidden');
-    loginError.textContent = '';
 
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+loginForm?.addEventListener('submit', async (e) => {
+	e.preventDefault();
+	hideError(loginError);
 
-    try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+	const email = document.getElementById('loginEmail')?.value;
+	const password = document.getElementById('loginPassword')?.value;
 
-    if (res.ok) {
-      window.location.href = '/dashboard'; 
-    } else {
-        const data = await res.json();
-        loginError.textContent = data.error || 'Login failed. Try again.';
-        loginError.classList.remove('hidden');    
-    }
-  } catch (err) {
-    loginError.textContent = 'Server error. Please try again later.';
-    loginError.classList.remove('hidden');
-  }
-});
-const registerError = document.getElementById('registerError');
-
-registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    registerError.classList.add('hidden');
-    registerError.textContent = '';
-
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    if (password !== confirmPassword) {
-        registerError.textContent = 'Passwords do not match.';
-        registerError.classList.remove('hidden');
-        return;
-    }
-
-    try {
-        const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: name, email, password }),
-        });
-
-        if (res.ok) {
-        window.location.href = '/dashboard';
-        } else {
-        const data = await res.json();
-        registerError.textContent = data.error || 'Registration failed.';
-        registerError.classList.remove('hidden');
-        }
-    } catch {
-        registerError.textContent = 'Server error. Please try again later.';
-        registerError.classList.remove('hidden');
-    }
+	try {
+		await postJSON('/api/auth/login', { email, password });
+		window.location.href = '/dashboard';
+	} catch (err) {
+		showError(loginError, err.message || 'Login failed.');
+	}
 });
 
-// Forgot password
+registerForm?.addEventListener('submit', async (e) => {
+	e.preventDefault();
+	hideError(registerError);
+
+	const name = document.getElementById('registerName')?.value;
+	const email = document.getElementById('registerEmail')?.value;
+	const password = document.getElementById('registerPassword')?.value;
+	const confirmPassword = document.getElementById('confirmPassword')?.value;
+
+	if (password !== confirmPassword) {
+		return showError(registerError, 'Passwords do not match.');
+	}
+
+	try {
+		await postJSON('/api/auth/register', { username: name, email, password });
+		window.location.href = '/dashboard';
+	} catch (err) {
+		showError(registerError, err.message || 'Registration failed.');
+	}
+});
+
 document.getElementById('forgotPassword').addEventListener('click', (e) => {
     e.preventDefault();
     alert('Password reset functionality would be implemented here.');

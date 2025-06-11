@@ -7,18 +7,18 @@ import { serveStatic } from './middlewares/static.js';
 dotenv.config();
 
 const server = http.createServer(async (req, res) => {
-  const { pathname } = parse(req.url, true);
+	const { pathname } = parse(req.url, true);
 
-  const matchedRoute = Object.keys(routes).find(route => pathname.startsWith(route));
-  if (matchedRoute) {
-    return routes[matchedRoute](req, res);
-  }
-  if (serveStatic(req, res)) {
-    return; 
-  }
-  res.writeHead(404);
-  res.end('Not Found');
-  
+	const matchedRoute = Object.keys(routes).find(route => pathname.startsWith(route));
+	if (matchedRoute) {
+		return routes[matchedRoute](req, res);
+	}
+	if (serveStatic(req, res)) {
+		return;
+	}
+	res.writeHead(404);
+	res.end('Not Found');
+
 });
 
 server.listen(process.env.PORT, () => console.log('Server running at http://localhost:8000'));

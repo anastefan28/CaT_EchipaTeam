@@ -131,7 +131,7 @@ function renderCampsites() {
 
     const priceBlock = document.createElement('div');
     priceBlock.className = 'campsite-price';
-    priceBlock.textContent = `$${campsite.price}`;
+    priceBlock.textContent = `${campsite.price} RON`;
     const unit = document.createElement('span');
     unit.className = 'price-unit';
     unit.textContent = '/night';

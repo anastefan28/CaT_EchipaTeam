@@ -281,7 +281,6 @@ body {
 	color: #4caf50;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
 	.search-form {
 		grid-template-columns: 1fr;

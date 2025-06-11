@@ -33,17 +33,16 @@ function capitalize(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function setupLogout() {
-	const logoutBtn = document.getElementById('logoutBtn');
-	if (logoutBtn) {
-		logoutBtn.addEventListener('click', async (e) => {
-			e.preventDefault();
-			await fetch('/api/auth/logout', { method: 'POST' });
-			localStorage.removeItem('token');
-			window.location.href = '/index';
-		});
-	}
-}
+document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (!res.ok) throw new Error('Logout failed');
+  } catch (err) {
+    console.warn('Logout request failed:', err);
+  }
+  window.location.href = '/index';
+});
 
 document.getElementById('profileForm').addEventListener('submit', (e) => {
 	e.preventDefault();

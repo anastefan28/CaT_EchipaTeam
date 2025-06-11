@@ -9,7 +9,7 @@ export async function userRoute(req, res) {
   const { method } = req;
 
   if (method === 'GET' && pathname === '/api/me') {
-    return protectRoute(asyncHandler(handleMe))(req, res);
+    return asyncHandler(protectRoute(handleMe))(req, res);
   }
 
   sendJson(res, 405, { error: 'Method Not Allowed' });

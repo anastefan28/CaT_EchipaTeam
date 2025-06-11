@@ -1,4 +1,4 @@
-import { getCampsites } from '../controllers/campsiteController.js';
+import { handleGetCampsites } from '../controllers/campsiteController.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { protectRoute } from '../middlewares/protect.js';
 import { sendJson } from '../utils/json.js';
@@ -9,7 +9,7 @@ export async function campsiteRoute(req, res) {
   const { method } = req;
 
   if (method === 'GET' && pathname === '/api/campsites') {
-    return protectRoute(asyncHandler(getCampsites))(req, res);
+    return asyncHandler(protectRoute(handleGetCampsites))(req, res);
   }
 
   sendJson(res, 405, { error: 'Method Not Allowed' });

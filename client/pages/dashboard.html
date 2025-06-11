@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +8,17 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
+
 <body>
     <header class="header">
         <nav class="nav">
             <div class="logo">CampSpot</div>
             <div class="nav-links">
-            <a href="/bookings" class="nav-item">📅 My Bookings</a>
-            <a href="/profile" class="nav-item">👤 Account Details</a>
-            <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
-            <a href="#" class="nav-item">💬 Community</a>
-            <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+                <a href="/bookings" class="nav-item">📅 My Bookings</a>
+                <a href="/profile" class="nav-item">👤 Account Details</a>
+                <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
+                <a href="#" class="nav-item">💬 Community</a>
+                <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
             </div>
         </nav>
     </header>
@@ -70,46 +72,7 @@
             </section>
             <section class="section">
                 <h2 class="section-title">Most Popular Campsites</h2>
-                <div class="campsites-grid">
-                    <div class="campsite-card" onclick="goToCampsite(1)">
-                        <div class="campsite-image">🏔️</div>
-                        <div class="campsite-content">
-                            <h3 class="campsite-title">Mountain View Campground</h3>
-                            <div class="campsite-location">📍 Rocky Mountain National Park</div>
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.8 (124 reviews)</span>
-                            </div>
-                            <div class="campsite-price">$45/night</div>
-                        </div>
-                    </div>
-                    
-                    <div class="campsite-card" onclick="goToCampsite(2)">
-                        <div class="campsite-image">🌊</div>
-                        <div class="campsite-content">
-                            <h3 class="campsite-title">Lakeside Paradise</h3>
-                            <div class="campsite-location">📍 Lake Tahoe, California</div>
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.9 (89 reviews)</span>
-                            </div>
-                            <div class="campsite-price">$55/night</div>
-                        </div>
-                    </div>
-                    
-                    <div class="campsite-card" onclick="goToCampsite(3)">
-                        <div class="campsite-image">🌲</div>
-                        <div class="campsite-content">
-                            <h3 class="campsite-title">Forest Retreat</h3>
-                            <div class="campsite-location">📍 Yellowstone National Park</div>
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.7 (156 reviews)</span>
-                            </div>
-                            <div class="campsite-price">$38/night</div>
-                        </div>
-                    </div>
-                </div>
+                <div id="popularCampsitesGrid" class="campsites-grid"></div>
             </section>
         </main>
     </div>
@@ -117,4 +80,5 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
+
 </html>

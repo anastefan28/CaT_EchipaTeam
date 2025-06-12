@@ -1,84 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CampSpot - Discover Your Next Adventure</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+  </head>
 
-<body>
+  <body>
     <header class="header">
-        <nav class="nav">
-            <div class="logo">CampSpot</div>
-            <div class="nav-links">
-                <a href="/bookings" class="nav-item">📅 My Bookings</a>
-                <a href="/profile" class="nav-item">👤 Account Details</a>
-                <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
-                <a href="#" class="nav-item">💬 Community</a>
-                <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
-            </div>
-        </nav>
+      <nav class="nav">
+        <div class="logo">CampSpot</div>
+        <div class="nav-links">
+          <a href="/bookings" class="nav-item">📅 My Bookings</a>
+          <a href="/profile" class="nav-item">👤 Account Details</a>
+          <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
+          <a href="#" class="nav-item">💬 Community</a>
+          <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+        </div>
+      </nav>
     </header>
 
     <section class="hero">
-        <div class="hero-content">
-            <h1>Find Your Perfect Campsite</h1>
-            <p>Discover amazing camping destinations, connect with nature lovers, and create unforgettable memories</p>
-        </div>
+      <div class="hero-content">
+        <h1>Find Your Perfect Campsite</h1>
+        <p>
+          Discover amazing camping destinations, connect with nature lovers, and
+          create unforgettable memories
+        </p>
+      </div>
     </section>
 
     <section class="search-section">
-        <form class="search-form" id="searchForm">
-            <div class="search-group">
-                <label for="location">Where</label>
-                <input type="text" id="location" name="location" placeholder="City, region, or park name">
-            </div>
-            <div class="search-group">
-                <label for="checkin">Check-in</label>
-                <input type="date" id="checkin" name="checkin">
-            </div>
-            <div class="search-group">
-                <label for="checkout">Check-out</label>
-                <input type="date" id="checkout" name="checkout">
-            </div>
-            <div class="search-group">
-                <label for="guests">Guests</label>
-                <select id="guests" name="guests">
-                    <option value="1">1 person</option>
-                    <option value="2">2 people</option>
-                    <option value="4">4 people</option>
-                    <option value="6">6 people</option>
-                    <option value="8">8+ people</option>
-                </select>
-            </div>
-            <button type="submit" class="search-btn">🔍 Search</button>
-        </form>
+      <form class="search-form" id="searchForm">
+        <div class="search-group">
+          <label for="location">Where</label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            placeholder="City, county, or park name"
+          />
+        </div>
+        <div class="search-group">
+          <label for="checkin">Check-in</label>
+          <input type="date" id="checkin" name="checkin" />
+        </div>
+        <div class="search-group">
+          <label for="checkout">Check-out</label>
+          <input type="date" id="checkout" name="checkout" />
+        </div>
+        <div class="search-group">
+          <label for="guests">Guests</label>
+          <select id="guests" name="guests">
+            <option value="1">1 person</option>
+            <option value="2">2 people</option>
+            <option value="4">4 people</option>
+            <option value="6">6 people</option>
+            <option value="8">8+ people</option>
+          </select>
+        </div>
+        <button type="submit" class="search-btn">🔍 Search</button>
+      </form>
     </section>
 
     <div class="content-container">
-        <main class="main-content">
-            <section class="section">
-                <h2 class="section-title">Explore Campsites on Map</h2>
-                <div class="map-container">
-                    <div class="map-header">
-                        <h3>Interactive Campsite Map</h3>
-                        <button class="map-toggle" onclick="toggleMap()">Expand Map</button>
-                    </div>
-                    <div id="map"></div>
-                </div>
-            </section>
-            <section class="section">
-                <h2 class="section-title">Most Popular Campsites</h2>
-                <div id="popularCampsitesGrid" class="campsites-grid"></div>
-            </section>
-        </main>
+      <main class="main-content">
+        <section class="section">
+          <h2 class="section-title">Explore Campsites on Map</h2>
+          <div class="map-container">
+            <div class="map-header">
+              <h3>Interactive Campsite Map</h3>
+              <button class="map-toggle" onclick="toggleMap()">
+                Expand Map
+              </button>
+            </div>
+            <div id="map"></div>
+          </div>
+        </section>
+        <section class="section">
+          <h2 class="section-title">Most Popular Campsites</h2>
+          <div id="popularCampsitesGrid" class="campsites-grid"></div>
+        </section>
+      </main>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../js/dashboard.js"></script>
-</body>
-
+  </body>
 </html>

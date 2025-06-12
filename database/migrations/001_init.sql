@@ -1,12 +1,12 @@
 
 CREATE TYPE user_role       AS ENUM ('member', 'admin');
 CREATE TYPE campsite_type   AS ENUM ('tent', 'rv', 'cabin', 'glamping', 'mixed');
-CREATE TYPE region_code     AS ENUM (
-  'RO-NV',  -- North-West
-  'RO-C',   -- Centre
-  'RO-S',   -- South
-  'RO-E',   -- East
-  'OTHER'  
+CREATE TYPE county_name AS ENUM (
+  'Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani', 'Brăila',
+  'Brașov', 'București', 'Buzău', 'Caraș-Severin', 'Călărași', 'Cluj', 'Constanța', 'Covasna',
+  'Dâmbovița', 'Dolj', 'Galați', 'Giurgiu', 'Gorj', 'Harghita', 'Hunedoara', 'Ialomița',
+  'Iași', 'Ilfov', 'Maramureș', 'Mehedinți', 'Mureș', 'Neamț', 'Olt', 'Prahova',
+  'Sălaj', 'Satu Mare', 'Sibiu', 'Suceava', 'Teleorman', 'Timiș', 'Tulcea', 'Vaslui', 'Vâlcea', 'Vrancea'
 );
 CREATE TYPE media_type AS ENUM ('image', 'video', 'audio');
 
@@ -29,20 +29,20 @@ CREATE TABLE campsites (
   lon         NUMERIC(9,6) NOT NULL CHECK (lon BETWEEN -180 AND 180),
   capacity    INT    CHECK (capacity > 0),
   price       NUMERIC(8,2) CHECK (price >= 0),
-  region      region_code   NOT NULL DEFAULT 'OTHER',
+  county      county_code   NOT NULL DEFAULT 'OTHER',
   type        campsite_type NOT NULL DEFAULT 'tent',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
 
 CREATE INDEX idx_campsites_latlon   ON campsites (lat, lon);   
-CREATE INDEX idx_campsites_region   ON campsites (region);
+CREATE INDEX idx_campsites_county   ON campsites (county);
 CREATE INDEX idx_campsites_type     ON campsites (type);
 CREATE INDEX idx_campsites_price    ON campsites (price);
 
 CREATE OR REPLACE VIEW campsites_view AS
 SELECT id, name, description,
        lat, lon,
-       capacity, price, region, type, created_at
+       capacity, price, county, type, created_at
 FROM   campsites;
 
 CREATE TABLE amenities (
@@ -75,6 +75,9 @@ ALTER TABLE bookings
   ADD CONSTRAINT no_overlaps
   EXCLUDE USING GIST (campsite_id WITH =, period WITH &&)
   WHERE (status = 'confirmed');
+
+ALTER TABLE campsites
+  ADD COLUMN county county_name NOT NULL DEFAULT 'București';
 
 CREATE INDEX ON bookings (user_id);
 CREATE INDEX ON bookings USING GIST (period);
@@ -116,15 +119,15 @@ CREATE TABLE media (
 CREATE INDEX ON media (campsite_id);
 CREATE INDEX ON media (review_id);
 
-INSERT INTO campsites (name, description, lat, lon, capacity, price, region, type) VALUES
-('Mountain View Campground', 'Stunning mountain views with hiking trails nearby.', 46.7700, 23.5800, 6, 45.00, 'RO-NV', 'tent'),
-('Lakeside Paradise', 'Peaceful lakefront camping with swimming and fishing.', 47.1600, 24.4900, 4, 55.00, 'RO-NV', 'rv'),
-('Forest Retreat', 'Secluded forest setting with abundant wildlife.', 45.7500, 21.2300, 8, 38.00, 'RO-C', 'tent'),
-('Desert Oasis Campground', 'Desert experience with stargazing and tours.', 44.4200, 26.1100, 2, 120.00, 'RO-S', 'glamping'),
-('Riverside Adventures', 'Camping with rafting and kayaking nearby.', 46.7700, 23.5800, 5, 85.00, 'RO-E', 'cabin'),
-('Pine Valley Campsite', 'Quiet pine forest for relaxation.', 47.0000, 25.3000, 4, 42.00, 'RO-C', 'tent'),
-('Ocean Breeze RV Park', 'Coastal camping with ocean views.', 44.1700, 28.6300, 6, 75.00, 'RO-E', 'rv'),
-('Highland Meadows', 'High-altitude meadow camping.', 46.1300, 23.5800, 3, 50.00, 'RO-C', 'tent');
+INSERT INTO campsites (name, description, lat, lon, capacity, price, county, type) VALUES
+('Mountain View Campground', 'Stunning mountain views with hiking trails nearby.', 46.7700, 23.5800, 6, 45.00, 'Cluj', 'tent'),
+('Lakeside Paradise', 'Peaceful lakefront camping with swimming and fishing.', 47.1600, 24.4900, 4, 55.00, 'Bistrița-Năsăud', 'rv'),
+('Forest Retreat', 'Secluded forest setting with abundant wildlife.', 45.7500, 21.2300, 8, 38.00, 'Timiș', 'tent'),
+('Desert Oasis Campground', 'Desert experience with stargazing and tours.', 44.4200, 26.1100, 2, 120.00, 'București', 'glamping'),
+('Riverside Adventures', 'Camping with rafting and kayaking nearby.', 46.7700, 23.5800, 5, 85.00, 'Cluj', 'cabin'),
+('Pine Valley Campsite', 'Quiet pine forest for relaxation.', 47.0000, 25.3000, 4, 42.00, 'Suceava', 'tent'),
+('Ocean Breeze RV Park', 'Coastal camping with ocean views.', 44.1700, 28.6300, 6, 75.00, 'Constanța', 'rv'),
+('Highland Meadows', 'High-altitude meadow camping.', 46.1300, 23.5800, 3, 50.00, 'Alba', 'tent');
 
 
 

@@ -275,8 +275,7 @@ function updateURLParams() {
   window.history.replaceState({}, '', newUrl);
 }
 
-function clearAllFilters() {
-
+async function clearAllFilters() {
   document.getElementById('locationFilter').value = '';
   document.getElementById('minPrice').value = '';
   document.getElementById('maxPrice').value = '';
@@ -285,6 +284,20 @@ function clearAllFilters() {
   document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
   document.querySelectorAll('input[name="type"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('input[name="amenities"]').forEach(cb => cb.checked = false);
+
   window.history.replaceState({}, '', window.location.pathname);
+
+  try {
+    const res = await fetch(`/api/campsites`);
+    if (!res.ok) {
+      console.error('Failed to reload campsites');
+      return;
+    }
+    allCampsites = await res.json();
+  } catch (err) {
+    console.error('Error fetching campsites:', err);
+    return;
+  }
+
   applyFilters();
 }

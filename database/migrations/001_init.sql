@@ -1,6 +1,7 @@
 
 CREATE TYPE user_role       AS ENUM ('member', 'admin');
 CREATE TYPE campsite_type   AS ENUM ('tent', 'rv', 'cabin', 'glamping', 'mixed');
+
 CREATE TYPE county_name AS ENUM (
   'Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani', 'Brăila',
   'Brașov', 'București', 'Buzău', 'Caraș-Severin', 'Călărași', 'Cluj', 'Constanța', 'Covasna',
@@ -29,7 +30,7 @@ CREATE TABLE campsites (
   lon         NUMERIC(9,6) NOT NULL CHECK (lon BETWEEN -180 AND 180),
   capacity    INT    CHECK (capacity > 0),
   price       NUMERIC(8,2) CHECK (price >= 0),
-  county      county_code   NOT NULL DEFAULT 'OTHER',
+  county      county_name   NOT NULL DEFAULT 'Iași',
   type        campsite_type NOT NULL DEFAULT 'tent',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
@@ -76,8 +77,7 @@ ALTER TABLE bookings
   EXCLUDE USING GIST (campsite_id WITH =, period WITH &&)
   WHERE (status = 'confirmed');
 
-ALTER TABLE campsites
-  ADD COLUMN county county_name NOT NULL DEFAULT 'București';
+
 
 CREATE INDEX ON bookings (user_id);
 CREATE INDEX ON bookings USING GIST (period);

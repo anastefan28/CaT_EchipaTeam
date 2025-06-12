@@ -26,15 +26,15 @@ INSERT INTO users (email, username, password_hash, role) VALUES
 ON CONFLICT (email) DO NOTHING;
 
 
-INSERT INTO campsites (name, description, lat, lon, capacity, price, region, type) VALUES
-('Mountain View Campground', 'Stunning mountain views with hiking trails nearby.', 46.7700, 23.5800, 6, 45.00, 'RO-NV', 'tent'),
-('Lakeside Paradise',        'Peaceful lakefront camping with swimming and fishing.', 47.1600, 24.4900, 4, 55.00, 'RO-NV', 'rv'),
-('Forest Retreat',           'Secluded forest setting with abundant wildlife.', 45.7500, 21.2300, 8, 38.00, 'RO-C',  'tent'),
-('Desert Oasis Campground',  'Desert experience with stargazing and tours.', 44.4200, 26.1100, 2, 120.00, 'RO-S', 'glamping'),
-('Riverside Adventures',     'Camping with rafting and kayaking nearby.', 46.7700, 23.5800, 5, 85.00, 'RO-E', 'cabin'),
-('Pine Valley Campsite',     'Quiet pine forest for relaxation.', 47.0000, 25.3000, 4, 42.00, 'RO-C',  'tent'),
-('Ocean Breeze RV Park',     'Coastal camping with ocean views.', 44.1700, 28.6300, 6, 75.00, 'RO-E', 'rv'),
-('Highland Meadows',         'High-altitude meadow camping.', 46.1300, 23.5800, 3, 50.00, 'RO-C',  'tent')
+INSERT INTO campsites (name, description, lat, lon, capacity, price, county, type) VALUES
+('Mountain View Campground', 'Stunning mountain views with hiking trails nearby.', 46.7700, 23.5800, 6, 45.00, 'Cluj', 'tent'),
+('Lakeside Paradise',        'Peaceful lakefront camping with swimming and fishing.', 47.1600, 24.4900, 4, 55.00, 'Bistrița-Năsăud', 'rv'),
+('Forest Retreat',           'Secluded forest setting with abundant wildlife.', 45.7500, 21.2300, 8, 38.00, 'Timiș',  'tent'),
+('Desert Oasis Campground',  'Desert experience with stargazing and tours.', 44.4200, 26.1100, 2, 120.00, 'București', 'glamping'),
+('Riverside Adventures',     'Camping with rafting and kayaking nearby.', 46.7700, 23.5800, 5, 85.00, 'Cluj', 'cabin'),
+('Pine Valley Campsite',     'Quiet pine forest for relaxation.', 47.0000, 25.3000, 4, 42.00, 'Suceava',  'tent'),
+('Ocean Breeze RV Park',     'Coastal camping with ocean views.', 44.1700, 28.6300, 6, 75.00, 'Constanța', 'rv'),
+('Highland Meadows',         'High-altitude meadow camping.', 46.1300, 23.5800, 3, 50.00, 'Alba',  'tent')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO amenities (name) VALUES

@@ -21,6 +21,31 @@ function initFiltersFromURL(params) {
     document.getElementById('locationFilter').value = params.get('location');
   }
 
+  if (params.get('minPrice')) document.getElementById('minPrice').value = params.get('minPrice');
+  if (params.get('maxPrice')) document.getElementById('maxPrice').value = params.get('maxPrice');
+  if (params.get('county')) document.getElementById('countyFilter').value = params.get('county');
+  if (params.get('capacity')) document.getElementById('capacityFilter').value = params.get('capacity');
+  if (params.get('rating')) {
+    const ratingInput = document.querySelector(`input[name="rating"][value="${params.get('rating')}"]`);
+    if (ratingInput) ratingInput.checked = true;
+  }
+
+  if (params.get('type')) {
+    const types = params.get('type').split(',');
+    types.forEach(t => {
+      const checkbox = document.querySelector(`input[name="type"][value="${t}"]`);
+      if (checkbox) checkbox.checked = true;
+    });
+  }
+
+  if (params.get('amenities')) {
+    const amenities = params.get('amenities').split(',');
+    amenities.forEach(a => {
+      const checkbox = document.querySelector(`input[name="amenities"][value="${a}"]`);
+      if (checkbox) checkbox.checked = true;
+    });
+  }
+
   const guests = parseInt(params.get('guests'));
   if (guests) {
     const capFilter = document.getElementById('capacityFilter');
@@ -35,7 +60,7 @@ function setupEventListeners() {
   document.getElementById('locationFilter').addEventListener('input', applyFilters);
   document.getElementById('minPrice').addEventListener('input', applyFilters);
   document.getElementById('maxPrice').addEventListener('input', applyFilters);
-  document.getElementById('regionFilter').addEventListener('change', applyFilters);
+  document.getElementById('countyFilter').addEventListener('change', applyFilters);
   document.getElementById('capacityFilter').addEventListener('change', applyFilters);
   document.querySelectorAll('input[name="rating"]').forEach(el => el.addEventListener('change', applyFilters));
   document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(el => el.addEventListener('change', applyFilters));
@@ -47,10 +72,11 @@ function setupEventListeners() {
 }
 
 function applyFilters() {
+  updateURLParams(); 
   const loc = document.getElementById('locationFilter').value.toLowerCase();
   const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
   const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
-  const region = document.getElementById('regionFilter').value;
+  const county = document.getElementById('countyFilter').value;
   const capacity = document.getElementById('capacityFilter').value;
   const rating = parseFloat(document.querySelector('input[name="rating"]:checked')?.value) || 0;
 
@@ -62,7 +88,7 @@ function applyFilters() {
   filteredCampsites = allCampsites.filter(c => {
     if (loc && !c.name.toLowerCase().includes(loc) && !c.description.toLowerCase().includes(loc)) return false;
     if (c.price < minPrice || c.price > maxPrice) return false;
-    if (region && c.region !== region) return false;
+    if (county && c.county !== county) return false;
     if (selectedTypes.length && !selectedTypes.includes(c.type)) return false;
     if (capacity) {
       const [minCap, maxCap] = capacity.includes('+') ? [7, Infinity] : capacity.split('-').map(Number);
@@ -123,11 +149,11 @@ function renderCampsites() {
     const name = document.createElement('h3');
     name.className = 'campsite-title';
     name.textContent = campsite.name;
-    const region = document.createElement('div');
-    region.className = 'campsite-region';
-    region.textContent = `${campsite.region} Region`;
+    const county = document.createElement('div');
+    county.className = 'campsite-county';
+    county.textContent = `${campsite.county} Rounty`;
     nameBlock.appendChild(name);
-    nameBlock.appendChild(region);
+    nameBlock.appendChild(county);
 
     const priceBlock = document.createElement('div');
     priceBlock.className = 'campsite-price';
@@ -223,3 +249,55 @@ document.getElementById('logoutBtn').addEventListener('click', async (e) => {
   }
   window.location.href = '/index';
 });
+
+
+function updateURLParams() {
+  const params = new URLSearchParams();
+
+  const loc = document.getElementById('locationFilter').value.trim();
+  const minPrice = document.getElementById('minPrice').value.trim();
+  const maxPrice = document.getElementById('maxPrice').value.trim();
+  const county = document.getElementById('countyFilter').value;
+  const capacity = document.getElementById('capacityFilter').value;
+  const rating = document.querySelector('input[name="rating"]:checked')?.value;
+
+  if (loc) params.set('location', loc);
+  if (minPrice) params.set('minPrice', minPrice);
+  if (maxPrice) params.set('maxPrice', maxPrice);
+  if (county) params.set('county', county);
+  if (capacity) params.set('capacity', capacity);
+  if (rating) params.set('rating', rating);
+  const selectedTypes = Array.from(document.querySelectorAll('input[name="type"]:checked')).map(cb => cb.value);
+  if (selectedTypes.length) params.set('type', selectedTypes.join(','));
+  const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(cb => cb.value);
+  if (selectedAmenities.length) params.set('amenities', selectedAmenities.join(','));
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState({}, '', newUrl);
+}
+
+async function clearAllFilters() {
+  document.getElementById('locationFilter').value = '';
+  document.getElementById('minPrice').value = '';
+  document.getElementById('maxPrice').value = '';
+  document.getElementById('countyFilter').value = '';
+  document.getElementById('capacityFilter').value = '';
+  document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+  document.querySelectorAll('input[name="type"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('input[name="amenities"]').forEach(cb => cb.checked = false);
+
+  window.history.replaceState({}, '', window.location.pathname);
+
+  try {
+    const res = await fetch(`/api/campsites`);
+    if (!res.ok) {
+      console.error('Failed to reload campsites');
+      return;
+    }
+    allCampsites = await res.json();
+  } catch (err) {
+    console.error('Error fetching campsites:', err);
+    return;
+  }
+
+  applyFilters();
+}

@@ -133,7 +133,7 @@ async function loadPopularCampsitesList() {
 
       const location = document.createElement('div');
       location.className = 'campsite-location';
-      location.textContent = `📍 ${campsite.region} Region`;
+      location.textContent = `📍 ${campsite.county} County`;
 
       const ratingDiv = document.createElement('div');
       ratingDiv.className = 'rating';

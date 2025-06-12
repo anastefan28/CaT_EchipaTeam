@@ -1,12 +1,12 @@
 
 CREATE TYPE user_role       AS ENUM ('member', 'admin');
 CREATE TYPE campsite_type   AS ENUM ('tent', 'rv', 'cabin', 'glamping', 'mixed');
-CREATE TYPE region_code     AS ENUM (
-  'RO-NV',  -- North-West
-  'RO-C',   -- Centre
-  'RO-S',   -- South
-  'RO-E',   -- East
-  'OTHER'  
+CREATE TYPE county_name AS ENUM (
+  'Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani', 'Brăila',
+  'Brașov', 'București', 'Buzău', 'Caraș-Severin', 'Călărași', 'Cluj', 'Constanța', 'Covasna',
+  'Dâmbovița', 'Dolj', 'Galați', 'Giurgiu', 'Gorj', 'Harghita', 'Hunedoara', 'Ialomița',
+  'Iași', 'Ilfov', 'Maramureș', 'Mehedinți', 'Mureș', 'Neamț', 'Olt', 'Prahova',
+  'Sălaj', 'Satu Mare', 'Sibiu', 'Suceava', 'Teleorman', 'Timiș', 'Tulcea', 'Vaslui', 'Vâlcea', 'Vrancea'
 );
 CREATE TYPE media_type AS ENUM ('image', 'video', 'audio');
 
@@ -29,20 +29,20 @@ CREATE TABLE campsites (
   lon         NUMERIC(9,6) NOT NULL CHECK (lon BETWEEN -180 AND 180),
   capacity    INT    CHECK (capacity > 0),
   price       NUMERIC(8,2) CHECK (price >= 0),
-  region      region_code   NOT NULL DEFAULT 'OTHER',
+  county      county_code   NOT NULL DEFAULT 'OTHER',
   type        campsite_type NOT NULL DEFAULT 'tent',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
 
 CREATE INDEX idx_campsites_latlon   ON campsites (lat, lon);   
-CREATE INDEX idx_campsites_region   ON campsites (region);
+CREATE INDEX idx_campsites_county   ON campsites (county);
 CREATE INDEX idx_campsites_type     ON campsites (type);
 CREATE INDEX idx_campsites_price    ON campsites (price);
 
 CREATE OR REPLACE VIEW campsites_view AS
 SELECT id, name, description,
        lat, lon,
-       capacity, price, region, type, created_at
+       capacity, price, county, type, created_at
 FROM   campsites;
 
 CREATE TABLE amenities (
@@ -75,6 +75,9 @@ ALTER TABLE bookings
   ADD CONSTRAINT no_overlaps
   EXCLUDE USING GIST (campsite_id WITH =, period WITH &&)
   WHERE (status = 'confirmed');
+
+ALTER TABLE campsites
+  ADD COLUMN county county_name NOT NULL DEFAULT 'București';
 
 CREATE INDEX ON bookings (user_id);
 CREATE INDEX ON bookings USING GIST (period);

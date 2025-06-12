@@ -18,10 +18,11 @@ export async function getCampsites(filters) {
       cs.*,
       COUNT(DISTINCT b.id) AS bookings_count,
       COALESCE(rv.review_count, 0) AS review_count,
-      COALESCE(ROUND(rv.avg_rating, 1), 0) AS avg_rating
+      COALESCE(ROUND(rv.avg_rating, 1), 0) AS avg_rating, COALESCE(
+      array_agg(m.id) FILTER (WHERE m.id IS NOT NULL),'{}'::uuid[]) AS media_ids
     	FROM campsites cs LEFT JOIN bookings b ON b.campsite_id = cs.id AND b.status = 'confirmed'
     	LEFT JOIN (SELECT campsite_id, COUNT(*)   AS review_count, AVG(rating) AS avg_rating FROM reviews
-      	GROUP BY campsite_id) rv ON rv.campsite_id = cs.id
+      	GROUP BY campsite_id) rv ON rv.campsite_id = cs.id LEFT JOIN media m ON m.campsite_id = cs.id
   `;
 
   if (location) {
@@ -55,7 +56,7 @@ export async function getCampsites(filters) {
 
   const { rows: campsites } = await pool.query(query, values);
   if (campsites.length === 0) return [];
-
+  console.log(query, values);
   const ids = campsites.map(c => c.id);
   const { rows: amenRows } = await pool.query(
     `
@@ -73,12 +74,11 @@ export async function getCampsites(filters) {
     amenitiesMap[campsite_id].push(amenity);
   }
 
-  let mediaQuery = `SELECT campsite_id, path FROM media WHERE campsite_id = ANY($1)`;
+  let mediaQuery = `SELECT id FROM media WHERE campsite_id = ANY($1)`;
   if (media === 'main') {
     mediaQuery += ` AND review_id IS NULL AND message_id IS NULL`;
   }
   mediaQuery += ` ORDER BY uploaded_at DESC`;
-
   const { rows: mediaRows } = await pool.query(mediaQuery, [ids]);
   const mediaMap = {};
   for (const { campsite_id, path } of mediaRows) {

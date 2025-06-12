@@ -1,169 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Browse Campsites - CampSpot</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="../css/campsites.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="../css/campsites.css" />
+  </head>
 
-<body>
+  <body>
     <header class="header">
-        <nav class="nav">
-            <a href="/dashboard" class="logo">CampSpot</a>
-            <div class="nav-links">
-                <a href="/bookings" class="nav-item">📅 My Bookings</a>
-                <a href="/profile" class="nav-item">👤 Account Details</a>
-                <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
-                <a href="#" class="nav-item">💬 Community</a>
-                <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
-            </div>
-        </nav>
+      <nav class="nav">
+        <a href="/dashboard" class="logo">CampSpot</a>
+        <div class="nav-links">
+          <a href="/bookings" class="nav-item">📅 My Bookings</a>
+          <a href="/profile" class="nav-item">👤 Account Details</a>
+          <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
+          <a href="#" class="nav-item">💬 Community</a>
+          <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+        </div>
+      </nav>
     </header>
 
     <div class="container">
-        <aside class="filters-sidebar">
-            <div class="filters-title">
-                Filters
-                <button class="clear-filters" onclick="clearAllFilters()">Clear all</button>
-            </div>
+      <aside class="filters-sidebar">
+        <div class="filters-title">
+          Filters
+          <button class="clear-filters" onclick="clearAllFilters()">
+            Clear all
+          </button>
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Location</label>
-                <input type="text" class="filter-input" id="locationFilter" placeholder="Search by location...">
-            </div>
+        <div class="filter-group">
+          <label class="filter-label">Location</label>
+          <input
+            type="text"
+            class="filter-input"
+            id="locationFilter"
+            placeholder="Search by location..."
+          />
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Price Range (per night)</label>
-                <div class="price-range">
-                    <input type="number" class="filter-input" id="minPrice" placeholder="Min" min="0">
-                    <span>-</span>
-                    <input type="number" class="filter-input" id="maxPrice" placeholder="Max" min="0">
-                </div>
-            </div>
+        <div class="filter-group">
+          <label class="filter-label">Price Range (per night)</label>
+          <div class="price-range">
+            <input
+              type="number"
+              class="filter-input"
+              id="minPrice"
+              placeholder="Min"
+              min="0"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              class="filter-input"
+              id="maxPrice"
+              placeholder="Max"
+              min="0"
+            />
+          </div>
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Campsite Type</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="tent" value="tent">
-                        <label for="tent">🏕️ Tent Sites</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="rv" value="rv">
-                        <label for="rv">🚐 RV Sites</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="cabin" value="cabin">
-                        <label for="cabin">🏠 Cabins</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="glamping" value="glamping">
-                        <label for="glamping">✨ Glamping</label>
-                    </div>
-                </div>
+        <div class="filter-group">
+          <label class="filter-label">Campsite Type</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="tent" name="type" value="tent" />
+              <label for="tent">🏕️ Tent Sites</label>
             </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="rv" name="type" value="rv" />
+              <label for="rv">🚐 RV Sites</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="cabin" name="type" value="cabin" />
+              <label for="cabin">🏠 Cabins</label>
+            </div>
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="glamping"
+                name="type"
+                value="glamping"
+              />
+              <label for="glamping">✨ Glamping</label>
+            </div>
+          </div>
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Region</label>
-                <select class="filter-input" id="regionFilter">
-                    <option value="">All Regions</option>
-                    <option value="WEST">West</option>
-                    <option value="EAST">East</option>
-                    <option value="NORTH">North</option>
-                    <option value="SOUTH">South</option>
-                    <option value="CENTRAL">Central</option>
-                    <option value="OTHER">Other</option>
-                </select>
-            </div>
+        <div class="filter-group">
+          <label class="filter-label">Region</label>
+          <select class="filter-input" id="regionFilter">
+            <option value="">All Regions</option>
+            <option value="WEST">West</option>
+            <option value="EAST">East</option>
+            <option value="NORTH">North</option>
+            <option value="SOUTH">South</option>
+            <option value="CENTRAL">Central</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Capacity</label>
-                <select class="filter-input" id="capacityFilter">
-                    <option value="">Any Size</option>
-                    <option value="1-2">1-2 people</option>
-                    <option value="3-4">3-4 people</option>
-                    <option value="5-6">5-6 people</option>
-                    <option value="7+">7+ people</option>
-                </select>
-            </div>
+        <div class="filter-group">
+          <label class="filter-label">Capacity</label>
+          <select class="filter-input" id="capacityFilter">
+            <option value="">Any Size</option>
+            <option value="1-2">1-2 people</option>
+            <option value="3-4">3-4 people</option>
+            <option value="5-6">5-6 people</option>
+            <option value="7+">7+ people</option>
+          </select>
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Minimum Rating</label>
-                <div class="rating-filter">
-                    <div class="rating-option">
-                        <input type="radio" id="rating-any" name="rating" value="">
-                        <label for="rating-any">Any Rating</label>
-                    </div>
-                    <div class="rating-option">
-                        <input type="radio" id="rating-4" name="rating" value="4">
-                        <label for="rating-4">⭐⭐⭐⭐ 4.0+</label>
-                    </div>
-                    <div class="rating-option">
-                        <input type="radio" id="rating-45" name="rating" value="4.5">
-                        <label for="rating-45">⭐⭐⭐⭐⭐ 4.5+</label>
-                    </div>
-                </div>
+        <div class="filter-group">
+          <label class="filter-label">Minimum Rating</label>
+          <div class="rating-filter">
+            <div class="rating-option">
+              <input type="radio" id="rating-any" name="rating" value="" />
+              <label for="rating-any">Any Rating</label>
             </div>
+            <div class="rating-option">
+              <input type="radio" id="rating-4" name="rating" value="4" />
+              <label for="rating-4">⭐⭐⭐⭐ 4.0+</label>
+            </div>
+            <div class="rating-option">
+              <input type="radio" id="rating-45" name="rating" value="4.5" />
+              <label for="rating-45">⭐⭐⭐⭐⭐ 4.5+</label>
+            </div>
+          </div>
+        </div>
 
-            <div class="filter-group">
-                <label class="filter-label">Amenities</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="fire-pit" value="Fire Pit">
-                        <label for="fire-pit">🔥 Fire Pit</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="shower" value="Shower">
-                        <label for="shower">🚿 Shower</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="electric" value="Electric Hook-up">
-                        <label for="electric">⚡ Electric Hook-up</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="wifi" value="Wi-Fi">
-                        <label for="wifi">📶 Wi-Fi</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="pet-friendly" value="Pet Friendly">
-                        <label for="pet-friendly">🐕 Pet Friendly</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="wheelchair" value="Wheelchair Access">
-                        <label for="wheelchair">♿ Wheelchair Access</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="picnic" value="Picnic Tables">
-                        <label for="picnic">🪑 Picnic Tables</label>
-                    </div>
-                </div>
+        <div class="filter-group">
+          <label class="filter-label">Amenities</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="fire-pit"
+                name="amenities"
+                value="Fire Pit"
+              />
+              <label for="fire-pit">🔥 Fire Pit</label>
             </div>
-        </aside>
-        <main class="main-content">
-            <div class="content-header">
-                <div class="results-info">
-                    <span id="resultsCount">248</span> campsites found
-                </div>
-                <select class="sort-select" id="sortSelect">
-                    <option value="popular">Most Popular</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Highest Rated</option>
-                    <option value="newest">Newest</option>
-                </select>
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="shower"
+                name="amenities"
+                value="Shower"
+              />
+              <label for="shower">🚿 Shower</label>
             </div>
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="electric"
+                name="amenities"
+                value="Electric Hook-up"
+              />
+              <label for="electric">⚡ Electric Hook-up</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="wifi" name="amenities" value="Wi-Fi" />
+              <label for="wifi">📶 Wi-Fi</label>
+            </div>
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="pet-friendly"
+                name="amenities"
+                value="Pet Friendly"
+              />
+              <label for="pet-friendly">🐕 Pet Friendly</label>
+            </div>
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="wheelchair"
+                name="amenities"
+                value="Wheelchair Access"
+              />
+              <label for="wheelchair">♿ Wheelchair Access</label>
+            </div>
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="picnic"
+                name="amenities"
+                value="Picnic Tables"
+              />
+              <label for="picnic">🪑 Picnic Tables</label>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <main class="main-content">
+        <div class="content-header">
+          <div class="results-info">
+            <span id="resultsCount">248</span> campsites found
+          </div>
+          <select class="sort-select" id="sortSelect">
+            <option value="popular">Most Popular</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
 
-            <div class="campsites-container">
-                <div class="campsites-grid" id="campsitesGrid">
-                </div>
-                <button class="load-more" id="loadMoreBtn">Load More Campsites</button>
-            </div>
-        </main>
+        <div class="campsites-container">
+          <div class="campsites-grid" id="campsitesGrid"></div>
+          <button class="load-more" id="loadMoreBtn">
+            Load More Campsites
+          </button>
+        </div>
+      </main>
     </div>
-     <script src="../js/campsites.js"></script>
-</body>
-
+    <script src="../js/campsites.js"></script>
+  </body>
 </html>

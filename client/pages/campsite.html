@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Campsite Details — CampSpot</title>
+    <link rel="stylesheet" href="../css/campsite.css">
+</head>
+
+<body>
+    <div id="mediaModal" class="media-modal hidden">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+    <header class="header">
+        <nav class="nav">
+            <a href="/dashboard" class="logo">CampSpot</a>
+            <div class="nav-links">
+                <a href="/bookings" class="nav-item">📅 My&nbsp;Bookings</a>
+                <a href="/profile" class="nav-item">👤 Account&nbsp;Details</a>
+                <a href="/campsites" class="nav-item">🗺️ Browse&nbsp;Campsites</a>
+                <a href="#" class="nav-item">💬 Community</a>
+                <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main class="main-content">
+            <section class="image-gallery">
+                <button class="arrow left" id="prevBtn">‹</button>
+                <div class="main-image" id="mainImage">
+                    🏕️
+                </div>
+                <button class="arrow right" id="nextBtn">›</button>
+            </section>
+
+            <section class="campsite-info">
+                <div class="campsite-header">
+                    <div>
+                        <h1 class="campsite-title" id="campsiteName"></h1>
+                        <div class="campsite-location">📍 <span id="campsiteLocation"></span></div>
+                    </div>
+                    <div class="campsite-type-badge" id="campsiteType"></div>
+                </div>
+
+                <div class="rating-section">
+                    <div class="stars" id="ratingStars"></div>
+                    <div class="rating-score" id="ratingScore"></div>
+                    <div class="rating-count" id="ratingCount"></div>
+                </div>
+
+                <p class="campsite-description" id="campsiteDescription"></p>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-icon">👥</div>
+                        <div class="detail-label">Capacity</div>
+                        <div class="detail-value" id="campsiteCapacity"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">🗺️</div>
+                        <div class="detail-label">County</div>
+                        <div class="detail-value" id="campsiteRegion"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">📍</div>
+                        <div class="detail-label">Coords</div>
+                        <div class="detail-value" id="campsiteCoords"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">💰</div>
+                        <div class="detail-label">Price</div>
+                        <div class="detail-value" id="campsitePrice"></div>
+                    </div>
+                </div>
+
+                <div class="amenities-section">
+                    <h3 class="section-title">Amenities</h3>
+                    <div class="amenities-grid" id="amenitiesGrid"></div>
+                </div>
+            </section>
+
+            <section class="reviews-section">
+                <h3 class="section-title">Reviews</h3>
+                <div id="reviewsList"></div>
+                <div class="add-review">
+                    <h4 style="margin-bottom:15px;color:#2e7d32;">Add&nbsp;Your&nbsp;Review</h4>
+                    <div class="rating-input" id="ratingInput">
+                        <span class="star-input" data-rating="1">⭐</span>
+                        <span class="star-input" data-rating="2">⭐</span>
+                        <span class="star-input" data-rating="3">⭐</span>
+                        <span class="star-input" data-rating="4">⭐</span>
+                        <span class="star-input" data-rating="5">⭐</span>
+                    </div>
+                    <textarea class="review-textarea" id="reviewText" placeholder="Share your experience..."></textarea>
+                    <input type="file" id="reviewMedia" accept="image/*,video/*,audio/*" multiple
+                        style="margin-bottom: 10px;">
+
+                    <button class="submit-btn" onclick="submitReview()">Submit Review</button>
+                </div>
+            </section>
+
+            <section class="chat-section">
+                <h3 class="section-title">Community&nbsp;Chat</h3>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <textarea class="message-textarea" id="messageText" rows="2"
+                        placeholder="Join the conversation…"></textarea>
+                    <div class="media-upload">
+                        <input type="file" id="messageMedia" accept="image/*,video/*,audio/*" multiple>
+
+                        <button class="submit-btn" onclick="sendMessage()">Send</button>
+                    </div>
+            </section>
+        </main>
+
+        <aside class="booking-sidebar">
+            <div class="booking-card">
+                <div class="price-display">
+                    <div class="price" id="priceDisplay"></div>
+                    <div class="price-unit">per night</div>
+                </div>
+
+                <form class="booking-form" id="bookingForm">
+                    <div class="form-group">
+                        <label class="form-label">Check-in / Check-out</label>
+                        <div class="date-inputs"><input type="date" id="checkinDate" required><input type="date"
+                                id="checkoutDate" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Guests</label>
+                        <select id="guestCount" required></select>
+                    </div>
+                    <button type="submit" class="book-btn">Book&nbsp;Now</button>
+                </form>
+
+                <div class="booking-summary" id="bookingSummary" style="display:none;">
+                    <div class="summary-row"><span>Nights:</span><span id="nightCount"></span></div>
+                    <div class="summary-row"><span>Rate/night:</span><span id="ratePerNight"></span></div>
+                    <div class="summary-row"><span>Subtotal:</span><span id="subtotal"></span></div>
+                    <div class="summary-row"><span>Service&nbsp;fee:</span><span id="serviceFee"></span></div>
+                    <div class="summary-row summary-total"><span>Total:</span><span id="totalCost"></span></div>
+                </div>
+
+                <div class="weather-section">
+                    <h3 class="weather-title">Weather&nbsp;Forecast</h3>
+                    <div id="weatherInfo">
+                        <div class="weather-item">
+                            <div class="weather-date">Select dates…</div>
+                            <div class="weather-info">🌤️ Check forecast</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <script src="../js/campsite.js"></script>
+</body>
+</html>

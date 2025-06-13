@@ -44,3 +44,21 @@ function isIsoDate(str) {
   // yyyy-mm-dd
   return /^\d{4}-\d{2}-\d{2}$/.test(str);
 }
+
+export async function handleGetCampsite(req, res) {
+  const parts = req.url.split('/');
+  const id = parts[3];
+  if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+    return sendJson(res, 400, { error: 'Invalid campsite ID' });
+  }
+  try {
+    const campsites = await getCampsites({ id });
+    if (!campsites || campsites.length === 0) {
+      return sendJson(res, 404, { error: 'Campsite not found' });
+    }
+    sendJson(res, 200, campsites[0]);
+  } catch (err) {
+    console.error('Error fetching campsite:', err);
+    sendJson(res, 500, { error: 'Internal Server Error' });
+  }
+}

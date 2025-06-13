@@ -1,11 +1,15 @@
 import { pool } from '../utils/db.js';
 
 export async function getCampsites (filters = {}) {
-  const { location, guests, checkin, checkout, sort } = filters;
+  const { id, location, guests, checkin, checkout, sort } = filters;
 
   const vals = [];
   const conds = [];
 
+  if (id) {
+    vals.push(id);
+    conds.push(`cs.id = $${vals.length}`);
+  }
   if (location) {
   vals.push(`%${location.toLowerCase()}%`);
   const idx = vals.length;          
@@ -30,7 +34,7 @@ export async function getCampsites (filters = {}) {
       COALESCE(rv.review_count, 0) AS review_count,
       COALESCE(ROUND(rv.avg_rating, 1), 0) AS avg_rating,
       COALESCE(am.amenities, '{}'::text[]) AS amenities,
-      m.main_media_id AS main_media_id
+      COALESCE(m.media_ids, '{}'::uuid[])  AS media_ids
     FROM campsites cs
     LEFT JOIN bookings b ON b.campsite_id = cs.id AND b.status= 'confirmed'
     LEFT JOIN (SELECT campsite_id,COUNT(*) AS review_count,AVG(rating) AS avg_rating
@@ -38,24 +42,27 @@ export async function getCampsites (filters = {}) {
     LEFT JOIN LATERAL(SELECT array_agg(a.name ORDER BY a.name) AS amenities
       FROM campsite_amenity ca JOIN   amenities a ON a.id = ca.amenity_id
       WHERE  ca.campsite_id = cs.id) am ON TRUE
-    LEFT JOIN LATERAL (SELECT id AS main_media_id FROM media WHERE campsite_id = cs.id
-        AND review_id IS NULL AND message_id IS NULL  ORDER BY uploaded_at DESC
-       LIMIT 1) m ON TRUE
+    LEFT JOIN LATERAL (SELECT array_agg(id ORDER BY uploaded_at DESC) AS media_ids
+     FROM media WHERE campsite_id = cs.id AND review_id IS NULL AND message_id IS NULL LIMIT 1) m ON TRUE
   `;
 
   if (conds.length) q += ` WHERE ` + conds.join(' AND ');
   q += `
     GROUP BY cs.id, rv.review_count, rv.avg_rating,
-             am.amenities, m.main_media_id
+             am.amenities, m.media_ids
   `;
-  const SORT_SQL = {
+  if(!id) {
+    const SORT_SQL = {
       'popular'    : 'ORDER BY bookings_count DESC LIMIT 10',
       'price-low'  : 'ORDER BY cs.price ASC',
       'price-high' : 'ORDER BY cs.price DESC',
       'rating'     : 'ORDER BY rv.avg_rating DESC',
       'newest'     : 'ORDER BY cs.created_at DESC'
     };
-    q += ' ' + SORT_SQL[sort];
+    if(!sort) q+= ' ORDER BY cs.created_at DESC';
+    else 
+      q += ' ' + SORT_SQL[sort];
+  }
 
   const { rows } = await pool.query(q, vals);
   return rows;

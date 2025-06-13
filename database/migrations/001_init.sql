@@ -110,10 +110,6 @@ CREATE TABLE media (
   data        BYTEA NOT NULL,
   uploaded_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
-ALTER TABLE media ADD COLUMN mime TEXT;
-UPDATE media SET mime = 'image/jpg' WHERE type = 'image';
-
-
 CREATE INDEX ON media (campsite_id);
 CREATE INDEX ON media (review_id);
 

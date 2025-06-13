@@ -7,4 +7,5 @@ export const routes = {
 	'/api/auth': authRoute,
 	'/api/me': userRoute,
 	'/api/campsites': campsiteRoute ,
+	'/api/media': mediaRoute
 };

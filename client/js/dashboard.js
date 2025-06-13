@@ -140,7 +140,7 @@ async function loadPopularCampsitesList() {
 
       const image = document.createElement('div');
       image.className = 'campsite-image';
-      image.textContent = campsite.media_ids[0] || '🏕️';
+      image.textContent = campsite.main_media_id || '🏕️';
 
       const content = document.createElement('div');
       content.className = 'campsite-content';

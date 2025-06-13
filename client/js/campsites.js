@@ -146,7 +146,7 @@ function renderCampsites() {
 
     const icon = document.createElement('div');
     icon.className = 'campsite-image';
-    icon.textContent = campsite.media_ids[0] || '🏕️';
+    icon.textContent = campsite.main_media_id || '🏕️';
 
     const type = document.createElement('div');
     type.className = 'campsite-type';

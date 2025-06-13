@@ -1,6 +1,7 @@
 
 CREATE TYPE user_role       AS ENUM ('member', 'admin');
 CREATE TYPE campsite_type   AS ENUM ('tent', 'rv', 'cabin', 'glamping', 'mixed');
+
 CREATE TYPE county_name AS ENUM (
   'Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani', 'Brăila',
   'Brașov', 'București', 'Buzău', 'Caraș-Severin', 'Călărași', 'Cluj', 'Constanța', 'Covasna',
@@ -29,7 +30,7 @@ CREATE TABLE campsites (
   lon         NUMERIC(9,6) NOT NULL CHECK (lon BETWEEN -180 AND 180),
   capacity    INT    CHECK (capacity > 0),
   price       NUMERIC(8,2) CHECK (price >= 0),
-  county      county_code   NOT NULL DEFAULT 'OTHER',
+  county      county_name   NOT NULL DEFAULT 'Iași',
   type        campsite_type NOT NULL DEFAULT 'tent',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
@@ -55,11 +56,6 @@ CREATE TABLE campsite_amenity (
   amenity_id  INT  REFERENCES amenities(id) ON DELETE CASCADE,
   PRIMARY KEY (campsite_id, amenity_id)
 );
-INSERT INTO amenities (name) VALUES
-  ('Fire Pit'), ('Shower'), ('Electric Hook-up'),
-  ('Wi-Fi'), ('Pet Friendly'), ('Wheelchair Access'),
-  ('Picnic Tables')
-ON CONFLICT DO NOTHING;
 
 CREATE TABLE bookings (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -76,8 +72,7 @@ ALTER TABLE bookings
   EXCLUDE USING GIST (campsite_id WITH =, period WITH &&)
   WHERE (status = 'confirmed');
 
-ALTER TABLE campsites
-  ADD COLUMN county county_name NOT NULL DEFAULT 'București';
+
 
 CREATE INDEX ON bookings (user_id);
 CREATE INDEX ON bookings USING GIST (period);
@@ -111,54 +106,10 @@ CREATE TABLE media (
   review_id   UUID REFERENCES reviews(id)    ON DELETE CASCADE,
   message_id  UUID REFERENCES messages(id) ON DELETE CASCADE,
   type        media_type NOT NULL,
-  mime        TEXT NOT NULL,
-  path        TEXT NOT NULL,                 
+  data        BYTEA NOT NULL,      
   uploaded_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
 
 CREATE INDEX ON media (campsite_id);
 CREATE INDEX ON media (review_id);
 
-INSERT INTO campsites (name, description, lat, lon, capacity, price, county, type) VALUES
-('Mountain View Campground', 'Stunning mountain views with hiking trails nearby.', 46.7700, 23.5800, 6, 45.00, 'Cluj', 'tent'),
-('Lakeside Paradise', 'Peaceful lakefront camping with swimming and fishing.', 47.1600, 24.4900, 4, 55.00, 'Bistrița-Năsăud', 'rv'),
-('Forest Retreat', 'Secluded forest setting with abundant wildlife.', 45.7500, 21.2300, 8, 38.00, 'Timiș', 'tent'),
-('Desert Oasis Campground', 'Desert experience with stargazing and tours.', 44.4200, 26.1100, 2, 120.00, 'București', 'glamping'),
-('Riverside Adventures', 'Camping with rafting and kayaking nearby.', 46.7700, 23.5800, 5, 85.00, 'Cluj', 'cabin'),
-('Pine Valley Campsite', 'Quiet pine forest for relaxation.', 47.0000, 25.3000, 4, 42.00, 'Suceava', 'tent'),
-('Ocean Breeze RV Park', 'Coastal camping with ocean views.', 44.1700, 28.6300, 6, 75.00, 'Constanța', 'rv'),
-('Highland Meadows', 'High-altitude meadow camping.', 46.1300, 23.5800, 3, 50.00, 'Alba', 'tent');
-
-
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Mountain View Campground' AND a.name IN ('Fire Pit', 'Picnic Tables', 'Shower');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Lakeside Paradise' AND a.name IN ('Electric Hook-up', 'Shower', 'Pet Friendly');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Forest Retreat' AND a.name IN ('Fire Pit', 'Wi-Fi', 'Picnic Tables');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Desert Oasis Campground' AND a.name IN ('Electric Hook-up', 'Wi-Fi', 'Shower');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Riverside Adventures' AND a.name IN ('Electric Hook-up', 'Shower', 'Pet Friendly', 'Wi-Fi');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Pine Valley Campsite' AND a.name IN ('Fire Pit', 'Picnic Tables');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Ocean Breeze RV Park' AND a.name IN ('Electric Hook-up', 'Shower', 'Wi-Fi', 'Pet Friendly');
-
-INSERT INTO campsite_amenity (campsite_id, amenity_id)
-SELECT c.id, a.id FROM (SELECT id, name FROM campsites) c, (SELECT id, name FROM amenities) a
-WHERE c.name = 'Highland Meadows' AND a.name IN ('Fire Pit', 'Picnic Tables', 'Wheelchair Access');

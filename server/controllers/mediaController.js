@@ -14,12 +14,9 @@ export async function handleGetMedia(req, res) {
   const media = await getMediaById(id);
 
   const { data, mime, uploaded_at } = media;
-  console.log(`Serving media ${id} (${mime})`);
   res.writeHead(200, {
     'Content-Type' : mime  || 'application/octet-stream',
     'Cache-Control': 'public, max-age=31536000, immutable',
-    'Last-Modified': new Date(uploaded_at).toUTCString(),
-    'ETag'         : `"${id}"`,
   });
   res.end(data);        
 }

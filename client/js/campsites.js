@@ -144,14 +144,22 @@ function renderCampsites() {
     card.className = 'campsite-card';
     card.onclick = () => goToCampsite(campsite.id);
 
-    const icon = document.createElement('div');
-    icon.className = 'campsite-image';
-    icon.textContent = campsite.main_media_id || '🏕️';
+    const image = document.createElement('div');
+    image.className = 'campsite-image'; 
+    if (campsite.main_media_id) {
+      const img = document.createElement('img');
+      img.src= `/api/media/${campsite.main_media_id}`;
+      img.alt= campsite.name;
+      img.loading= 'lazy';             
+      image.appendChild(img);
+    } else {
+    image.textContent = '🏕️';              
+}
 
     const type = document.createElement('div');
     type.className = 'campsite-type';
     type.textContent = capitalize(campsite.type);
-    icon.appendChild(type);
+    image.appendChild(type);
 
     const content = document.createElement('div');
     content.className = 'campsite-content';
@@ -235,7 +243,7 @@ function renderCampsites() {
     content.appendChild(details);
     content.appendChild(amenitiesDiv);
 
-    card.appendChild(icon);
+    card.appendChild(image);
     card.appendChild(content);
     grid.appendChild(card);
   });

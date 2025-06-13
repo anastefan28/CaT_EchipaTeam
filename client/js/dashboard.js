@@ -139,9 +139,16 @@ async function loadPopularCampsitesList() {
       card.onclick = () => goToCampsite(campsite.id);
 
       const image = document.createElement('div');
-      image.className = 'campsite-image';
-      image.textContent = campsite.main_media_id || '🏕️';
-
+      image.className = 'campsite-image'; 
+      if (campsite.main_media_id) {
+          const img = document.createElement('img');
+          img.src= `/api/media/${campsite.main_media_id}`;
+          img.alt= campsite.name;
+          img.loading= 'lazy';             
+          image.appendChild(img);
+        } else {
+        image.textContent = '🏕️';     
+      }
       const content = document.createElement('div');
       content.className = 'campsite-content';
 

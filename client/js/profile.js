@@ -3,31 +3,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadUserData() {
-
-	const res = await fetch('/api/me');
-
-	if (!res.ok) {
-		console.error('Failed to load user data:', res.status, res.statusText);
-		return window.location.href = '/index';
-	}
-
-	const user = await res.json();
-	console.log('User loaded:', user);
-
-	document.getElementById('email').value = user.email;
-	document.getElementById('username').value = user.username || '';
-
-	document.getElementById('statusBadge').innerHTML =
-		`<span class="status-badge status-${user.role}">${capitalize(user.role)}</span>`;
-
-	document.getElementById('memberSince').textContent =
-		new Date(user.created_at).toLocaleDateString();
-
-	document.getElementById('accountType').innerHTML =
-		`${user.oauth_provider ? 'OAuth' : 'Regular'} <span class="oauth-badge">${user.oauth_provider || 'Local'}</span>`;
-
-	document.getElementById('userId').textContent = user.id;
+  try {
+    const res = await fetch('/api/me');
+    switch (res.status) {
+	case 200:                          
+		user = await res.json();
+        break;
+      case 401:
+        throw new Error('Unauthorized – please sign in');
+      case 404:
+        throw new Error('User not found');
+      case 500:
+        throw new Error('Server had an issue');
+    }
+    document.getElementById('email').value= user.email;
+    document.getElementById('username').value= user.username || '';
+    document.getElementById('statusBadge').innerHTML =
+      `<span class="status-badge status-${user.role}">${capitalize(user.role)}</span>`;
+    document.getElementById('memberSince').textContent =
+      new Date(user.created_at).toLocaleDateString();
+    document.getElementById('accountType').innerHTML =
+      `${user.oauth_provider ? 'OAuth' : 'Regular'} <span class="oauth-badge">${user.oauth_provider || 'Local'}</span>`;
+    document.getElementById('userId').textContent = user.id;
+  } catch (err) {
+    console.error('Error loading user data:', err);
+    window.location.href = '/index';
+  }
 }
+
 
 function capitalize(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);

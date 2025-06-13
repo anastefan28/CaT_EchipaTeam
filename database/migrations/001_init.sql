@@ -56,11 +56,6 @@ CREATE TABLE campsite_amenity (
   amenity_id  INT  REFERENCES amenities(id) ON DELETE CASCADE,
   PRIMARY KEY (campsite_id, amenity_id)
 );
-INSERT INTO amenities (name) VALUES
-  ('Fire Pit'), ('Shower'), ('Electric Hook-up'),
-  ('Wi-Fi'), ('Pet Friendly'), ('Wheelchair Access'),
-  ('Picnic Tables')
-ON CONFLICT DO NOTHING;
 
 CREATE TABLE bookings (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),

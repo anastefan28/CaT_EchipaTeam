@@ -8,9 +8,18 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 async function loadPopularCampsitesOnMap() {
   try {
     const res = await fetch('/api/campsites?sort=popular');
-    if (!res.ok) throw new Error('Failed to fetch campsites');
-    const campsites = await res.json();
-
+   switch (res.status) {
+      case 200:                          
+        campsites = await res.json();
+        break;
+      case 401:
+        throw new Error('Unauthorized');
+      case 400:
+        const errorData = await res.json();
+        throw new Error(`Bad Request: ${errorData.errors.join(', ')}`);
+      case 500:
+        throw new Error('Server had an issue');
+    }
     campsites.forEach((campsite) => {
       const marker = L.marker([campsite.lat, campsite.lon]).addTo(map);
       marker.bindPopup(createCampsitePopup(campsite));
@@ -31,7 +40,7 @@ function createCampsitePopup(campsite) {
   title.style.color = '#2E7D32';
 
   const rating = document.createElement('p');
-  rating.textContent = `⭐ ${campsite.rating?.toFixed(1) || 'N/A'}/5`;
+  rating.textContent = `⭐ ${campsite.avg_rating}/5`;
   rating.style.margin = '5px 0';
 
   const price = document.createElement('p');
@@ -109,9 +118,18 @@ loadPopularCampsitesOnMap();
 async function loadPopularCampsitesList() {
   try {
     const res = await fetch('/api/campsites?sort=popular');
-    if (!res.ok) throw new Error('Failed to fetch popular campsites');
-    const campsites = await res.json();
-
+    switch (res.status) {
+      case 200:                          
+        campsites = await res.json();
+        break;
+      case 400:
+        const errorData = await res.json();
+        throw new Error(`Bad Request: ${errorData.errors.join(', ')}`);
+      case 401:
+        throw new Error('Unauthorized');
+      case 500:
+        throw new Error('Server had an issue, try again');
+    }
     const grid = document.getElementById('popularCampsitesGrid');
     grid.replaceChildren();
 
@@ -122,7 +140,7 @@ async function loadPopularCampsitesList() {
 
       const image = document.createElement('div');
       image.className = 'campsite-image';
-      image.textContent = campsite.media[0] || '🏕️';
+      image.textContent = campsite.media_ids[0] || '🏕️';
 
       const content = document.createElement('div');
       content.className = 'campsite-content';
@@ -140,10 +158,10 @@ async function loadPopularCampsitesList() {
 
       const stars = document.createElement('span');
       stars.className = 'stars';
-      stars.textContent = '⭐'.repeat(Math.floor(campsite.rating || 0));
+      stars.textContent = '⭐'.repeat(Math.floor(campsite.avg_rating || 0));
 
       const ratingText = document.createElement('span');
-      ratingText.textContent = `${(campsite.rating || 0).toFixed(1)} (${campsite.reviewCount || 0} reviews)`;
+      ratingText.textContent = `${(campsite.avg_rating || 0)} (${campsite.review_count || 0} reviews)`;
 
       ratingDiv.appendChild(stars);
       ratingDiv.appendChild(ratingText);

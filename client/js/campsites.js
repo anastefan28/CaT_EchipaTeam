@@ -3,17 +3,31 @@ let filteredCampsites = [];
 let displayedCount = 6;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const res = await fetch(`/api/campsites?${urlParams.toString()}`);
-  if (!res.ok) {
-    console.error('Failed to load campsites');
-    return;
-  }
+  try {
+    const qs  = new URLSearchParams(window.location.search);
+    const res = await fetch(`/api/campsites?${qs}`);
+    switch (res.status) {
+      case 200:                          
+        allCampsites = await res.json();
+        break;
+      case 400: {                        
+        const { errors = [] } = await res.json();
+        throw new Error(`Bad Request: ${errors.join(', ')}`);
+      }
+      case 401:
+        throw new Error('Unauthorized');
+      case 500:
+        throw new Error('Server had an issue, try again');
+      default:                            
+        throw new Error(`Unexpected status ${res.status}`);
+    }
+    initFiltersFromURL(qs);
+    setupEventListeners();
+    applyFilters();
 
-  allCampsites = await res.json();
-  initFiltersFromURL(urlParams);
-  setupEventListeners();
-  applyFilters();
+  } catch (err) {
+    console.error('Error fetching campsites:', err);
+  }
 });
 
 function initFiltersFromURL(params) {
@@ -132,7 +146,7 @@ function renderCampsites() {
 
     const icon = document.createElement('div');
     icon.className = 'campsite-image';
-    icon.textContent = campsite.icon || '🏕️';
+    icon.textContent = campsite.media_ids[0] || '🏕️';
 
     const type = document.createElement('div');
     type.className = 'campsite-type';
@@ -151,7 +165,7 @@ function renderCampsites() {
     name.textContent = campsite.name;
     const county = document.createElement('div');
     county.className = 'campsite-county';
-    county.textContent = `${campsite.county} Rounty`;
+    county.textContent = `${campsite.county} County`;
     nameBlock.appendChild(name);
     nameBlock.appendChild(county);
 
@@ -182,15 +196,15 @@ function renderCampsites() {
 
     const stars = document.createElement('span');
     stars.className = 'stars';
-    stars.textContent = '⭐'.repeat(Math.floor(campsite.rating));
+    stars.textContent = '⭐'.repeat(Math.floor(campsite.avg_rating));
 
     const ratingScore = document.createElement('span');
     ratingScore.className = 'rating-score';
-    ratingScore.textContent = campsite.rating;
+    ratingScore.textContent = campsite.avg_rating;
 
     const reviewCount = document.createElement('span');
     reviewCount.className = 'rating-count';
-    reviewCount.textContent = `(${campsite.reviewCount})`;
+    reviewCount.textContent = `(${campsite.review_count})`;
 
     ratingDiv.appendChild(stars);
     ratingDiv.appendChild(ratingScore);
@@ -289,11 +303,21 @@ async function clearAllFilters() {
 
   try {
     const res = await fetch(`/api/campsites`);
-    if (!res.ok) {
-      console.error('Failed to reload campsites');
-      return;
+    switch (res.status) {
+      case 200:                          
+        allCampsites = await res.json();
+        break;
+      case 400: {                        
+        const { errors = [] } = await res.json();
+        throw new Error(`Bad Request: ${errors.join(', ')}`);
+      }
+      case 401:
+        throw new Error('Unauthorized');
+      case 500:
+        throw new Error('Server had an issue, try again');
+      default:                            
+        throw new Error(`Unexpected status ${res.status}`);
     }
-    allCampsites = await res.json();
   } catch (err) {
     console.error('Error fetching campsites:', err);
     return;

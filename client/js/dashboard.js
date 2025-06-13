@@ -13,6 +13,7 @@ async function loadPopularCampsitesOnMap() {
         campsites = await res.json();
         break;
       case 401:
+        window.location.href = '/index';
         throw new Error('Unauthorized');
       case 400:
         const errorData = await res.json();
@@ -126,6 +127,7 @@ async function loadPopularCampsitesList() {
         const errorData = await res.json();
         throw new Error(`Bad Request: ${errorData.errors.join(', ')}`);
       case 401:
+        window.location.href = '/index';
         throw new Error('Unauthorized');
       case 500:
         throw new Error('Server had an issue, try again');

@@ -12,9 +12,7 @@ DB_DSN = "postgresql://postgres:postgres@localhost:5432/CampingTool"
 PEXELS_API_KEY = "4ASODLqGfWD7W8loiQMobLZYSHqEBcWD2ZhQyhmnSCnpYxU9lZ7QZLXD"
 HEADERS = {"Authorization": PEXELS_API_KEY}
 
-###############################################################################
-# helpers
-###############################################################################
+
 def slugify(text: str) -> str:
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
     text = re.sub(r"[^\w\s-]", "", text).strip().lower()
@@ -37,9 +35,6 @@ def download(url, dest):
     except Exception as e:
         print("✘", dest, e)
 
-###############################################################################
-# core
-###############################################################################
 def media_for_campsite(name, n_photos=2, n_videos=2):
     query = f"{name} campsite"
     slug = slugify(name)
@@ -66,7 +61,6 @@ def media_for_campsite(name, n_photos=2, n_videos=2):
             photos_dl += 1
         page += 1
 
-    # ---- videos ------------------------------------------------------------
     vids_dl = 0
     page = 1
     while vids_dl < n_videos:

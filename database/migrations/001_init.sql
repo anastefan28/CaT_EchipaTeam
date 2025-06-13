@@ -106,9 +106,13 @@ CREATE TABLE media (
   review_id   UUID REFERENCES reviews(id)    ON DELETE CASCADE,
   message_id  UUID REFERENCES messages(id) ON DELETE CASCADE,
   type        media_type NOT NULL,
-  data        BYTEA NOT NULL,      
+  mime       TEXT,
+  data        BYTEA NOT NULL,
   uploaded_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
+ALTER TABLE media ADD COLUMN mime TEXT;
+UPDATE media SET mime = 'image/jpg' WHERE type = 'image';
+
 
 CREATE INDEX ON media (campsite_id);
 CREATE INDEX ON media (review_id);

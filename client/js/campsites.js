@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw new Error(`Bad Request: ${errors.join(', ')}`);
       }
       case 401:
+        window.location.href = '/index';
         throw new Error('Unauthorized');
       case 500:
         throw new Error('Server had an issue, try again');
@@ -320,6 +321,7 @@ async function clearAllFilters() {
         throw new Error(`Bad Request: ${errors.join(', ')}`);
       }
       case 401:
+        window.location.href = '/index';
         throw new Error('Unauthorized');
       case 500:
         throw new Error('Server had an issue, try again');

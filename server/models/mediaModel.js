@@ -3,7 +3,7 @@ import { AppError } from '../utils/appError.js';
 
 export async function getMediaById(id) {
         const { rows } = await pool.query(
-        'SELECT type, data, uploaded_at FROM media WHERE id = $1',
+        'SELECT mime, data, uploaded_at FROM media WHERE id = $1',
         [id]
       );
       if (!rows || rows.length===0) {

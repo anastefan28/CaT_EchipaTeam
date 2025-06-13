@@ -13,17 +13,10 @@ export async function handleGetMedia(req, res) {
   }
   const media = await getMediaById(id);
 
-  const { type, data, uploaded_at } = media;
-  const mimeMap = {
-    jpeg: 'image/jpeg',
-    jpg:  'image/jpeg',
-    png:  'image/png',
-    webp: 'image/webp',
-    gif:  'image/gif'
-  };
-  const mime = mimeMap[type] || 'application/octet-stream';
+  const { data, mime, uploaded_at } = media;
+  console.log(`Serving media ${id} (${mime})`);
   res.writeHead(200, {
-    'Content-Type' : mime,
+    'Content-Type' : mime  || 'application/octet-stream',
     'Cache-Control': 'public, max-age=31536000, immutable',
     'Last-Modified': new Date(uploaded_at).toUTCString(),
     'ETag'         : `"${id}"`,

@@ -1,7 +1,9 @@
 import { AppError } from '../utils/appError.js';
-import { getMediaById } from '../models/mediaModel.js';
+import { getMediaById , createMedia} from '../models/mediaModel.js';
 import { parse }    from 'url';
 import { isValidId } from '../utils/valid.js';
+import {sendJson} from '../utils/json.js'
+
 
 export async function handleGetMedia(req, res) {
     const { pathname } = parse(req.url, true);
@@ -19,4 +21,43 @@ export async function handleGetMedia(req, res) {
   });
   res.end(data);        
 }
-export async function handlePostMedia(req, res) {}
+export async function handlePostMedia(req, res) {
+ const fullURL = new URL(req.url, `http://${req.headers.host}`);
+  const webReq  = new Request(fullURL, { method:req.method, headers:req.headers, body:req, duplex : 'half' });
+  const form = await webReq.formData();             
+  const campsiteId = form.get('campsite_id')?.trim();
+  const reviewId = form.get('review_id')   || null;
+  const messageId = form.get('message_id')  || null;
+
+  const errors = [];
+  if (!isValidId(campsiteId))          
+    errors.push('bad campsite_id');
+  if (reviewId  && !isValidId(reviewId))  
+    errors.push('bad review_id');
+  if (messageId && !isValidId(messageId))  
+    errors.push('bad message_id');
+
+  const files = form.getAll('data');   
+  if (!files.length) 
+    errors.push('no files uploaded');
+
+  if (errors.length) 
+    throw new AppError(errors.join(', '), 400);
+
+  const media_ids = [];
+  for (const blob of files) {
+    const buf = Buffer.from(await blob.arrayBuffer());
+    const mime = blob.type || 'application/octet-stream';
+    const type = mime.split('/')[0];       
+    const id = await createMedia({
+      campsiteId,
+      reviewId,
+      messageId,
+      type,
+      mime,
+      buffer: buf
+    });
+    media_ids.push(id);
+  }
+  return sendJson(res, 201, { media_ids });
+}

@@ -20,9 +20,6 @@ export async function createMedia({ campsiteId, reviewId, messageId,
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
     [campsiteId, reviewId, messageId, type, mime, buffer]
   );
-  if (!rows || rows.length === 0) {
-    throw new AppError('Failed to create media', 500);
-  }
   return rows[0].id;                 
 }
 

@@ -249,12 +249,12 @@ async function submitReview() {
   const text = document.querySelector('#reviewText').value.trim();
   const files = document.querySelector('#reviewMedia').files;
   if (!rating) return alert('Pick a star rating first');
-  if (!text)   return alert('Write a review');
+  if (!text) return alert('Write a review');
 
   const review = await api(`/api/campsites/${campId}/reviews`, {
     method : 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body   : JSON.stringify({ rating, body_md: text })
+    body : JSON.stringify({ rating, body_md: text })
   });
   review.media_ids = await uploadMedia({ reviewId: review.id, files });
   renderReviews([review]);                        
@@ -271,7 +271,7 @@ async function sendMessage() {
   const msg = await api(`/api/campsites/${campId}/messages`, {
     method : 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body   : JSON.stringify({ body_md: text })
+    body : JSON.stringify({ body_md: text })
   });
 
   msg.media_ids = await uploadMedia({ messageId: msg.id, files });
@@ -321,9 +321,13 @@ function renderWeather(daily) {
     box.append(row);
   });
 }
-document.getElementById('checkinDate').addEventListener('change', updateWeather);
-document.getElementById('checkoutDate').addEventListener('change', updateWeather);
-
+document.getElementById('checkinDate').addEventListener('change', () => {
+       updateWeather(); updatePriceBox();     
+});
+document.getElementById('checkoutDate').addEventListener('change',  () => {
+       updateWeather(); updatePriceBox();     
+});
+document.getElementById('guestCount').addEventListener('change',   updatePriceBox);
 async function updateWeather() {
   const checkin  = document.getElementById('checkinDate').value;
   const checkout = document.getElementById('checkoutDate').value;
@@ -346,10 +350,31 @@ const totalEl = document.getElementById('totalCost');
 
 const NIGHTLY_RATE = +el.price.textContent.replace(/[^\d.]/g, ''); 
 const SERVICE_FEE  = 15;                                          
-
+function getNightlyRate() {
+  return +el.price.textContent.replace(/[^\d.]/g, '');
+}
 const diffDays = (a, b) => Math.ceil(
   (new Date(b) - new Date(a)) / 86_400_000 );
+function updatePriceBox () {
+  const checkin = document.getElementById('checkinDate').value;
+  const checkout = document.getElementById('checkoutDate').value;
+  if (!checkin || !checkout || checkin >= checkout) {
+    summaryBox.style.display = 'none';
+    return;
+  }
+  const nights = diffDays(checkin, checkout);
+  const rate = getNightlyRate();
+  const subtotal= nights * rate;
+  const total = subtotal + SERVICE_FEE;
 
+  nightsEl.textContent = nights;
+  rateEl.textContent = `RON ${rate.toFixed(2)}`;
+  subtotalEl.textContent = `RON ${subtotal.toFixed(2)}`;
+  feeEl.textContent = `RON ${SERVICE_FEE.toFixed(2)}`;
+  totalEl.textContent = `RON ${total.toFixed(2)}`;
+
+  summaryBox.style.display = 'block';
+}
 async function postBooking({ campsite_id, checkin, checkout, guests }) {
   return api('/api/bookings', {
     method : 'POST',
@@ -366,8 +391,8 @@ form.addEventListener('submit', async (e) => {
   const guests = +document.getElementById('guestCount').value;
 
   const err =
-    !checkin || !checkout                 ? 'Pick both dates' :
-    checkin >= checkout                   ? 'Checkout must be after check-in' :
+    !checkin || !checkout  ? 'Pick both dates' :
+    checkin >= checkout  ? 'Checkout must be after check-in' :
     !Number.isInteger(guests) || guests<1 ? 'Invalid guest count' : '';
 
   if (err) { alert(err); return; }
@@ -388,7 +413,7 @@ form.addEventListener('submit', async (e) => {
     summaryBox.style.display = 'block';
     form.reset();
     alert('Booking confirmed! 🎉');
-
+    summaryBox.style.display = 'none';
   } catch (ex) {
     alert(`Booking failed: ${ex.message}`);
   }

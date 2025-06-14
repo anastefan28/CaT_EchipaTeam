@@ -9,8 +9,8 @@ export async function mediaRoute(req, res) {
   if (req.method === 'GET' && parts.length === 4 && parts[3]) {
     return asyncHandler(protectRoute(handleGetMedia))(req, res, parts[3]);
   }
-  if(req.method==='POST' && parts.length === 4 && parts[3]) {
-    return asyncHandler(protectRoute(handlePostMedia))(req, res, parts[3]);
+  if(req.method==='POST') {
+    return asyncHandler(protectRoute(handlePostMedia))(req, res);
   }
   sendJson(res, 405, { error: 'Method Not Allowed' });
 }

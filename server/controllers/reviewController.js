@@ -18,15 +18,12 @@ export async function handleGetReviewsByCampsite(req, res) {
 }
 
 export async function handlePostReview(req, res) {
-  console.log('handlePostReview');
   const { pathname } = parse(req.url, true);
   const parts = pathname.split('/');
   const campsiteId = parts[3];
-  console.log('campsiteId:', campsiteId);
   if (!isValidId(campsiteId)) 
     throw new AppError('Invalid campsite id', 400);
   const { rating, body_md } = await json(req);
-  console.log('rating:', rating, 'body_md:', body_md);
   if (![1, 2, 3, 4, 5].includes(rating))
     throw new AppError('rating must be 1-5', 400);
 

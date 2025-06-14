@@ -91,18 +91,7 @@ JOIN u ON u.rn BETWEEN 4 AND 6
 ON CONFLICT DO NOTHING;
 
 
-SET LOCAL media.base_path TO 'E:\Anul II\Semestrul II\Web\CaT_EchipaTeam\helpers\media';   -- <<< EDIT IF NEEDED
-
-
-CREATE OR REPLACE FUNCTION public.slugify(txt text)
-RETURNS text LANGUAGE sql IMMUTABLE AS $$
-  SELECT regexp_replace(
-           lower(translate(txt,
-             ' ĂÂÎȘŞȚŢăâîșşțţÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝŸàáâãäåçèéêëìíîïñòóôõöøùúûüýÿ',
-             ' aaiissttaaaiissttaaaceeeeiiiinoooooouuuuyyaaaiissttaaaceeeeiiiinoooooouuuuyy')),
-           '[^a-z0-9]+', '-', 'g');
-$$;
-
+SET LOCAL media.base_path TO 'E:\Anul II\Semestrul II\Web\CaT_EchipaTeam\helpers\media';   
 
 DO $$
 DECLARE

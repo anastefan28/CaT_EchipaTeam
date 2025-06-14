@@ -45,9 +45,18 @@ async function mediaNode(id) {
   const url  = URL.createObjectURL(blob);
 
   let el;
-  if (blob.type.startsWith('image/')) el = new Image();
-  else if (blob.type.startsWith('video/')) el = Object.assign(document.createElement('video'), { controls: true });
-  else if (blob.type.startsWith('audio/')) el = Object.assign(document.createElement('audio'), { controls: true });
+  console.log(blob.type);
+  if (blob.type.startsWith('image/')) 
+    el = new Image();
+  else if (blob.type.startsWith('video/')) 
+  
+    {
+      
+    el = Object.assign(document.createElement('video'), { controls: true });
+
+    }
+  else if (blob.type.startsWith('audio/')) 
+    el = Object.assign(document.createElement('audio'), { controls: true });
   else return null;
 
   el.src = url;
@@ -189,7 +198,8 @@ async function renderReviews(arr, append = true) {
     if (r.media_ids?.length) {
       const box = document.createElement('div');
       box.className = 'review-media';
-      for (const id of r.media_ids) box.append(await mediaNode(id));
+      for (const id of r.media_ids) 
+        box.append(await mediaNode(id));
       card.append(box);
     }
     frag.append(card);

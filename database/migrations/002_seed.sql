@@ -91,7 +91,7 @@ JOIN u ON u.rn BETWEEN 4 AND 6
 ON CONFLICT DO NOTHING;
 
 
-SET LOCAL media.base_path TO 'E:\Anul II\Semestrul II\Web\CaT_EchipaTeam\helpers\media';   -- <<< EDIT IF NEEDED
+SET LOCAL media.base_path TO 'C:\Users\scoba\OneDrive\Desktop\CaT_EchipaTeam\helpers\media';
 
 
 CREATE OR REPLACE FUNCTION public.slugify(txt text)

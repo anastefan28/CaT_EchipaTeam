@@ -92,7 +92,7 @@ registerForm?.addEventListener("submit", async (e) => {
       password,
       role: "member",
     });
-    window.location.href = "/dashboard";
+    window.location.href = "/index";
   } catch (err) {
     console.error("Registration error:", err);
     showError(registerError, err.message || "Registration failed.");

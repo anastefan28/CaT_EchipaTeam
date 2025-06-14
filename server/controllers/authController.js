@@ -59,18 +59,9 @@ export async function handleRegister(req, res) {
   }
 
   const hashed = await bcrypt.hash(password, 10);
-  const user = await createUser({ username, email, password: hashed, role });
-  const token = generateJWT(user);
+  await createUser({ username, email, password: hashed, role });
 
-  res.writeHead(201, {
-    "Set-Cookie": serialize("token", token, {
-      httpOnly: true,
-      path: "/",
-      maxAge: 3600,
-    }),
-    "Content-Type": "application/json",
-  });
-  res.end(JSON.stringify({ success: true }));
+  sendJson(res,201,"User registered");
 }
 
 export function handleLogout(req, res) {

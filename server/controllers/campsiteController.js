@@ -1,3 +1,4 @@
+
 import { getCampsites, deleteCampsiteById } from '../models/campsiteModel.js';
 import { AppError } from '../utils/appError.js';
 import { sendJson } from '../utils/json.js';
@@ -29,7 +30,6 @@ export async function handleGetCampsites(req, res) {
 
   const bothDates = filters.checkin && filters.checkout;
   if (bothDates) {
-
     if (!isIso(filters.checkin) || !isIso(filters.checkout))
       errors.push('dates must be yyyy-mm-dd');
     else if (filters.checkin > filters.checkout)
@@ -49,14 +49,12 @@ export async function handleGetCampsites(req, res) {
       errors.push(`sort must be one of: ${validSorts.join(", ")}`);
     }
   }
-
   if (errors.length) 
     throw new AppError(errors.join(', '), 400);
 
   const campsites = await getCampsites(filters);
   sendJson(res, 200, campsites);
 }
-
 
 
 export async function handleDeleteCampsite(req, res) {
@@ -79,7 +77,6 @@ export async function handleDeleteCampsite(req, res) {
   }
 }
 
-
 export async function handleGetCampsite(req, res) {
   const parts = req.url.split('/');
   const id = parts[3];
@@ -97,3 +94,4 @@ export async function handleGetCampsite(req, res) {
     throw new AppError('Internal Server Error', 500);
   }
 }
+

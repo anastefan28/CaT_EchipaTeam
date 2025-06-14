@@ -35,12 +35,19 @@ export async function validatePassword(inputPassword, storedHash) {
   return bcrypt.compare(inputPassword, storedHash);
 }
 
-export async function createUser({ username, email, password, role }) {
+export async function createUser({
+  username,
+  email,
+  password,
+  role,
+  confirmationToken = null,
+  confirmed = false, 
+}) {
   const result = await pool.query(
-    `INSERT INTO users (username, email, password_hash, role)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO users (username, email, password_hash, role, confirmation_token, confirmed)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING id, username, email, role`,
-    [username, email, password, role]
+    [username, email, password, role, confirmationToken, confirmed]
   );
   return result.rows[0];
 }
@@ -92,4 +99,15 @@ export async function updateUserById(id, { username, email, password, role }) {
     : [username, email, role, id];
 
   await pool.query(query, values);
+}
+
+export async function confirmUserByToken(token) {
+  const result = await pool.query(
+    `UPDATE users
+     SET confirmed = TRUE, confirmation_token = NULL
+     WHERE confirmation_token = $1
+     RETURNING id`,
+    [token]
+  );
+  return result.rows[0];
 }

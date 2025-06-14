@@ -1,5 +1,9 @@
 import { googleClient, nonce } from "../config/google.js";
-import { findUserByOAuthSub, createOAuthUser } from "../models/userModel.js";
+import {
+  findUserByOAuthSub,
+  createOAuthUser,
+  confirmUserByToken,
+} from "../models/userModel.js";
 import { generateJWT } from "../utils/jwt.js";
 import { serialize } from "cookie";
 import {
@@ -11,6 +15,10 @@ import { sendJson, json } from "../utils/json.js";
 import bcrypt from "bcrypt";
 import { AppError } from "../utils/appError.js";
 
+import crypto from "crypto";
+import { sendConfirmationEmail } from "../utils/mailer.js";
+
+
 export async function handleLogin(req, res) {
   const { email, password } = await json(req);
   if (!email || !password) {
@@ -19,13 +27,17 @@ export async function handleLogin(req, res) {
 
   const user = await findUserByEmail(email);
   if (
-    user.password_hash === null ||
+    user.password_hash === null || user.password_hash === null ||
     !(await validatePassword(password, user.password_hash))
   ) {
     throw new AppError(
       "Invalid credentials. If you don’t have an account, please register first.",
       401
     );
+  }
+
+  if (!user.confirmed) {
+    throw new AppError("Please confirm your email before logging in.", 401);
   }
 
   const token = generateJWT(user);
@@ -59,9 +71,26 @@ export async function handleRegister(req, res) {
   }
 
   const hashed = await bcrypt.hash(password, 10);
-  await createUser({ username, email, password: hashed, role });
+  const confirmationToken = crypto.randomUUID();
 
-  sendJson(res,201,"User registered");
+  const user = await createUser({
+    username,
+    email,
+    password: hashed,
+    role,
+    confirmationToken,
+  });
+  console.log(
+    "Sending confirmation email to:",
+    email,
+    "with token:",
+    confirmationToken
+  );
+
+  await sendConfirmationEmail(email, confirmationToken);
+
+  res.writeHead(201, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ success: true }));
 }
 
 export function handleLogout(req, res) {
@@ -101,5 +130,23 @@ export async function handleGoogleCallback(req, res) {
     }),
     Location: "/dashboard",
   });
+  res.end();
+}
+
+export async function handleEmailConfirmation(req, res) {
+  const urlParts = new URL(req.url, `http://${req.headers.host}`);
+  const token = urlParts.searchParams.get("token");
+
+  console.log("Token from URL:", token);
+
+  if (!token)
+    return sendJson(res, 400, { error: "Invalid confirmation link." });
+
+  const updated = await confirmUserByToken(token);
+
+  if (!updated)
+    return sendJson(res, 404, { error: "Invalid or expired token." });
+
+  res.writeHead(302, { Location: "/confirmation-success" });
   res.end();
 }

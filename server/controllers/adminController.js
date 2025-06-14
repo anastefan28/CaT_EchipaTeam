@@ -25,7 +25,7 @@ export async function handleAdminUsers(req, res) {
 
 export async function handleCreateUser(req, res) {
   try {
-    const { username, email, password, role } = await json(req);
+    const { username, email, password, role, confirmed } = await json(req);
 
     if (!username || !email || !password || !role) {
       return sendJson(res, 400, { error: "All fields are required." });
@@ -37,7 +37,7 @@ export async function handleCreateUser(req, res) {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    await createUser({ username, email, password: hashed, role });
+    await createUser({ username, email, password: hashed, role,confirmed });
 
     return sendJson(res, 201, {
       success: true,

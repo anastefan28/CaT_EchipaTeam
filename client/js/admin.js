@@ -488,7 +488,7 @@ async function saveUser(e) {
 
   try {
     let res;
-    const userData = { username, email, role };
+    const userData = { username, email, role, confirmed: true };
 
     if (password) {
       userData.password = password;

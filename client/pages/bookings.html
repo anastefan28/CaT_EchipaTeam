@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings – CampSpot</title>
+  <link rel="stylesheet" href="../css/bookings.css">
+</head>
+
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo">CampSpot</div>
+    <div class="nav-links">
+      <a href="/bookings"  class="nav-item active">📅 My Bookings</a>
+      <a href="/profile"   class="nav-item">👤 Account Details</a>
+      <a href="/dashboard" class="nav-item">🏠 Dashboard</a>
+      <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
+      <a href="#"          class="nav-item" id="logoutBtn">🚪 Logout</a>
+    </div>
+  </nav>
+</header>
+
+<div class="content-container">
+  <div class="page-header">
+    <h1 class="page-title">My Bookings</h1>
+    <p  class="page-subtitle">Manage your camping reservations and adventures</p>
+  </div>
+
+  <div id="bookingsContainer" class="bookings-container">
+    <div class="loading">Loading your bookings…</div>
+  </div>
+
+  <template id="tpl-booking-card">
+    <div class="booking-card">
+      <div class="booking-header">
+        <div>
+          <div class="booking-title"></div>
+          <div class="booking-id"></div>
+        </div>
+        <div class="booking-status"></div>
+      </div>
+
+      <div class="booking-dates">
+        <div class="date-range"></div>
+      </div>
+
+      <div class="booking-details">
+        <div class="detail-item">
+          <div class="detail-label">Guests</div>
+          <div class="detail-value guests"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Booked On</div>
+          <div class="detail-value booked-on"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Status</div>
+          <div class="detail-value status-long"></div>
+        </div>
+      </div>
+
+      <div class="booking-actions">
+        <button class="btn btn-secondary view-btn">View Campsite</button>
+        <button class="btn btn-primary  manage-btn">Manage Booking</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-empty">
+    <div class="empty-state">
+      <h3 class="title"></h3>
+      <p  class="msg"></p>
+      <a  class="btn btn-primary cta" href="#"></a>
+    </div>
+  </template>
+</div>
+
+<script src='../js/bookings.js'></script>
+</body>
+</html>

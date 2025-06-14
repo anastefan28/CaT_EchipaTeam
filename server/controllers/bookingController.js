@@ -2,9 +2,9 @@ import { AppError } from '../utils/appError.js';
 import { sendJson, json } from '../utils/json.js';
 import { createBooking } from '../models/bookingModel.js';
 import { isIso ,isValidId} from '../utils/valid.js';
+import { getBookingsByUserId } from '../models/bookingModel.js';
 export async function handlePostBooking(req,res){
   const { campsite_id, checkin, checkout, guests } = await json(req);
-  console.log('handlePostBooking', { campsite_id, checkin, checkout, guests });
   if (!campsite_id || !isIso(checkin) || !isIso(checkout))
     throw new AppError('campsite_id, checkin, checkout required', 400);
   if (!isValidId(campsite_id))
@@ -28,4 +28,16 @@ export async function handlePostBooking(req,res){
       throw new AppError('Selected dates already booked', 409);
     throw e;
   }
+}
+
+export async function handleGetMyBookings(req, res) {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const status = url.searchParams.get('status');         
+
+  if (status && !['confirmed', 'cancelled'].includes(status)) {
+    throw new AppError('status must be "confirmed" or "cancelled"', 400);
+  }
+
+  const rows = await getBookingsByUserId(req.user.id, status );
+  sendJson(res, 200, rows);
 }

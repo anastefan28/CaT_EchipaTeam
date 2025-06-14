@@ -8,6 +8,5 @@ export async function bookingRoute(req,res){
   const { pathname } = parse(req.url,true);
   if (req.method==='POST' && pathname==='/api/bookings')
     return asyncHandler(protectRoute(handlePostBooking))(req,res);
-
   sendJson(res,405,{error:'Method Not Allowed'});
 }

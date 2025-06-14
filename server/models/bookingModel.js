@@ -10,13 +10,17 @@ export async function createBooking({ campsiteId, userId, checkin, checkout, gue
   return rows[0];
 }
 
-export async function getBookingsByUser(userId) {
-  const { rows } = await pool.query(
-    `SELECT b.*, cs.name AS campsite_name,cs.county AS campsite_county,
-            cs.type AS campsite_type,cs.price AS campsite_price
-       FROM bookings b JOIN campsites cs ON cs.id = b.campsite_id
-      WHERE b.user_id =$1 ORDER BY b.created_at DESC`,
-    [userId]
-  );
+export async function getBookingsByUserId(userId, status) {
+  const vals  = [userId];
+  let where = 'WHERE b.user_id = $1';
+  if (status) {
+    vals.push(status);
+    where += ` AND b.status = $${vals.length}`;
+  }
+  const { rows } = await pool.query( `SELECT b.id,b.period,lower(b.period) AS checkin,upper(b.period)  AS checkout,
+      b.guests,b.status,b.created_at,cs.id AS campsite_id,
+      cs.name AS campsite_name,cs.price,cs.county,cs.type
+    FROM bookings  b JOIN campsites cs ON cs.id = b.campsite_id
+    ${where} ORDER BY b.created_at DESC `, vals);
   return rows;
 }

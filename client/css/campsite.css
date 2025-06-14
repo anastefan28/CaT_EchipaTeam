@@ -11,21 +11,21 @@ body {
 }
 
 .header {
-  background: #fff;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+	background: white;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 1000;
 }
 
 .nav {
-  max-width: 1400px;
-  height: 70px;
-  margin: auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+	max-width: 1200px;
+	margin: auto;
+	height: 70px;
 }
 
 .logo {

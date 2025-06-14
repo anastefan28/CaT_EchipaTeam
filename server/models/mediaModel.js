@@ -1,7 +1,8 @@
-import { pool } from '../utils/db.js';
-import { AppError } from '../utils/appError.js';
+import { pool } from "../utils/db.js";
+import { AppError } from "../utils/appError.js";
 
 export async function getMediaById(id) {
+
         const { rows } = await pool.query(
         'SELECT mime, data, uploaded_at FROM media WHERE id = $1',
         [id]

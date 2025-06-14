@@ -10,23 +10,22 @@ body {
     color: #333;
 }
 
-/* Header */
 .header {
-    background: white;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+	background: white;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 1000;
 }
 
 .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    max-width: 1200px;
-    margin: auto;
-    height: 70px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+	max-width: 1200px;
+	margin: auto;
+	height: 70px;
 }
 
 .logo {
@@ -211,7 +210,6 @@ body {
     background: #e0e0e0;
 }
 
-/* Loading and Empty States */
 .loading,
 .empty-state {
     text-align: center;
@@ -240,7 +238,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .nav-links {
         flex-wrap: wrap;

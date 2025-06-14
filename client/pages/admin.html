@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampSpot Admin Panel</title>
+    <link rel="stylesheet" href="../css/admin.css" />
+    <script src="../js/admin.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav">
+        <div class="logo">Admin Panel</div>
+        <div class="nav-links">
+          <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="admin-container">
+      <div class="dashboard-header">
+        <h1>CampSpot Admin Dashboard</h1>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-number" id="totalUsers">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏕️</div>
+          <div class="stat-number" id="totalCampsites">0</div>
+          <div class="stat-label">Total Campsites</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-number" id="totalBookings">0</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="users">
+          👥 Users Management
+        </button>
+        <button class="tab-btn" data-tab="campsites">
+          🏕️ Campsites Management
+        </button>
+        <button class="tab-btn" data-tab="bookings">
+          📅 Bookings Management
+        </button>
+      </div>
+
+      <div class="tab-content active" id="users-tab">
+        <div class="action-header">
+          <h2>Users Management</h2>
+          <button class="btn-primary" onclick="openUserModal('create')">
+            ➕ Add New User
+          </button>
+        </div>
+
+        <div class="search-filter">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search users..."
+            id="userSearch"
+          />
+          <select class="filter-select" id="userRoleFilter">
+            <option value="">All Roles</option>
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined on</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-content" id="campsites-tab">
+        <div class="action-header">
+          <h2>Campsites Management</h2>
+          <button class="btn-primary" onclick="openCampsiteModal('create')">
+            ➕ Add New Campsite
+          </button>
+        </div>
+
+        <div class="search-filter">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search campsites..."
+            id="campsiteSearch"
+          />
+          <select class="filter-select" id="campsiteCountyFilter">
+            <option value="">All Counties</option>
+            <option value="Alba">Alba</option>
+            <option value="Arad">Arad</option>
+            <option value="Argeș">Argeș</option>
+            <option value="Bacău">Bacău</option>
+            <option value="Bihor">Bihor</option>
+            <option value="Bistrița-Năsăud">Bistrița-Năsăud</option>
+            <option value="Botoșani">Botoșani</option>
+            <option value="Brăila">Brăila</option>
+            <option value="Brașov">Brașov</option>
+            <option value="București">București</option>
+            <option value="Buzău">Buzău</option>
+            <option value="Caraș-Severin">Caraș-Severin</option>
+            <option value="Călărași">Călărași</option>
+            <option value="Cluj">Cluj</option>
+            <option value="Constanța">Constanța</option>
+            <option value="Covasna">Covasna</option>
+            <option value="Dâmbovița">Dâmbovița</option>
+            <option value="Dolj">Dolj</option>
+            <option value="Galați">Galați</option>
+            <option value="Giurgiu">Giurgiu</option>
+            <option value="Gorj">Gorj</option>
+            <option value="Harghita">Harghita</option>
+            <option value="Hunedoara">Hunedoara</option>
+            <option value="Ialomița">Ialomița</option>
+            <option value="Iași">Iași</option>
+            <option value="Ilfov">Ilfov</option>
+            <option value="Maramureș">Maramureș</option>
+            <option value="Mehedinți">Mehedinți</option>
+            <option value="Mureș">Mureș</option>
+            <option value="Neamț">Neamț</option>
+            <option value="Olt">Olt</option>
+            <option value="Prahova">Prahova</option>
+            <option value="Sălaj">Sălaj</option>
+            <option value="Satu Mare">Satu Mare</option>
+            <option value="Sibiu">Sibiu</option>
+            <option value="Suceava">Suceava</option>
+            <option value="Teleorman">Teleorman</option>
+            <option value="Timiș">Timiș</option>
+            <option value="Tulcea">Tulcea</option>
+            <option value="Vâlcea">Vâlcea</option>
+            <option value="Vaslui">Vaslui</option>
+            <option value="Vrancea">Vrancea</option>
+          </select>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>County</th>
+              <th>Price/Night</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="campsitesTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-content" id="bookings-tab">
+        <div class="action-header">
+          <h2>Bookings Management</h2>
+          <button class="btn-primary" onclick="openBookingModal('create')">
+            ➕ Add New Booking
+          </button>
+        </div>
+
+        <div class="search-filter">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search bookings..."
+            id="bookingSearch"
+          />
+          <select class="filter-select" id="bookingStatusFilter">
+            <option value="">All Status</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <input type="date" class="filter-select" id="bookingDateFilter" />
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Campsite</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal" id="userModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="userModalTitle">Add New User</h3>
+          <button class="close-btn" onclick="closeModal('userModal')">
+            &times;
+          </button>
+        </div>
+        <form id="userForm">
+          <div class="form-group">
+            <label for="userName">Username</label>
+            <input type="text" id="userName" required />
+          </div>
+          <div class="form-group">
+            <label for="userEmail">Email</label>
+            <input type="email" id="userEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="userPassword">Password</label>
+            <input type="password" id="userPassword" />
+          </div>
+          <div class="form-group">
+            <label for="userRole">Role</label>
+            <select id="userRole" required>
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('userModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary">Save User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="campsiteModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="campsiteModalTitle">Add New Campsite</h3>
+          <button class="close-btn" onclick="closeModal('campsiteModal')">
+            &times;
+          </button>
+        </div>
+        <form id="campsiteForm">
+          <div class="form-group">
+            <label for="campsiteName">Campsite Name</label>
+            <input type="text" id="campsiteName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="campsiteDescription">Description</label>
+            <textarea id="campsiteDescription" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="campsiteLat">Latitude</label>
+            <input
+              type="number"
+              id="campsiteLat"
+              step="0.000001"
+              min="-90"
+              max="90"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="campsiteLon">Longitude</label>
+            <input
+              type="number"
+              id="campsiteLon"
+              step="0.000001"
+              min="-180"
+              max="180"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="campsiteCapacity">Capacity</label>
+            <input type="number" id="campsiteCapacity" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="campsitePrice">Price per Night (RON)</label>
+            <input
+              type="number"
+              id="campsitePrice"
+              step="0.01"
+              min="0"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="campsiteCounty">County</label>
+            <select id="campsiteCounty" required>
+              <option value="" selected>Select County</option>
+              <option value="Alba">Alba</option>
+              <option value="Arad">Arad</option>
+              <option value="Argeș">Argeș</option>
+              <option value="Bacău">Bacău</option>
+              <option value="Bihor">Bihor</option>
+              <option value="Bistrița-Năsăud">Bistrița-Năsăud</option>
+              <option value="Botoșani">Botoșani</option>
+              <option value="Brăila">Brăila</option>
+              <option value="Brașov">Brașov</option>
+              <option value="București">București</option>
+              <option value="Buzău">Buzău</option>
+              <option value="Caraș-Severin">Caraș-Severin</option>
+              <option value="Călărași">Călărași</option>
+              <option value="Cluj">Cluj</option>
+              <option value="Constanța">Constanța</option>
+              <option value="Covasna">Covasna</option>
+              <option value="Dâmbovița">Dâmbovița</option>
+              <option value="Dolj">Dolj</option>
+              <option value="Galați">Galați</option>
+              <option value="Giurgiu">Giurgiu</option>
+              <option value="Gorj">Gorj</option>
+              <option value="Harghita">Harghita</option>
+              <option value="Hunedoara">Hunedoara</option>
+              <option value="Ialomița">Ialomița</option>
+              <option value="Iași">Iași</option>
+              <option value="Ilfov">Ilfov</option>
+              <option value="Maramureș">Maramureș</option>
+              <option value="Mehedinți">Mehedinți</option>
+              <option value="Mureș">Mureș</option>
+              <option value="Neamț">Neamț</option>
+              <option value="Olt">Olt</option>
+              <option value="Prahova">Prahova</option>
+              <option value="Sălaj">Sălaj</option>
+              <option value="Satu Mare">Satu Mare</option>
+              <option value="Sibiu">Sibiu</option>
+              <option value="Suceava">Suceava</option>
+              <option value="Teleorman">Teleorman</option>
+              <option value="Timiș">Timiș</option>
+              <option value="Tulcea">Tulcea</option>
+              <option value="Vâlcea">Vâlcea</option>
+              <option value="Vaslui">Vaslui</option>
+              <option value="Vrancea">Vrancea</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="campsiteType">Type</label>
+            <select id="campsiteType" required>
+              <option value="tent">Tent</option>
+              <option value="rv">RV</option>
+              <option value="cabin">Cabin</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('campsiteModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary">Save Campsite</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="bookingModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="bookingModalTitle">Add New Booking</h3>
+          <button class="close-btn" onclick="closeModal('bookingModal')">
+            &times;
+          </button>
+        </div>
+        <form id="bookingForm">
+          <div class="form-group">
+            <label for="bookingUser">User</label>
+            <select id="bookingUser" required>
+              <option value="">Select User</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bookingCampsite">Campsite</label>
+            <select id="bookingCampsite" required>
+              <option value="">Select Campsite</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bookingCheckin">Check-in Date</label>
+            <input type="date" id="bookingCheckin" required />
+          </div>
+          <div class="form-group">
+            <label for="bookingCheckout">Check-out Date</label>
+            <input type="date" id="bookingCheckout" required />
+          </div>
+          <div class="form-group">
+            <label for="bookingGuests">Number of Guests</label>
+            <input type="number" id="bookingGuests" min="1" required />
+          </div>
+          <div class="form-group">
+            <label for="bookingTotal">Total Amount (RON)</label>
+            <input type="number" id="bookingTotal" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label for="bookingStatus">Status</label>
+            <select id="bookingStatus" required>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('bookingModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary">Save Booking</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

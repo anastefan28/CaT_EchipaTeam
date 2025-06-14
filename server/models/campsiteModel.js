@@ -1,4 +1,5 @@
-import { pool } from '../utils/db.js';
+import { pool } from "../utils/db.js";
+
 
 export async function getCampsites (filters = {}) {
   const { id, location, guests, checkin, checkout, sort } = filters;
@@ -11,9 +12,11 @@ export async function getCampsites (filters = {}) {
     conds.push(`cs.id = $${vals.length}`);
   }
   if (location) {
-  vals.push(`%${location.toLowerCase()}%`);
-  const idx = vals.length;          
-  conds.push(`(LOWER(cs.name) LIKE $${idx} OR LOWER(cs.county::text) LIKE $${idx})`);
+    vals.push(`%${location.toLowerCase()}%`);
+    const idx = vals.length;
+    conds.push(
+      `(LOWER(cs.name) LIKE $${idx} OR LOWER(cs.county::text) LIKE $${idx})`
+    );
   }
   if (guests) {
     vals.push(guests);
@@ -23,7 +26,9 @@ export async function getCampsites (filters = {}) {
     vals.push(checkin, checkout);
     conds.push(`
       cs.id NOT IN (SELECT campsite_id FROM bookings WHERE  status = 'confirmed'
-          AND period && daterange($${vals.length - 1}::date,$${vals.length}::date, '[]'))
+          AND period && daterange($${vals.length - 1}::date,$${
+      vals.length
+    }::date, '[]'))
     `);
   }
 
@@ -46,11 +51,12 @@ export async function getCampsites (filters = {}) {
      FROM media WHERE campsite_id = cs.id AND review_id IS NULL AND message_id IS NULL LIMIT 1) m ON TRUE
   `;
 
-  if (conds.length) q += ` WHERE ` + conds.join(' AND ');
+  if (conds.length) q += ` WHERE ` + conds.join(" AND ");
   q += `
     GROUP BY cs.id, rv.review_count, rv.avg_rating,
              am.amenities, m.media_ids
   `;
+
   if(!id) {
     const SORT_SQL = {
       'popular': 'ORDER BY bookings_count DESC LIMIT 10',
@@ -66,4 +72,69 @@ export async function getCampsites (filters = {}) {
 
   const { rows } = await pool.query(q, vals);
   return rows;
+}
+
+export async function createCampsite(camp) {
+  const query = `
+    INSERT INTO campsites (name, description, lat, lon, capacity, price, county, type)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING *;
+  `;
+  const values = [
+    camp.name,
+    camp.description,
+    camp.lat,
+    camp.lon,
+    camp.capacity,
+    camp.price,
+    camp.county,
+    camp.type,
+  ];
+
+  const result = await pool.query(query, values);
+  return result.rows[0];
+}
+
+export async function deleteCampsiteById(id) {
+  const result = await pool.query("DELETE FROM campsites WHERE id = $1", [id]);
+  return result.rowCount > 0;
+}
+
+export async function findCampsiteById(id) {
+  const result = await pool.query(
+    `SELECT id, name, description, lat, lon, capacity, price, county, type
+     FROM campsites WHERE id = $1`,
+    [id]
+  );
+  return result.rows[0];
+}
+
+export async function updateCampsiteById(
+  id,
+  { name, description, lat, lon, capacity, price, county, type }
+) {
+  const query = `
+    UPDATE campsites
+    SET name = $1,
+        description = $2,
+        lat = $3,
+        lon = $4,
+        capacity = $5,
+        price = $6,
+        county = $7,
+        type = $8
+    WHERE id = $9
+  `;
+  const values = [
+    name,
+    description,
+    lat,
+    lon,
+    capacity,
+    price,
+    county,
+    type,
+    id,
+  ];
+  await pool.query(query, values);
 }

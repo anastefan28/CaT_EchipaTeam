@@ -1,5 +1,7 @@
 import { getCampsites } from '../models/campsiteModel.js';
+import { AppError } from '../utils/appError.js';
 import { sendJson } from '../utils/json.js';
+import { isIso, isValidId } from '../utils/valid.js';
 
 export async function handleGetCampsites(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -20,7 +22,7 @@ export async function handleGetCampsites(req, res) {
 
   const bothDates = filters.checkin && filters.checkout;
   if (bothDates) {
-    if (!isIsoDate(filters.checkin) || !isIsoDate(filters.checkout))
+    if (!isIso(filters.checkin) || !isIso(filters.checkout))
       errors.push('dates must be yyyy-mm-dd');
     else if (filters.checkin > filters.checkout)
       errors.push('checkout must be after checkin');
@@ -33,14 +35,28 @@ export async function handleGetCampsites(req, res) {
       errors.push(`sort must be one of: ${validSorts.join(', ')}`);
     }
   }
-  if (errors.length) {
-    return sendJson(res, 400, { errors });     
-  }
+  if (errors.length) 
+    throw new AppError(errors.join(', '), 400);
 
   const campsites = await getCampsites(filters);
   sendJson(res, 200, campsites);
 }
-function isIsoDate(str) {
-  // yyyy-mm-dd
-  return /^\d{4}-\d{2}-\d{2}$/.test(str);
+
+
+export async function handleGetCampsite(req, res) {
+  const parts = req.url.split('/');
+  const id = parts[3];
+  if (isValidId(id) === false) {
+    throw new AppError('Invalid campsite id', 400);
+  }
+  try {
+    const campsites = await getCampsites({ id });
+    if (!campsites || campsites.length === 0) {
+      throw new AppError('Campsite not found', 404);
+    }
+    sendJson(res, 200, campsites[0]);
+  } catch (err) {
+    console.error('Error fetching campsite:', err);
+    throw new AppError('Internal Server Error', 500);
+  }
 }

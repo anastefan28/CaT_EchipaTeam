@@ -147,9 +147,9 @@ function renderCampsites() {
 
     const image = document.createElement('div');
     image.className = 'campsite-image'; 
-    if (campsite.main_media_id) {
+    if (campsite.media_ids[0]) {
       const img = document.createElement('img');
-      img.src= `/api/media/${campsite.main_media_id}`;
+      img.src= `/api/media/${campsite.media_ids[0]}`;
       img.alt= campsite.name;
       img.loading= 'lazy';             
       image.appendChild(img);
@@ -255,7 +255,7 @@ function renderCampsites() {
 
 
 function goToCampsite(id) {
-  window.location.href = `/campsite-detail.html?id=${id}`;
+  window.location.href = `/campsite?id=${id}`;
 }
 
 function capitalize(str) {

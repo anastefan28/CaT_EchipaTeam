@@ -1,15 +1,14 @@
 import { AppError } from '../utils/appError.js';
 import { getMediaById } from '../models/mediaModel.js';
 import { parse }    from 'url';
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { isValidId } from '../utils/valid.js';
 
 export async function handleGetMedia(req, res) {
     const { pathname } = parse(req.url, true);
     const parts = pathname.split('/');    
     const id = parts[3];
-    if (!UUID_RE.test(id)) {
-    throw new AppError('Invalid media id', 400);
+    if (!isValidId(id)) {
+      throw new AppError('Invalid media id', 400);
   }
   const media = await getMediaById(id);
 
@@ -20,3 +19,4 @@ export async function handleGetMedia(req, res) {
   });
   res.end(data);        
 }
+export async function handlePostMedia(req, res) {}

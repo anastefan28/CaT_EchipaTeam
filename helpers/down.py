@@ -44,7 +44,6 @@ def media_for_campsite(name, n_photos=2, n_videos=2):
     ensure_dir(photo_dir)
     ensure_dir(video_dir)
 
-    # ---- photos ------------------------------------------------------------
     photos_dl = 0
     page = 1
     while photos_dl < n_photos:

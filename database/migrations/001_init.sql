@@ -67,12 +67,12 @@ CREATE TABLE bookings (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
 
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
 ALTER TABLE bookings
   ADD CONSTRAINT no_overlaps
-  EXCLUDE USING GIST (campsite_id WITH =, period WITH &&)
-  WHERE (status = 'confirmed');
-
-
+  EXCLUDE USING GIST
+    (campsite_id WITH =,  period WITH &&)  WHERE (status = 'confirmed');
 
 CREATE INDEX ON bookings (user_id);
 CREATE INDEX ON bookings USING GIST (period);
@@ -110,10 +110,6 @@ CREATE TABLE media (
   data        BYTEA NOT NULL,
   uploaded_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
-ALTER TABLE media ADD COLUMN mime TEXT;
-UPDATE media SET mime = 'image/jpg' WHERE type = 'image';
-
-
 CREATE INDEX ON media (campsite_id);
 CREATE INDEX ON media (review_id);
 

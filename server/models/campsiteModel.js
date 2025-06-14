@@ -1,6 +1,7 @@
 import { pool } from "../utils/db.js";
 
-export async function getCampsites(filters = {}) {
+
+export async function getCampsites (filters = {}) {
   const { id, location, guests, checkin, checkout, sort } = filters;
 
   const vals = [];
@@ -55,16 +56,18 @@ export async function getCampsites(filters = {}) {
     GROUP BY cs.id, rv.review_count, rv.avg_rating,
              am.amenities, m.media_ids
   `;
-  if (!id) {
+
+  if(!id) {
     const SORT_SQL = {
-      popular: "ORDER BY bookings_count DESC LIMIT 10",
-      "price-low": "ORDER BY cs.price ASC",
-      "price-high": "ORDER BY cs.price DESC",
-      rating: "ORDER BY rv.avg_rating DESC",
-      newest: "ORDER BY cs.created_at DESC",
+      'popular': 'ORDER BY bookings_count DESC LIMIT 10',
+      'price-low' : 'ORDER BY cs.price ASC',
+      'price-high' : 'ORDER BY cs.price DESC',
+      'rating' : 'ORDER BY rv.avg_rating DESC',
+      'newest': 'ORDER BY cs.created_at DESC'
     };
-    if (!sort) q += " ORDER BY cs.created_at DESC";
-    else q += " " + SORT_SQL[sort];
+    if(!sort) q+= ' ORDER BY cs.created_at DESC';
+    else 
+      q += ' ' + SORT_SQL[sort];
   }
 
   const { rows } = await pool.query(q, vals);

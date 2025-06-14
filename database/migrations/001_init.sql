@@ -67,12 +67,12 @@ CREATE TABLE bookings (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
 );
 
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
 ALTER TABLE bookings
   ADD CONSTRAINT no_overlaps
-  EXCLUDE USING GIST (campsite_id WITH =, period WITH &&)
-  WHERE (status = 'confirmed');
-
-
+  EXCLUDE USING GIST
+    (campsite_id WITH =,  period WITH &&)  WHERE (status = 'confirmed');
 
 CREATE INDEX ON bookings (user_id);
 CREATE INDEX ON bookings USING GIST (period);

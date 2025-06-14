@@ -21,7 +21,7 @@ export const protectRoute = (handler) => async (req, res, next) => {
 
     const user = await getUserById(payload.id);
     if (!user) {
-      throw new AppError('User not found.', 401);
+      throw new AppError('Unauthorized.', 403);
     }
 
     req.user = user;

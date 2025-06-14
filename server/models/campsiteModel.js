@@ -53,11 +53,11 @@ export async function getCampsites (filters = {}) {
   `;
   if(!id) {
     const SORT_SQL = {
-      'popular'    : 'ORDER BY bookings_count DESC LIMIT 10',
-      'price-low'  : 'ORDER BY cs.price ASC',
+      'popular': 'ORDER BY bookings_count DESC LIMIT 10',
+      'price-low' : 'ORDER BY cs.price ASC',
       'price-high' : 'ORDER BY cs.price DESC',
-      'rating'     : 'ORDER BY rv.avg_rating DESC',
-      'newest'     : 'ORDER BY cs.created_at DESC'
+      'rating' : 'ORDER BY rv.avg_rating DESC',
+      'newest': 'ORDER BY cs.created_at DESC'
     };
     if(!sort) q+= ' ORDER BY cs.created_at DESC';
     else 

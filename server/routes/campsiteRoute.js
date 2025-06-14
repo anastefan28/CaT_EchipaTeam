@@ -28,7 +28,7 @@ export async function campsiteRoute(req, res) {
   }
   if(method === 'POST' && pathname.startsWith('/api/campsites/')) {
     const parts = pathname.split('/');
-    if (parts.length === 5 && parts[3]) {
+    if (parts.length === 5 && parts[3] && parts[4] === 'reviews') {
       return asyncHandler(protectRoute(handlePostReview))(req, res);
     }
     if (parts.length === 5 && parts[3] && parts[4] === 'messages') {

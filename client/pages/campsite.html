@@ -40,7 +40,6 @@
                 <div class="campsite-header">
                     <div>
                         <h1 class="campsite-title" id="campsiteName"></h1>
-                        <div class="campsite-location">📍 <span id="campsiteLocation"></span></div>
                     </div>
                     <div class="campsite-type-badge" id="campsiteType"></div>
                 </div>
@@ -95,10 +94,14 @@
                         <span class="star-input" data-rating="5">⭐</span>
                     </div>
                     <textarea class="review-textarea" id="reviewText" placeholder="Share your experience..."></textarea>
-                    <input type="file" id="reviewMedia" accept="image/*,video/*,audio/*" multiple
-                        style="margin-bottom: 10px;">
-
-                    <button class="submit-btn" onclick="submitReview()">Submit Review</button>
+                    <div class="review-actions">
+                        <div class="file-upload-wrapper">
+                            <label class="file-upload-button" id="fileLabel" for="reviewMedia">Attach files</label>
+                            <input type="file" id="reviewMedia" class="file-upload-input"
+                                accept="image/*,video/*,audio/*" multiple onchange="updateFileLabel()">
+                        </div>
+                        <button class="submit-btn" onclick="submitReview()">Submit Review</button>
+                    </div>
                 </div>
             </section>
 
@@ -106,11 +109,13 @@
                 <h3 class="section-title">Community&nbsp;Chat</h3>
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input">
-                    <textarea class="message-textarea" id="messageText" rows="2"
-                        placeholder="Join the conversation…"></textarea>
+                    <textarea class="message-textarea" id="messageText" rows="2"placeholder="Join the conversation…"></textarea>
                     <div class="media-upload">
-                        <input type="file" id="messageMedia" accept="image/*,video/*,audio/*" multiple>
-
+                        <div class="file-upload-wrapper">
+                            <label class="file-upload-button" id="fileLabelMessage" for="messageMedia">Attach files</label>
+                            <input type="file" id="messageMedia" class="file-upload-input"
+                                accept="image/*,video/*,audio/*" multiple onchange="updateFileLabel()">
+                        </div>
                         <button class="submit-btn" onclick="sendMessage()">Send</button>
                     </div>
             </section>
@@ -158,4 +163,5 @@
     </div>
     <script src="../js/campsite.js"></script>
 </body>
+
 </html>

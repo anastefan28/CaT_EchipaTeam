@@ -5,17 +5,18 @@ export async function getReviewsByCampsiteId(campsiteId) {
      FROM reviews r JOIN users u ON u.id = r.user_id
      LEFT JOIN LATERAL(SELECT array_agg(id ORDER BY uploaded_at) AS img_ids
         FROM media WHERE review_id = r.id) m ON TRUE
-     WHERE r.campsite_id = $1 ORDER BY r.created_at DESC`,
+     WHERE r.campsite_id = $1 ORDER BY r.created_at `,
     [campsiteId]
   );
   return rows;
 }
-export async function createMessage({ campsiteId, userId, body }) {
+
+export async function createReview({ campsiteId, userId, rating, body }) {
   const { rows } = await pool.query(
-    `INSERT INTO messages (campsite_id,user_id,body_md)
-     VALUES ($1,$2,$3)
+    `INSERT INTO reviews (campsite_id,user_id,rating,body_md)
+     VALUES ($1,$2,$3,$4)
      RETURNING *`,
-    [campsiteId, userId, body]
+    [campsiteId, userId, rating, body]
   );
   return rows[0];
 }

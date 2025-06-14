@@ -8,5 +8,5 @@ export const routes = {
 	'/api/auth': authRoute,
 	'/api/me': userRoute,
 	'/api/campsites': campsiteRoute ,
-	'api/bookings': bookingRoute, // Assuming bookings are handled in campsiteRoute
+	'/api/bookings': bookingRoute, 
 };

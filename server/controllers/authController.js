@@ -18,8 +18,7 @@ export async function handleLogin(req, res) {
   }
 
   const user = await findUserByEmail(email);
-  if (
-    user.password_hash === null ||
+  if (!user || user.password_hash === null ||
     !(await validatePassword(password, user.password_hash))
   ) {
     throw new AppError(

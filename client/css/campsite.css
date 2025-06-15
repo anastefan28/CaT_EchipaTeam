@@ -11,21 +11,21 @@ body {
 }
 
 .header {
-	background: white;
-	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-	position: sticky;
-	top: 0;
-	z-index: 1000;
+  background: white;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .nav {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 20px;
-	max-width: 1200px;
-	margin: auto;
-	height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 150px;
+  max-width: 1200px;
+  margin: auto;
+  height: 70px;
 }
 
 .logo {
@@ -633,26 +633,6 @@ select:focus {
 
 .book-btn:hover {
   transform: translateY(-2px);
-}
-
-.booking-summary {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 15px;
-}
-
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.summary-total {
-  font-weight: 600;
-  color: #2e7d32;
-  border-top: 1px solid #e1e1e1;
-  padding-top: 10px;
 }
 
 .weather-section {

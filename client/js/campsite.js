@@ -322,12 +322,11 @@ function renderWeather(daily) {
   });
 }
 document.getElementById('checkinDate').addEventListener('change', () => {
-       updateWeather(); updatePriceBox();     
+       updateWeather();  
 });
 document.getElementById('checkoutDate').addEventListener('change',  () => {
-       updateWeather(); updatePriceBox();     
+       updateWeather(); 
 });
-document.getElementById('guestCount').addEventListener('change',   updatePriceBox);
 async function updateWeather() {
   const checkin  = document.getElementById('checkinDate').value;
   const checkout = document.getElementById('checkoutDate').value;
@@ -341,40 +340,7 @@ async function updateWeather() {
   if (weather) renderWeather(weather);
 }
 const form = document.getElementById('bookingForm');
-const summaryBox = document.getElementById('bookingSummary');
-const nightsEl = document.getElementById('nightCount');
-const rateEl = document.getElementById('ratePerNight');
-const subtotalEl = document.getElementById('subtotal');
-const feeEl = document.getElementById('serviceFee');
-const totalEl = document.getElementById('totalCost');
-
-const NIGHTLY_RATE = +el.price.textContent.replace(/[^\d.]/g, ''); 
-const SERVICE_FEE  = 15;                                          
-function getNightlyRate() {
-  return +el.price.textContent.replace(/[^\d.]/g, '');
-}
-const diffDays = (a, b) => Math.ceil(
-  (new Date(b) - new Date(a)) / 86_400_000 );
-function updatePriceBox () {
-  const checkin = document.getElementById('checkinDate').value;
-  const checkout = document.getElementById('checkoutDate').value;
-  if (!checkin || !checkout || checkin >= checkout) {
-    summaryBox.style.display = 'none';
-    return;
-  }
-  const nights = diffDays(checkin, checkout);
-  const rate = getNightlyRate();
-  const subtotal= nights * rate;
-  const total = subtotal + SERVICE_FEE;
-
-  nightsEl.textContent = nights;
-  rateEl.textContent = `RON ${rate.toFixed(2)}`;
-  subtotalEl.textContent = `RON ${subtotal.toFixed(2)}`;
-  feeEl.textContent = `RON ${SERVICE_FEE.toFixed(2)}`;
-  totalEl.textContent = `RON ${total.toFixed(2)}`;
-
-  summaryBox.style.display = 'block';
-}
+                                  
 async function postBooking({ campsite_id, checkin, checkout, guests }) {
   return api('/api/bookings', {
     method : 'POST',
@@ -399,21 +365,8 @@ form.addEventListener('submit', async (e) => {
 
   try {
     await postBooking({ campsite_id: campId, checkin, checkout, guests });
-
-    const nights = diffDays(checkin, checkout);
-    const subtotal = nights * NIGHTLY_RATE;
-    const total = subtotal + SERVICE_FEE;
-
-    nightsEl.textContent = nights;
-    rateEl.textContent = `RON ${NIGHTLY_RATE.toFixed(2)}`;
-    subtotalEl.textContent = `RON ${subtotal.toFixed(2)}`;
-    feeEl.textContent = `RON ${SERVICE_FEE.toFixed(2)}`;
-    totalEl.textContent = `RON ${total.toFixed(2)}`;
-
-    summaryBox.style.display = 'block';
     form.reset();
     alert('Booking confirmed! 🎉');
-    summaryBox.style.display = 'none';
   } catch (ex) {
     alert(`Booking failed: ${ex.message}`);
   }

@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Campsite Details — CampSpot</title>
-    <link rel="stylesheet" href="../css/campsite.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="../css/campsite.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
@@ -85,12 +86,12 @@
                 <div id="reviewsList"></div>
                 <div class="add-review">
                     <h4 style="margin-bottom:15px;color:#2e7d32;">Add your Review</h4>
-                    <div class="rating-input" id="ratingInput">
-                        <span class="star-input" data-rating="1">⭐</span>
-                        <span class="star-input" data-rating="2">⭐</span>
-                        <span class="star-input" data-rating="3">⭐</span>
-                        <span class="star-input" data-rating="4">⭐</span>
-                        <span class="star-input" data-rating="5">⭐</span>
+                    <div class="rating">
+                        <input id="s5" type="radio" name="rate" value="5"><label for="s5">⭐</label>
+                        <input id="s4" type="radio" name="rate" value="4"><label for="s4">⭐</label>
+                        <input id="s3" type="radio" name="rate" value="3"><label for="s3">⭐</label>
+                        <input id="s2" type="radio" name="rate" value="2"><label for="s2">⭐</label>
+                        <input id="s1" type="radio" name="rate" value="1"><label for="s1">⭐</label>
                     </div>
                     <textarea class="review-textarea" id="reviewText" placeholder="Share your experience..."></textarea>
                     <div class="review-actions">
@@ -101,6 +102,7 @@
                         </div>
                         <button class="submit-btn" onclick="submitReview()">Submit Review</button>
                     </div>
+                    <div id="reviewBanner" class="banner hidden"></div>
                 </div>
             </section>
 
@@ -132,10 +134,10 @@
 
                 <form class="booking-form" id="bookingForm">
                     <div class="form-group">
-                        <label class="form-label">Check-in / Check-out</label>
                         <div class="date-inputs">
-                            <input type="date" id="checkinDate"  required>
-                            <input type="date" id="checkoutDate"  required></div>
+                            <input type="date" id="checkinDate" placeholder="Check-in" required>
+                            <input type="date" id="checkoutDate" placeholder="Check-out" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Guests</label>

@@ -1,8 +1,7 @@
 import { AppError } from '../utils/appError.js';
 import { sendJson, json } from '../utils/json.js';
-import { createBooking } from '../models/bookingModel.js';
 import { isIso ,isValidId} from '../utils/valid.js';
-import { getBookingsByUserId } from '../models/bookingModel.js';
+import { getBookingsByUserId,getBookedRanges,createBooking } from '../models/bookingModel.js';
 export async function handlePostBooking(req,res){
   const { campsite_id, checkin, checkout, guests } = await json(req);
   if (!campsite_id || !isIso(checkin) || !isIso(checkout))
@@ -13,7 +12,13 @@ export async function handlePostBooking(req,res){
     throw new AppError('checkout must be after checkin', 400);
   if (!Number.isInteger(guests) || guests < 1)
     throw new AppError('guests must be positive int', 400);
-
+  console.log('Creating booking', {
+    campsite_id,
+    userId: req.user.id,
+    checkin,
+    checkout,
+    guests
+  });
   try {
     const booking = await createBooking({
       campsiteId : campsite_id,
@@ -40,4 +45,20 @@ export async function handleGetMyBookings(req, res) {
 
   const rows = await getBookingsByUserId(req.user.id, status );
   sendJson(res, 200, rows);
+}
+
+export async function handleBookedRanges(req, res) {
+  const parts = req.url.split('/');
+  const campsiteId = parts[3];
+  if (!isValidId(campsiteId)) {
+    throw new AppError('Invalid campsite id', 400);
+  }
+
+  try {
+    const data = await getBookedRanges(campsiteId);
+    sendJson(res, 200, data);
+  } catch (err) {
+    console.error(err);
+    throw new AppError('Error fetching booked ranges', 500);
+  }
 }

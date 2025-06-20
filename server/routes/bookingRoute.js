@@ -8,10 +8,10 @@ export async function bookingRoute(req, res) {
   const { pathname } = parse(req.url, true);
   if (req.method === 'POST' && pathname === '/api/bookings')
     return asyncHandler(protectRoute(handlePostBooking))(req, res);
-  if (method === "GET" && pathname === "/api/bookings") {
+  if (req.method === "GET" && pathname === "/api/bookings") {
     return asyncHandler(protectRoute(handleGetAllBookings))(req, res, 'admin');
   }
-  if (method === "DELETE" && pathname.startsWith("/api/bookings/")) {
+  if (req.method === "DELETE" && pathname.startsWith("/api/bookings/")) {
     return asyncHandler(protectRoute(handleDeleteBooking))(req, res);
   }
   sendJson(res, 405, { error: 'Method Not Allowed' });

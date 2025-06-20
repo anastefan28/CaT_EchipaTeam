@@ -123,7 +123,7 @@ function openBookingModal() {
 
 async function loadUserData(userId) {
   try {
-    const res = await fetch(`/api/admin/users/${userId}`);
+    const res = await fetch(`/api/users/${userId}`);
 
     if (!res.ok) {
       const errData = await res.json();
@@ -144,7 +144,7 @@ async function loadUserData(userId) {
 
 async function loadCampsiteData(campsiteId) {
   try {
-    const res = await fetch(`/api/admin/campsites/${campsiteId}`);
+    const res = await fetch(`/api/campsites/${campsiteId}`);
 
     if (!res.ok) {
       const errData = await res.json();
@@ -170,7 +170,7 @@ async function loadCampsiteData(campsiteId) {
 
 async function fetchUsers() {
   try {
-    const res = await fetch("/api/admin/users", {});
+    const res = await fetch("/api/users", {});
 
     if (!res.ok) {
       const errData = await res.json();
@@ -238,7 +238,7 @@ function renderUsers(users) {
 
 async function fetchCampsites() {
   try {
-    const res = await fetch("/api/admin/campsites", {});
+    const res = await fetch("/api/campsites", {});
 
     if (!res.ok) {
       const errData = await res.json();
@@ -308,7 +308,7 @@ function renderCampsites(campsites) {
 
 async function fetchDashboardStats() {
   try {
-    const res = await fetch("/api/admin/stats", {});
+    const res = await fetch("/api/stats", {});
 
     if (!res.ok) throw new Error("Failed to fetch stats.");
 
@@ -323,20 +323,20 @@ async function fetchDashboardStats() {
 }
 
 async function fetchBookings() {
-  try {
-    const res = await fetch("/api/admin/bookings", {});
+  // try {
+  //   const res = await fetch("/api/bookings", {});
 
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.error || "Failed to fetch bookings.");
-    }
+  //   if (!res.ok) {
+  //     const errData = await res.json();
+  //     throw new Error(errData.error || "Failed to fetch bookings.");
+  //   }
 
-    const bookings = await res.json();
-    renderBookings(bookings);
-  } catch (err) {
-    console.error("Error fetching bookings:", err.message);
-    alert("Error loading bookings: " + err.message);
-  }
+  //   const bookings = await res.json();
+  //   renderBookings(bookings);
+  // } catch (err) {
+  //   console.error("Error fetching bookings:", err.message);
+  //   alert("Error loading bookings: " + err.message);
+  // }
 }
 
 function renderBookings(bookings) {
@@ -501,7 +501,7 @@ async function saveUser(e) {
     }
 
     if (currentEditId) {
-      res = await fetch(`/api/admin/users/${currentEditId}`, {
+      res = await fetch(`/api/users/${currentEditId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -509,7 +509,7 @@ async function saveUser(e) {
         body: JSON.stringify(userData),
       });
     } else {
-      res = await fetch("/api/admin/users", {
+      res = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -581,13 +581,13 @@ async function saveCampsite(e) {
     };
 
     if (currentEditId) {
-      res = await fetch(`/api/admin/campsites/${currentEditId}`, {
+      res = await fetch(`/api/campsites/${currentEditId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(campsiteData),
       });
     } else {
-      res = await fetch("/api/admin/campsites", {
+      res = await fetch("/api/campsites", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(campsiteData),
@@ -628,7 +628,7 @@ async function deleteUser(id) {
   if (!confirm("Are you sure you want to delete this user?")) return;
 
   try {
-    const res = await fetch(`/api/admin/users/${id}`, {
+    const res = await fetch(`/api/users/${id}`, {
       method: "DELETE",
     });
 
@@ -650,7 +650,7 @@ async function deleteCampsite(btn, id) {
   if (!confirm("Are you sure you want to delete this campsite?")) return;
 
   try {
-    const res = await fetch(`/api/admin/campsites/${id}`, {
+    const res = await fetch(`/api/campsites/${id}`, {
       method: "DELETE",
     });
 
@@ -668,15 +668,23 @@ async function deleteCampsite(btn, id) {
   }
 }
 
-function editBooking(id) {
-  console.log("Edit booking:", id);
+async function editBooking(id) {
+  currentEditType = "booking";
+  currentEditId = id;
+
+  document.getElementById("bookingModalTitle").textContent = "Edit Booking";
+  document.getElementById("bookingForm").reset();
+
+
+
+  document.getElementById("bookingModal").style.display = "block";
 }
 
 async function deleteBooking(id) {
   if (!confirm("Are you sure you want to delete this booking?")) return;
 
   try {
-    const res = await fetch(`/api/admin/bookings/${id}`, {
+    const res = await fetch(`/api/bookings/${id}`, {
       method: "DELETE",
     });
 

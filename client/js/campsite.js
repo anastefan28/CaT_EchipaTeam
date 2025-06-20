@@ -1,4 +1,5 @@
 const campId = new URLSearchParams(location.search).get('id');
+const MAX_SIZE = 5 * 1024 * 1024; 
 let getRating;
 async function api(path, opt = {}) {
   const res = await fetch(path, { credentials: 'include', ...opt });
@@ -207,7 +208,24 @@ async function renderMessages(list, append = true) {
   append ? el.chatWrap.append(frag) : el.chatWrap.replaceChildren(frag);
   el.chatWrap.scrollTop = el.chatWrap.scrollHeight;
 }
-
+document.getElementById('reviewMedia').addEventListener('change', e => {
+  for (const f of e.target.files) {
+    if (f.size > MAX_SIZE) {
+      alert(`${f.name} is larger than 5 MB. Please choose a smaller file.`);
+      e.target.value = '';         
+      return;
+    }
+  }
+});
+document.getElementById('messageMedia').addEventListener('change', e => {
+  for (const f of e.target.files) {
+    if (f.size > MAX_SIZE) {
+      alert(`${f.name} is larger than 5 MB. Please choose a smaller file.`);
+      e.target.value = '';          
+      return;
+    }
+  }
+});
 async function submitReview() {
   const rating = +document.querySelector('.rating input:checked')?.value || 0;
   const text = document.querySelector('#reviewText').value.trim();

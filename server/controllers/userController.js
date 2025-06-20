@@ -1,5 +1,5 @@
 import { verifyJWT , getJWT} from "../utils/jwt.js";
-import { getUserById, updateUserById, findUserByEmail, deleteUserById} from "../models/userModel.js";
+import { getUserById, updateUserById, findUserByEmail, deleteUserById, getAllUsers} from "../models/userModel.js";
 import { sendJson } from "../utils/json.js";
 import { AppError } from "../utils/appError.js";
 import bcrypt from "bcrypt";

@@ -14,8 +14,8 @@ import {
   updateCampsiteById,
 } from "../models/campsiteModel.js";
 import { getAdminStats } from "../models/adminModel.js";
-import { getBookings } from "../models/adminModel.js";
 import { sendJson, json } from "../utils/json.js";
+import { deleteBookingById, getBookings } from "../models/bookingModel.js";
 import bcrypt from "bcrypt";
 
 export async function handleAdminUsers(req, res) {
@@ -259,5 +259,25 @@ export async function handleUpdateCampsite(req, res) {
   } catch (err) {
     console.error("Update campsite error:", err);
     return sendJson(res, 500, { error: "Internal server error." });
+  }
+}
+
+export async function handleDeleteBooking(req, res) {
+  const id = req.params?.id || req.url.split("/").pop();
+
+  try {
+    const deleted = await deleteBookingById(id);
+
+    if (!deleted) {
+      return sendJson(res, 404, { error: "Booking not found" });
+    }
+
+    return sendJson(res, 200, {
+      success: true,
+      message: "Booking deleted successfully",
+    });
+  } catch (err) {
+    console.error("Delete booking error:", err);
+    return sendJson(res, 500, { error: "Internal server error" });
   }
 }

@@ -124,6 +124,7 @@ function openBookingModal() {
 async function loadUserData(userId) {
   try {
     const res = await fetch(`/api/users/${userId}`);
+    const res = await fetch(`/api/users/${userId}`);
 
     if (!res.ok) {
       const errData = await res.json();
@@ -144,6 +145,7 @@ async function loadUserData(userId) {
 
 async function loadCampsiteData(campsiteId) {
   try {
+    const res = await fetch(`/api/campsites/${campsiteId}`);
     const res = await fetch(`/api/campsites/${campsiteId}`);
 
     if (!res.ok) {
@@ -323,20 +325,20 @@ async function fetchDashboardStats() {
 }
 
 async function fetchBookings() {
-  // try {
-  //   const res = await fetch("/api/bookings", {});
+  try {
+    const res = await fetch("/api/bookings", {});
 
-  //   if (!res.ok) {
-  //     const errData = await res.json();
-  //     throw new Error(errData.error || "Failed to fetch bookings.");
-  //   }
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || "Failed to fetch bookings.");
+    }
 
-  //   const bookings = await res.json();
-  //   renderBookings(bookings);
-  // } catch (err) {
-  //   console.error("Error fetching bookings:", err.message);
-  //   alert("Error loading bookings: " + err.message);
-  // }
+    const bookings = await res.json();
+    renderBookings(bookings);
+  } catch (err) {
+    console.error("Error fetching bookings:", err.message);
+    alert("Error loading bookings: " + err.message);
+  }
 }
 
 function renderBookings(bookings) {

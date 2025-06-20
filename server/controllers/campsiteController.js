@@ -1,7 +1,7 @@
 
 import { getCampsites, deleteCampsiteById } from '../models/campsiteModel.js';
 import { AppError } from '../utils/appError.js';
-import { sendJson } from '../utils/json.js';
+import { sendJson,json} from '../utils/json.js';
 import { isIso, isValidId } from '../utils/valid.js';
 import { updateCampsiteById, createCampsite, findCampsiteById } from '../models/campsiteModel.js';
 

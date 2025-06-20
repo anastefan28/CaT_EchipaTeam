@@ -70,13 +70,6 @@ export async function deleteUserById(id) {
   return result.rowCount > 0;
 }
 
-export async function findUserById(id) {
-  const result = await pool.query(
-    "SELECT id, username, email, role FROM users WHERE id = $1",
-    [id]
-  );
-  return result.rows[0];
-}
 
 export async function updateUserById(id, { username, email, password, role }) {
   const query = `

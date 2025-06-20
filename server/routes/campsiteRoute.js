@@ -1,4 +1,5 @@
-import { handleGetCampsites, handleGetCampsite} from '../controllers/campsiteController.js';
+import { handleGetCampsites, handleGetCampsite, handleCreateCampsite, 
+  handleDeleteCampsite ,handleUpdateCampsite} from '../controllers/campsiteController.js';
 import { handleGetMessagesByCampsite } from '../controllers/messageController.js';
 import { handleGetReviewsByCampsite } from '../controllers/reviewController.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -6,8 +7,8 @@ import { protectRoute } from '../middlewares/protect.js';
 import { sendJson } from '../utils/json.js';
 import { parse } from 'url';
 import { handlePostReview } from '../controllers/reviewController.js';
-import { handlePostMessage } from '../controllers/messageController.js';  
-import { handleBookedRanges } from '../controllers/bookingController.js';     
+import { handlePostMessage } from '../controllers/messageController.js';
+import { handleBookedRanges } from '../controllers/bookingController.js';
 export async function campsiteRoute(req, res) {
   const { pathname } = parse(req.url, true);
   const { method } = req;
@@ -15,22 +16,25 @@ export async function campsiteRoute(req, res) {
   if (method === 'GET' && pathname === '/api/campsites') {
     return asyncHandler(protectRoute(handleGetCampsites))(req, res);
   }
-  if(method=== 'GET' && pathname.startsWith('/api/campsites/')) {
+  if (method === 'GET' && pathname.startsWith('/api/campsites/')) {
     const parts = pathname.split('/');
     if (parts.length === 4 && parts[3]) {
       return asyncHandler(protectRoute(handleGetCampsite))(req, res);
     }
-    if( parts.length === 5 && parts[3] && parts[4] === 'messages') {
+    if (parts.length === 5 && parts[3] && parts[4] === 'messages') {
       return asyncHandler(protectRoute(handleGetMessagesByCampsite))(req, res);
     }
-    if( parts.length === 5 && parts[3] && parts[4] === 'reviews') {
+    if (parts.length === 5 && parts[3] && parts[4] === 'reviews') {
       return asyncHandler(protectRoute(handleGetReviewsByCampsite))(req, res);
     }
-    if( parts.length === 5 && parts[3] && parts[4] === 'booked') {
+    if (parts.length === 5 && parts[3] && parts[4] === 'booked') {
       return asyncHandler(protectRoute(handleBookedRanges))(req, res);
     }
   }
-  if(method === 'POST' && pathname.startsWith('/api/campsites/')) {
+  if (method === 'POST' && pathname.startsWith('/api/campsites/')) {
+    if (method === "POST" && pathname === "/api/campsites") {
+      return asyncHandler(protectRoute(handleCreateCampsite))(req, res, 'admin');
+    }
     const parts = pathname.split('/');
     if (parts.length === 5 && parts[3] && parts[4] === 'reviews') {
       return asyncHandler(protectRoute(handlePostReview))(req, res);
@@ -38,6 +42,12 @@ export async function campsiteRoute(req, res) {
     if (parts.length === 5 && parts[3] && parts[4] === 'messages') {
       return asyncHandler(protectRoute(handlePostMessage))(req, res);
     }
+  }
+  if (method === "DELETE" && pathname.startsWith("/api/campsites/")) {
+    return asyncHandler(protectRoute(handleDeleteCampsite))(req, res);
+  }
+  if (method === "PUT" && pathname.startsWith("/api/campsites/")) {
+    return asyncHandler(protectRoute(handleUpdateCampsite))(req, res, 'admin');
   }
   sendJson(res, 405, { error: 'Method Not Allowed' });
 }

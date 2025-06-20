@@ -14,7 +14,7 @@ export async function bookingRoute(req, res) {
   const { pathname } = parse(req.url, true);
   if (req.method === 'POST' && pathname === '/api/bookings')
     return asyncHandler(protectRoute(handlePostBooking))(req, res);
-
+  
   if (req.method === "GET" && pathname === "/api/bookings") {
     return asyncHandler(protectRoute(handleGetAllBookings))(req, res, "admin");
   }
@@ -23,6 +23,7 @@ export async function bookingRoute(req, res) {
     return asyncHandler(protectRoute(handleGetBooking))(req, res, 'admin');
 
   }
+
 
   if (req.method === "DELETE" && pathname.startsWith("/api/bookings/")) {
     return asyncHandler(protectRoute(handleDeleteBooking))(req, res);

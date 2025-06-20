@@ -729,6 +729,7 @@ async function editBooking(id) {
     console.error("Error loading booking:", err.message);
     alert("Error loading booking: " + err.message);
   }
+
 }
 
 async function deleteBooking(id) {

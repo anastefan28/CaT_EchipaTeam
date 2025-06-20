@@ -11,6 +11,7 @@ import {
   updateBooking,
 } from "../models/bookingModel.js";
 
+
 export async function handlePostBooking(req,res){
   const { campsite_id, checkin, checkout, guests } = await json(req);
   if (!campsite_id || !isIso(checkin) || !isIso(checkout))

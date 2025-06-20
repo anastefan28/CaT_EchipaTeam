@@ -412,7 +412,16 @@ form.addEventListener('submit', async (e) => {
     }
   }
 });
-
+document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (!res.ok) throw new Error('Logout failed');
+  } catch (err) {
+    console.warn('Logout request failed:', err);
+  }
+  window.location.href = '/index';
+});
 (async () => {
   if (!campId) return alert('Missing ?id parameter');
 

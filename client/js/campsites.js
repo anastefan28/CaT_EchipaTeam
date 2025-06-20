@@ -87,30 +87,49 @@ function setupEventListeners() {
 }
 
 function applyFilters() {
-  updateURLParams(); 
-  const loc = document.getElementById('locationFilter').value.toLowerCase();
-  const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
-  const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
-  const county = document.getElementById('countyFilter').value;
-  const capacity = document.getElementById('capacityFilter').value;
-  const rating = parseFloat(document.querySelector('input[name="rating"]:checked')?.value) || 0;
+  updateURLParams();
+  const loc = document.getElementById("locationFilter").value.toLowerCase();
+  const minPrice = parseFloat(document.getElementById("minPrice").value) || 0;
+  const maxPrice =
+    parseFloat(document.getElementById("maxPrice").value) || Infinity;
+  const county = document.getElementById("countyFilter").value;
+  const capacity = document.getElementById("capacityFilter").value;
 
-  const selectedTypes = Array.from(document.querySelectorAll('input[name="type"]:checked')).map(cb => cb.value);
-  const selectedAmenities = Array.from(document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked'))
-    .filter(cb => cb.name === 'amenities')
-    .map(cb => cb.value);
+  const ratingRadio = document.querySelector('input[name="rating"]:checked');
+  const rating = ratingRadio?.value ? parseFloat(ratingRadio.value) : null;
 
-  filteredCampsites = allCampsites.filter(c => {
-    if (loc && !c.name.toLowerCase().includes(loc) && !c.description.toLowerCase().includes(loc)) return false;
+  const selectedTypes = Array.from(
+    document.querySelectorAll('input[name="type"]:checked')
+  ).map((cb) => cb.value);
+  const selectedAmenities = Array.from(
+    document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked')
+  )
+    .filter((cb) => cb.name === "amenities")
+    .map((cb) => cb.value);
+
+  filteredCampsites = allCampsites.filter((c) => {
+    if (
+      loc &&
+      !c.name.toLowerCase().includes(loc) &&
+      !c.description.toLowerCase().includes(loc)
+    )
+      return false;
     if (c.price < minPrice || c.price > maxPrice) return false;
     if (county && c.county !== county) return false;
     if (selectedTypes.length && !selectedTypes.includes(c.type)) return false;
     if (capacity) {
-      const [minCap, maxCap] = capacity.includes('+') ? [7, Infinity] : capacity.split('-').map(Number);
+      const [minCap, maxCap] = capacity.includes("+")
+        ? [7, Infinity]
+        : capacity.split("-").map(Number);
       if (c.capacity < minCap || c.capacity > maxCap) return false;
     }
-    if (c.rating < rating) return false;
-    if (selectedAmenities.length && !selectedAmenities.every(a => c.amenities.includes(a))) return false;
+    const actualRating = c.rating ?? c.avg_rating ?? 0;
+    if (rating !== null && actualRating < rating) return false;
+    if (
+      selectedAmenities.length &&
+      !selectedAmenities.every((a) => c.amenities.includes(a))
+    )
+      return false;
 
     return true;
   });
@@ -118,6 +137,7 @@ function applyFilters() {
   displayedCount = 6;
   renderCampsites();
 }
+
 
 function sortCampsites() {
   const sort = document.getElementById('sortSelect').value;

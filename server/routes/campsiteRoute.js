@@ -31,8 +31,8 @@ export async function campsiteRoute(req, res) {
       return asyncHandler(protectRoute(handleBookedRanges))(req, res);
     }
   }
-  if (method === 'POST' && pathname.startsWith('/api/campsites/')) {
-    if (method === "POST" && pathname === "/api/campsites") {
+  if (method === 'POST' && pathname.startsWith('/api/campsites')) {
+    if (pathname === "/api/campsites") {
       return asyncHandler(protectRoute(handleCreateCampsite))(req, res, 'admin');
     }
     const parts = pathname.split('/');

@@ -1,7 +1,7 @@
 import { AppError } from '../utils/appError.js';
 import { sendJson, json } from '../utils/json.js';
 import { isIso ,isValidId} from '../utils/valid.js';
-import { getBookingsByUserId,getBookedRanges,createBooking, deleteBookingById } from '../models/bookingModel.js';
+import { getBookingsByUserId,getBookedRanges,createBooking, deleteBookingById, getBookings } from '../models/bookingModel.js';
 
 export async function handlePostBooking(req,res){
   const { campsite_id, checkin, checkout, guests } = await json(req);

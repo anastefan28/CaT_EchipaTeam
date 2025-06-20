@@ -1,7 +1,16 @@
 import { AppError } from '../utils/appError.js';
 import { sendJson, json } from '../utils/json.js';
 import { isIso ,isValidId} from '../utils/valid.js';
-import { getBookingsByUserId,getBookedRanges,createBooking, deleteBookingById, getBookings } from '../models/bookingModel.js';
+import {
+  getBookingsByUserId,
+  getBookedRanges,
+  createBooking,
+  deleteBookingById,
+  getBookings,
+  getBooking,
+  updateBooking,
+} from "../models/bookingModel.js";
+
 
 export async function handlePostBooking(req,res){
   const { campsite_id, checkin, checkout, guests } = await json(req);
@@ -86,4 +95,50 @@ export async function handleDeleteBooking(req, res) {
 export async function handleGetAllBookings(req, res) {
   const bookings = await getBookings();
   sendJson(res, 200, bookings);
+}
+
+export async function handleGetBooking(req, res) {
+  const id = req.params?.id || req.url.split("/").pop();
+  if (!isValidId(id)) {
+    throw new AppError('Invalid booking id', 400);
+  }
+
+  const booking = await getBooking(id);
+  if (!booking) {
+    throw new AppError('Booking not found', 404);
+  }
+  
+  sendJson(res, 200, booking);
+}
+export async function handleUpdateBooking(req, res) {
+  const id = req.params?.id || req.url.split("/").pop();
+  if (!isValidId(id)) {
+    throw new AppError("Invalid booking id", 400);
+  }
+
+  const { checkin, checkout, guests } = await json(req);
+
+  if (!isIso(checkin) || !isIso(checkout)) {
+    throw new AppError("checkin and checkout must be valid ISO dates", 400);
+  }
+
+  if (new Date(checkout) <= new Date(checkin)) {
+    throw new AppError("checkout must be after checkin", 400);
+  }
+
+  if (!Number.isInteger(guests) || guests < 1) {
+    throw new AppError("guests must be a positive integer", 400);
+  }
+
+  try {
+    const updatedBooking = await updateBooking(id, {
+      checkin,
+      checkout,
+      guests,
+    });
+    sendJson(res, 200, updatedBooking);
+  } catch (err) {
+    console.error(err);
+    throw new AppError("Error updating booking", 500);
+  }
 }

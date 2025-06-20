@@ -621,7 +621,46 @@ async function saveCampsite(e) {
 
 async function saveBooking(e) {
   e.preventDefault();
-  console.log("Save booking functionality needs to be implemented");
+
+  const checkin = document.getElementById("bookingCheckin").value;
+  const checkout = document.getElementById("bookingCheckout").value;
+  const guests = parseInt(document.getElementById("bookingGuests").value);
+
+  if (!checkin || !checkout || isNaN(guests)) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  if (!currentEditId) {
+    alert(
+      "Booking creation from admin is not allowed. Select an existing booking to edit."
+    );
+    return;
+  }
+
+  try {
+    const bookingData = { checkin, checkout, guests };
+
+    const res = await fetch(`/api/bookings/${currentEditId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to update booking.");
+    }
+
+    closeModal("bookingModal");
+    fetchBookings();
+    fetchDashboardStats();
+    alert("Booking updated successfully!");
+  } catch (err) {
+    console.error("Error updating booking:", err);
+    alert("Error updating booking: " + err.message);
+  }
 }
 
 async function deleteUser(id) {
@@ -672,12 +711,25 @@ async function editBooking(id) {
   currentEditType = "booking";
   currentEditId = id;
 
-  document.getElementById("bookingModalTitle").textContent = "Edit Booking";
-  document.getElementById("bookingForm").reset();
+  try {
+    const res = await fetch(`/api/bookings/${id}`);
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || "Failed to fetch booking data.");
+    }
 
+    const booking = await res.json();
+    document.getElementById("bookingCheckin").value = booking.checkin;
+    document.getElementById("bookingCheckout").value = booking.checkout;
+    document.getElementById("bookingGuests").value = booking.guests;
 
+    document.getElementById("bookingModalTitle").textContent = "Edit Booking";
+    document.getElementById("bookingModal").style.display = "block";
+  } catch (err) {
+    console.error("Error loading booking:", err.message);
+    alert("Error loading booking: " + err.message);
+  }
 
-  document.getElementById("bookingModal").style.display = "block";
 }
 
 async function deleteBooking(id) {

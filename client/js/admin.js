@@ -370,8 +370,14 @@ function renderBookings(bookings) {
     endDateCell.textContent = new Date(booking.end_date).toLocaleDateString();
     tr.appendChild(endDateCell);
 
+    const startDate = new Date(booking.start_date);
+    const endDate = new Date(booking.end_date);
+    const diffDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+    const nights = diffDays > 0 ? diffDays : 1;
+    const total = nights * parseFloat(booking.campsite_price || 0);
+
     const totalCell = document.createElement("td");
-    totalCell.textContent = `${booking.total} RON`;
+    totalCell.textContent = `${total.toFixed(2)} RON`;
     tr.appendChild(totalCell);
 
     const statusCell = document.createElement("td");
@@ -666,8 +672,25 @@ function editBooking(id) {
   console.log("Edit booking:", id);
 }
 
-function deleteBooking(id) {
-  if (confirm("Are you sure you want to delete this booking?")) {
-    console.log("Delete booking:", id);
+async function deleteBooking(id) {
+  if (!confirm("Are you sure you want to delete this booking?")) return;
+
+  try {
+    const res = await fetch(`/api/admin/bookings/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to delete booking.");
+    }
+
+    fetchDashboardStats();
+    fetchBookings();
+    alert("Booking deleted successfully!");
+  } catch (err) {
+    console.error("Error deleting booking:", err);
+    alert("Error deleting booking: " + err.message);
   }
 }

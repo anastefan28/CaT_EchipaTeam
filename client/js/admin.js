@@ -370,8 +370,14 @@ function renderBookings(bookings) {
     endDateCell.textContent = new Date(booking.end_date).toLocaleDateString();
     tr.appendChild(endDateCell);
 
+    const startDate = new Date(booking.start_date);
+    const endDate = new Date(booking.end_date);
+    const diffDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+    const nights = diffDays > 0 ? diffDays : 1;
+    const total = nights * parseFloat(booking.campsite_price || 0);
+
     const totalCell = document.createElement("td");
-    totalCell.textContent = `${booking.total} RON`;
+    totalCell.textContent = `${total.toFixed(2)} RON`;
     tr.appendChild(totalCell);
 
     const statusCell = document.createElement("td");

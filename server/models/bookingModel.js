@@ -46,7 +46,8 @@ export async function getBookings() {
       b.status,
       b.created_at,
       u.username AS user_name,
-      c.name AS campsite_name
+      c.name AS campsite_name,
+      c.price AS campsite_price
     FROM bookings b
     JOIN users u ON b.user_id = u.id
     JOIN campsites c ON b.campsite_id = c.id

@@ -666,8 +666,25 @@ function editBooking(id) {
   console.log("Edit booking:", id);
 }
 
-function deleteBooking(id) {
-  if (confirm("Are you sure you want to delete this booking?")) {
-    console.log("Delete booking:", id);
+async function deleteBooking(id) {
+  if (!confirm("Are you sure you want to delete this booking?")) return;
+
+  try {
+    const res = await fetch(`/api/admin/bookings/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to delete booking.");
+    }
+
+    fetchDashboardStats();
+    fetchBookings();
+    alert("Booking deleted successfully!");
+  } catch (err) {
+    console.error("Error deleting booking:", err);
+    alert("Error deleting booking: " + err.message);
   }
 }

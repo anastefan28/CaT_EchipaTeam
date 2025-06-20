@@ -14,9 +14,9 @@ import {
   handleGetCampsiteById,
   handleUpdateUser,
   handleUpdateCampsite,
+  handleDeleteBooking,
 } from "../controllers/adminController.js";
 import { sendJson } from "../utils/json.js";
-import path from "path";
 
 export async function adminRoute(req, res) {
   const { pathname } = parse(req.url, true);
@@ -68,6 +68,10 @@ export async function adminRoute(req, res) {
 
   if (method === "PUT" && pathname.startsWith("/api/admin/campsites/")) {
     return asyncHandler(protectRoute(handleUpdateCampsite))(req, res);
+  }
+
+  if (method === "DELETE" && pathname.startsWith("/api/admin/bookings/")) {
+    return asyncHandler(protectRoute(handleDeleteBooking))(req, res);
   }
 
   sendJson(res, 405, { error: "Method Not Allowed" });

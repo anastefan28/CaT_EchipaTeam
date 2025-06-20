@@ -13,5 +13,4 @@ export const routes = {
 	'/api/bookings': bookingRoute, 
 	'/api/users' : userRoute,
 	'/api/stats': statsRoute
-	'/api/users': userRoute,
 };

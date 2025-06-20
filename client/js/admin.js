@@ -124,8 +124,6 @@ function openBookingModal() {
 async function loadUserData(userId) {
   try {
     const res = await fetch(`/api/users/${userId}`);
-    const res = await fetch(`/api/users/${userId}`);
-
     if (!res.ok) {
       const errData = await res.json();
       throw new Error(errData.error || "Failed to fetch user data.");
@@ -145,7 +143,6 @@ async function loadUserData(userId) {
 
 async function loadCampsiteData(campsiteId) {
   try {
-    const res = await fetch(`/api/campsites/${campsiteId}`);
     const res = await fetch(`/api/campsites/${campsiteId}`);
 
     if (!res.ok) {

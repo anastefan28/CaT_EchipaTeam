@@ -285,38 +285,26 @@ body {
   content: "✍️";
   font-size: 1.2rem;
 }
-
-.rating-input {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  align-items: center;
+.rating {                 
+  display: inline-flex; 
+  flex-direction: row-reverse; 
 }
 
-.rating-input::before {
-  content: "Rating: ";
-  font-weight: 600;
-  color: #2e7d32;
-  margin-right: 10px;
+
+.rating input {
+  display: none
 }
 
-.star-input {
-  font-size: 2rem;
+.rating label {
   cursor: pointer;
-  color: #e0e0e0;
-  transition: all 0.3s ease;
-  transform-origin: center;
+  font-size: 1.5rem;
+  opacity: .4
 }
 
-.star-input:hover {
-  color: #ffb300;
-  transform: scale(1.2);
-}
-
-.star-input.active {
-  color: #ffc107;
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.5));
+.rating input:checked~label,
+.rating label:hover,
+.rating label:hover~label {
+  opacity: 1
 }
 
 .review-textarea {
@@ -595,10 +583,26 @@ body {
   color: #333;
 }
 
-.date-inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+.date-inputs {                       /* the wrapper that already exists   */
+  grid-template-columns: repeat(2, 130px);   /* 130-px wide columns      */
+}
+
+/* make the boxes a little taller & give them a nicer look */
+.date-inputs input[type="text"],
+.date-inputs input[type="date"] {    /* flatpickr turns them into [type=text] */
+  width : 100%;                      /* fill the 130 px column              */
+  height: 38px;                      /* ↕ taller line                       */
+  padding: 0 8px;
+  border : 2px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* keep focus style consistent with the rest of the form */
+.date-inputs input:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, .15);
 }
 
 input[type="date"],
@@ -617,15 +621,32 @@ select:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, .1);
 }
-.banner{
-  margin-top:1rem;padding:.75rem 1rem;
-  border-radius:6px;font-weight:600;text-align:center;
-  color:#fff;
+
+.banner {
+  margin-top: 1rem;
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
 }
-.banner.success{background:#2e7d32;}
-.banner.warn   {background:#f57c00;}
-.banner.error  {background:#c62828;}
-.hidden{display:none;}
+
+.banner.success {
+  background: #2e7d32;
+}
+
+.banner.warn {
+  background: #f57c00;
+}
+
+.banner.error {
+  background: #c62828;
+}
+
+.hidden {
+  display: none;
+}
+
 .book-btn {
   background: linear-gradient(135deg, #4caf50, #2e7d32);
   color: #fff;

@@ -8,38 +8,6 @@ async function api(path, opt = {}) {
   throw new Error(errors.join(', '));
 }
 
-function buildStarPicker(rootSel) {
-  const root = document.querySelector(rootSel);
-  if (!root) return () => 0;
-
-  const stars = [...root.querySelectorAll('.star-input')];
-  let current = 0;
-
-  const paint = val => {
-    stars.forEach(s => {
-      const n = +s.dataset.rating;
-      s.classList.toggle('active', n <= val);
-    });
-  };
-
-  stars.forEach(star => {
-    const n = +star.dataset.rating;
-    star.onmouseenter = () => paint(n);
-    star.onclick = () => {
-      current = n;
-      paint(current);
-    };
-  });
-
-  root.onmouseleave = () => paint(current);
-  root.ondblclick = () => {
-    current = 0;
-    paint(current);
-  };
-
-  return () => current;
-}
-
 async function mediaNode(id) {
   const blob = await fetch(`/api/media/${id}`).then(r => r.blob());
   const url = URL.createObjectURL(blob);
@@ -241,22 +209,31 @@ async function renderMessages(list, append = true) {
 }
 
 async function submitReview() {
-  const rating = getRating();
+  const rating = +document.querySelector('.rating input:checked')?.value || 0;
   const text = document.querySelector('#reviewText').value.trim();
   const files = document.querySelector('#reviewMedia').files;
-  if (!rating) return alert('Pick a star rating first');
-  if (!text) return alert('Write a review');
+  if (!rating) return showReviewBanner('⚠️ Pick a star rating first', 'warn');
+  if (!text)
+    return showReviewBanner('⚠️ Write a review before submitting', 'warn');
 
-  const review = await api(`/api/campsites/${campId}/reviews`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ rating, body_md: text })
-  });
-  review.media_ids = await uploadMedia({ reviewId: review.id, files });
-  renderReviews([review]);
+  try {
+    const review = await api(`/api/campsites/${campId}/reviews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating, body_md: text })
+    });
 
-  document.querySelector('#reviewText').value = '';
-  document.querySelector('#reviewMedia').value = '';
+    review.media_ids = await uploadMedia({ reviewId: review.id, files });
+    renderReviews([review]);
+    document.querySelector('#reviewText').value = '';
+    document.querySelector('#reviewMedia').value = '';
+    showReviewBanner('🎉 Review posted – thank you!', 'success');
+
+  } catch (ex) {
+    showReviewBanner('⚠️ You already reviewed this campsite.', 'warn');
+    document.querySelector('#reviewText').value = '';
+    document.querySelector('#reviewMedia').value = '';
+  }
 }
 
 async function sendMessage() {
@@ -275,6 +252,38 @@ async function sendMessage() {
 
   document.querySelector('#messageText').value = '';
   document.querySelector('#messageMedia').value = '';
+}
+async function initDatePickers() {
+  const booked = await api(`/api/campsites/${campId}/booked`);
+  const disabled = booked.map(r => ({
+    from: r.checkin,
+    to  : r.checkout           
+  }));
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  let fpOut;   
+  const fpIn=flatpickr('#checkinDate', {
+    dateFormat: 'Y-m-d',
+    minDate: tomorrow,
+    disable: disabled,
+    onChange: ([d]) => {
+      fpOut.set('minDate', d ? new Date(d.getTime() + 86_400_000) : tomorrow);
+      fpOut.open();           
+      updateWeatherIfBoth();
+    }
+  });
+
+  fpOut=flatpickr('#checkoutDate', {
+    dateFormat: 'Y-m-d',
+    minDate   : tomorrow,
+    disable   : disabled,
+    onChange  :  updateWeatherIfBoth
+  });
+  function updateWeatherIfBoth() {
+    const inVal = document.getElementById('checkinDate').value;
+    const outVal = document.getElementById('checkoutDate').value;
+    if (inVal && outVal) updateWeather();      
+  }
 }
 
 document.addEventListener('click', e => {
@@ -337,19 +346,27 @@ async function updateWeather() {
 }
 const form = document.getElementById('bookingForm');
 
-async function postBooking(data){
-  const res = await fetch('/api/bookings',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data),
-    credentials:'include'
+async function postBooking(data) {
+  const res = await fetch('/api/bookings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+    credentials: 'include'
   });
   if (res.ok) return res.json();
-  const { errors = [res.statusText] } = await res.json().catch(()=>({}));
+  const { errors = [res.statusText] } = await res.json().catch(() => ({}));
   const err = new Error(errors.join(', '));
   err.status = res.status;
   throw err;
 }
+const reviewBanner = document.getElementById('reviewBanner');
+const showReviewBanner = (txt, kind = 'success') => {
+  reviewBanner.textContent = txt;
+  reviewBanner.className = `banner ${kind}`;
+  reviewBanner.classList.remove('hidden');
+  clearTimeout(showReviewBanner.t);
+  showReviewBanner.t = setTimeout(() => reviewBanner.classList.add('hidden'), 4000);
+};
 const banner = document.getElementById('bookingBanner');
 const showBanner = (text, kind = 'success') => {
   banner.textContent = text;
@@ -358,20 +375,13 @@ const showBanner = (text, kind = 'success') => {
   clearTimeout(showBanner.t);
   showBanner.t = setTimeout(() => banner.classList.add('hidden'), 4000);
 };
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const checkin = document.getElementById('checkinDate').value;
   const checkout = document.getElementById('checkoutDate').value;
+  console.log(checkin, checkout);
   const guests = +document.getElementById('guestCount').value;
-
-  const err =
-    !checkin || !checkout ? 'Pick both dates' :
-      checkin >= checkout ? 'Checkout must be after check-in' :
-        !Number.isInteger(guests) || guests < 1 ? 'Invalid guest count' : '';
-
-  if (err) { alert(err); return; }
-
   try {
     await postBooking({ campsite_id: campId, checkin, checkout, guests });
     form.reset();
@@ -384,6 +394,7 @@ form.addEventListener('submit', async (e) => {
     }
   }
 });
+
 (async () => {
   if (!campId) return alert('Missing ?id parameter');
 
@@ -396,9 +407,9 @@ form.addEventListener('submit', async (e) => {
 
     renderCampsite(campsite);
     buildSlider(campsite.media_ids || []);
+    await initDatePickers();
     await renderReviews(reviews || [], false);
     await renderMessages(messages || [], false);
-    getRating = buildStarPicker('#ratingInput');
   } catch (err) {
     console.error(err);
     alert(err.message);

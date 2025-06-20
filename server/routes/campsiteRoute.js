@@ -7,6 +7,7 @@ import { sendJson } from '../utils/json.js';
 import { parse } from 'url';
 import { handlePostReview } from '../controllers/reviewController.js';
 import { handlePostMessage } from '../controllers/messageController.js';  
+import { handleBookedRanges } from '../controllers/bookingController.js';     
 export async function campsiteRoute(req, res) {
   const { pathname } = parse(req.url, true);
   const { method } = req;
@@ -24,6 +25,9 @@ export async function campsiteRoute(req, res) {
     }
     if( parts.length === 5 && parts[3] && parts[4] === 'reviews') {
       return asyncHandler(protectRoute(handleGetReviewsByCampsite))(req, res);
+    }
+    if( parts.length === 5 && parts[3] && parts[4] === 'booked') {
+      return asyncHandler(protectRoute(handleBookedRanges))(req, res);
     }
   }
   if(method === 'POST' && pathname.startsWith('/api/campsites/')) {

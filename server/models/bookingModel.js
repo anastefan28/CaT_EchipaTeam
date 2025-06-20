@@ -69,16 +69,3 @@ export async function getBookings() {
   const result = await pool.query(query);
   return result.rows;
 }
-
-export async function getBookedRanges(campsiteId) {
-  const sql = `SELECT (LOWER(period)+ INTERVAL '1 day')::date AS checkin,
-    UPPER(period)  AS checkout
-    FROM bookings WHERE campsite_id = $1 AND  status = 'confirmed'
-      AND  UPPER(period) >= CURRENT_DATE ORDER BY checkin;
-  `;
-  const { rows } = await pool.query(sql, [campsiteId]);
-  return rows.map(r => ({
-    checkin : r.checkin .toISOString().slice(0, 10),
-    checkout: r.checkout.toISOString().slice(0, 10)
-  }));
-}

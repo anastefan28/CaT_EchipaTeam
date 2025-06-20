@@ -70,3 +70,50 @@ export async function getBookings() {
   return result.rows;
 
 }
+
+export async function getBooking(id) {
+  const query = `
+    SELECT
+      b.id,
+      b.user_id,
+      b.campsite_id,
+      LOWER(b.period) AS start_date,
+      UPPER(b.period) AS end_date,
+      b.guests,
+      b.status,
+      b.created_at,
+      u.username AS user_name,
+      c.name AS campsite_name,
+      c.price AS campsite_price
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    JOIN campsites c ON b.campsite_id = c.id
+    WHERE b.id = $1
+  `;
+  const result = await pool.query(query, [id]);
+  return result.rows[0];
+}
+
+export async function updateBooking(id, updates) {
+  const { checkin, checkout, guests } = updates;
+
+  if (!checkin || !checkout || guests === undefined) {
+    throw new Error("Missing required fields: checkin, checkout, guests");
+  }
+
+  const query = `
+    UPDATE bookings 
+    SET 
+      period = daterange($1::date, $2::date, '[]'),
+      guests = $3
+    WHERE id = $4
+    RETURNING *;
+  `;
+
+  const values = [checkin, checkout, guests, id];
+
+  const { rows } = await pool.query(query, values);
+  if (!rows.length) throw new Error("Booking not found");
+
+  return rows[0];
+}

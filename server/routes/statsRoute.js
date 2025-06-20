@@ -1,7 +1,7 @@
 import { parse } from "url";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { protectRoute } from "../middlewares/protect.js";
-import {handleAdminStats} from "../controllers/adminController.js";
+import {handleAdminStats} from "../controllers/statsController.js";
 import { sendJson } from "../utils/json.js";
 
 export async function statsRoute(req, res) {

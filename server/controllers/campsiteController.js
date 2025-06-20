@@ -3,6 +3,7 @@ import { getCampsites, deleteCampsiteById } from '../models/campsiteModel.js';
 import { AppError } from '../utils/appError.js';
 import { sendJson } from '../utils/json.js';
 import { isIso, isValidId } from '../utils/valid.js';
+import { updateCampsiteById, createCampsite, findCampsiteById } from '../models/campsiteModel.js';
 
 export async function handleGetCampsites(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -94,4 +95,85 @@ export async function handleGetCampsite(req, res) {
     throw new AppError('Internal Server Error', 500);
   }
 }
+
+export async function handleUpdateCampsite(req, res) {
+  const id = req.params?.id || req.url.split("/").pop();
+
+  try {
+    const { name, description, lat, lon, capacity, price, county, type } =
+      await json(req);
+
+    if (
+      !name ||
+      lat === undefined ||
+      lon === undefined ||
+      !capacity ||
+      price === undefined ||
+      !county ||
+      !type
+    ) {
+      return sendJson(res, 400, { error: "Missing required fields." });
+    }
+
+    const existing = await findCampsiteById(id);
+    if (!existing) {
+      return sendJson(res, 404, { error: "Campsite not found." });
+    }
+
+    await updateCampsiteById(id, {
+      name,
+      description,
+      lat,
+      lon,
+      capacity,
+      price,
+      county,
+      type,
+    });
+
+    return sendJson(res, 200, {
+      success: true,
+      message: "Campsite updated successfully.",
+    });
+  } catch (err) {
+    console.error("Update campsite error:", err);
+    return sendJson(res, 500, { error: "Internal server error." });
+  }
+}
+
+export async function handleCreateCampsite(req, res) {
+  try {
+    const { name, description, lat, lon, capacity, price, county, type } =
+      await json(req);
+
+    if (
+      !name ||
+      lat === undefined ||
+      lon === undefined ||
+      !capacity ||
+      price === undefined ||
+      !county ||
+      !type
+    ) {
+      return sendJson(res, 400, { error: "Missing required fields." });
+    }
+
+    const campsite = await createCampsite({
+      name,
+      description,
+      lat,
+      lon,
+      capacity,
+      price,
+      county,
+      type,
+    });
+
+    return sendJson(res, 201, campsite);
+  } catch (err) {
+    console.error("Create campsite error:", err);
+    return sendJson(res, 500, { error: "Failed to create campsite." });
+  }
+}
+
 

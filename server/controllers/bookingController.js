@@ -1,7 +1,8 @@
 import { AppError } from '../utils/appError.js';
 import { sendJson, json } from '../utils/json.js';
 import { isIso ,isValidId} from '../utils/valid.js';
-import { getBookingsByUserId,getBookedRanges,createBooking } from '../models/bookingModel.js';
+import { getBookingsByUserId,getBookedRanges,createBooking, deleteBookingById } from '../models/bookingModel.js';
+
 export async function handlePostBooking(req,res){
   const { campsite_id, checkin, checkout, guests } = await json(req);
   if (!campsite_id || !isIso(checkin) || !isIso(checkout))
@@ -61,4 +62,28 @@ export async function handleBookedRanges(req, res) {
     console.error(err);
     throw new AppError('Error fetching booked ranges', 500);
   }
+}
+export async function handleDeleteBooking(req, res) {
+  const id = req.params?.id || req.url.split("/").pop();
+
+  try {
+    const deleted = await deleteBookingById(id);
+
+    if (!deleted) {
+      return sendJson(res, 404, { error: "Booking not found" });
+    }
+
+    return sendJson(res, 200, {
+      success: true,
+      message: "Booking deleted successfully",
+    });
+  } catch (err) {
+    console.error("Delete booking error:", err);
+    return sendJson(res, 500, { error: "Internal server error" });
+  }
+}
+
+export async function handleGetAllBookings(req, res) {
+  const bookings = await getBookings();
+  sendJson(res, 200, bookings);
 }

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Campsite Details — CampSpot</title>
     <link rel="stylesheet" href="../css/campsite.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body>
@@ -17,9 +19,9 @@
         <nav class="nav">
             <a href="/dashboard" class="logo">CampSpot</a>
             <div class="nav-links">
-                <a href="/bookings" class="nav-item">📅 My&nbsp;Bookings</a>
-                <a href="/profile" class="nav-item">👤 Account&nbsp;Details</a>
-                <a href="/campsites" class="nav-item">🗺️ Browse&nbsp;Campsites</a>
+                <a href="/bookings" class="nav-item">📅 My Bookings</a>
+                <a href="/profile" class="nav-item">👤 Account Details</a>
+                <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
                 <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
             </div>
         </nav>
@@ -27,18 +29,16 @@
 
     <div class="container">
         <main class="main-content">
-            <section class="image-gallery">
+            <div class="image-gallery">
                 <button class="arrow left" id="prevBtn">‹</button>
-                <div class="main-image" id="mainImage">
-                    🏕️
-                </div>
+                <div class="main-image" id="mainImage"></div>
                 <button class="arrow right" id="nextBtn">›</button>
-            </section>
+            </div>
 
             <section class="campsite-info">
                 <div class="campsite-header">
                     <div>
-                        <h1 class="campsite-title" id="campsiteName"></h1>
+                        <h1 class="campsite-title" id="campsiteName"> Campsite Name</h1>
                     </div>
                     <div class="campsite-type-badge" id="campsiteType"></div>
                 </div>
@@ -84,7 +84,7 @@
                 <h3 class="section-title">Reviews</h3>
                 <div id="reviewsList"></div>
                 <div class="add-review">
-                    <h4 style="margin-bottom:15px;color:#2e7d32;">Add&nbsp;Your&nbsp;Review</h4>
+                    <h4 style="margin-bottom:15px;color:#2e7d32;">Add your Review</h4>
                     <div class="rating-input" id="ratingInput">
                         <span class="star-input" data-rating="1">⭐</span>
                         <span class="star-input" data-rating="2">⭐</span>
@@ -105,18 +105,21 @@
             </section>
 
             <section class="chat-section">
-                <h3 class="section-title">Community&nbsp;Chat</h3>
+                <h3 class="section-title">Community Chat</h3>
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input">
-                    <textarea class="message-textarea" id="messageText" rows="2"placeholder="Join the conversation…"></textarea>
+                    <textarea class="message-textarea" id="messageText" rows="2"
+                        placeholder="Join the conversation…"></textarea>
                     <div class="media-upload">
                         <div class="file-upload-wrapper">
-                            <label class="file-upload-button" id="fileLabelMessage" for="messageMedia">Attach files</label>
+                            <label class="file-upload-button" id="fileLabelMessage" for="messageMedia">Attach
+                                files</label>
                             <input type="file" id="messageMedia" class="file-upload-input"
                                 accept="image/*,video/*,audio/*" multiple onchange="updateFileLabel()">
                         </div>
                         <button class="submit-btn" onclick="sendMessage()">Send</button>
                     </div>
+                </div>
             </section>
         </main>
 
@@ -130,17 +133,20 @@
                 <form class="booking-form" id="bookingForm">
                     <div class="form-group">
                         <label class="form-label">Check-in / Check-out</label>
-                        <div class="date-inputs"><input type="date" id="checkinDate" required><input type="date"
-                                id="checkoutDate" required></div>
+                        <div class="date-inputs">
+                            <input type="date" id="checkinDate"  required>
+                            <input type="date" id="checkoutDate"  required></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Guests</label>
-                        <select id="guestCount" required></select>
+                        <select id="guestCount"></select>
                     </div>
-                    <button type="submit" class="book-btn">Book&nbsp;Now</button>
+                    <button type="submit" class="book-btn">Book Now</button>
                 </form>
+                <div id="bookingBanner" class="banner hidden"></div>
+
                 <div class="weather-section">
-                    <h3 class="weather-title">Weather&nbsp;Forecast</h3>
+                    <h3 class="weather-title">Weather Forecast</h3>
                     <div id="weatherInfo">
                         <div class="weather-item">
                             <div class="weather-date">Select dates…</div>

@@ -1,5 +1,5 @@
 const campId = new URLSearchParams(location.search).get('id');
-let getRating;                  
+let getRating;
 async function api(path, opt = {}) {
   const res = await fetch(path, { credentials: 'include', ...opt });
   if (res.ok) return res.json();
@@ -42,20 +42,16 @@ function buildStarPicker(rootSel) {
 
 async function mediaNode(id) {
   const blob = await fetch(`/api/media/${id}`).then(r => r.blob());
-  const url  = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
 
   let el;
   console.log(blob.type);
-  if (blob.type.startsWith('image/')) 
+  if (blob.type.startsWith('image/'))
     el = new Image();
-  else if (blob.type.startsWith('video/')) 
-  
-    {
-      
+  else if (blob.type.startsWith('video/')) {
     el = Object.assign(document.createElement('video'), { controls: true });
-
-    }
-  else if (blob.type.startsWith('audio/')) 
+  }
+  else if (blob.type.startsWith('audio/'))
     el = Object.assign(document.createElement('audio'), { controls: true });
   else return null;
 
@@ -83,7 +79,7 @@ async function uploadMedia({ files, reviewId, messageId }) {
 
   const fd = new FormData();
   fd.append('campsite_id', campId);
-  if (reviewId)  fd.append('review_id',  reviewId);
+  if (reviewId) fd.append('review_id', reviewId);
   if (messageId) fd.append('message_id', messageId);
   [...files].forEach(f => fd.append('data', f));
 
@@ -92,26 +88,26 @@ async function uploadMedia({ files, reviewId, messageId }) {
 }
 
 const el = {
-  name : document.querySelector('#campsiteName'),
-  location : document.querySelector('#campsiteRegion'),
-  type : document.querySelector('#campsiteType'),
-  desc : document.querySelector('#campsiteDescription'),
-  capacity : document.querySelector('#campsiteCapacity'),
-  coords : document.querySelector('#campsiteCoords'),
-  price : document.querySelector('#campsitePrice'),
-  stars : document.querySelector('#ratingStars'),
-  score : document.querySelector('#ratingScore'),
-  count : document.querySelector('#ratingCount'),
+  name: document.querySelector('#campsiteName'),
+  location: document.querySelector('#campsiteRegion'),
+  type: document.querySelector('#campsiteType'),
+  desc: document.querySelector('#campsiteDescription'),
+  capacity: document.querySelector('#campsiteCapacity'),
+  coords: document.querySelector('#campsiteCoords'),
+  price: document.querySelector('#campsitePrice'),
+  stars: document.querySelector('#ratingStars'),
+  score: document.querySelector('#ratingScore'),
+  count: document.querySelector('#ratingCount'),
 
-  amenGrid : document.querySelector('#amenitiesGrid'),
-  guestSelect : document.querySelector('#guestCount'),
+  amenGrid: document.querySelector('#amenitiesGrid'),
+  guestSelect: document.querySelector('#guestCount'),
 
-  mainImg : document.querySelector('#mainImage'),
-  prev : document.querySelector('#prevBtn'),
-  next : document.querySelector('#nextBtn'),
+  mainImg: document.querySelector('#mainImage'),
+  prev: document.querySelector('#prevBtn'),
+  next: document.querySelector('#nextBtn'),
 
-  reviewsWrap : document.querySelector('#reviewsList'),
-  chatWrap : document.querySelector('#chatMessages')
+  reviewsWrap: document.querySelector('#reviewsList'),
+  chatWrap: document.querySelector('#chatMessages')
 };
 
 function renderCampsite(c) {
@@ -151,7 +147,7 @@ function buildSlider(ids = []) {
     if (!ids.length) { el.mainImg.textContent = '🏕️'; return; }
     const img = new Image();
     img.src = `/api/media/${ids[i]}`;
-    img.style  = 'width:100%;height:100%;object-fit:cover';
+    img.style = 'width:100%;height:100%;object-fit:cover';
     el.mainImg.append(img);
   };
 
@@ -198,7 +194,7 @@ async function renderReviews(arr, append = true) {
     if (r.media_ids?.length) {
       const box = document.createElement('div');
       box.className = 'review-media';
-      for (const id of r.media_ids) 
+      for (const id of r.media_ids)
         box.append(await mediaNode(id));
       card.append(box);
     }
@@ -208,19 +204,19 @@ async function renderReviews(arr, append = true) {
 }
 
 function messageNode(m) {
-  const item= document.createElement('div');
+  const item = document.createElement('div');
   item.className = 'message-item';
   const head = document.createElement('div');
   head.className = 'message-header';
   const who = document.createElement('div');
   who.className = 'message-author';
   who.textContent = m.username || 'You';
-  const when= document.createElement('div');
-  when.className= 'message-time';
+  const when = document.createElement('div');
+  when.className = 'message-time';
   when.textContent = new Date(m.created_at)
-      .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   head.append(who, when);
-  const body  = document.createElement('div');
+  const body = document.createElement('div');
   body.className = 'message-content';
   body.textContent = m.body_md;
 
@@ -252,12 +248,12 @@ async function submitReview() {
   if (!text) return alert('Write a review');
 
   const review = await api(`/api/campsites/${campId}/reviews`, {
-    method : 'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body : JSON.stringify({ rating, body_md: text })
+    body: JSON.stringify({ rating, body_md: text })
   });
   review.media_ids = await uploadMedia({ reviewId: review.id, files });
-  renderReviews([review]);                        
+  renderReviews([review]);
 
   document.querySelector('#reviewText').value = '';
   document.querySelector('#reviewMedia').value = '';
@@ -269,9 +265,9 @@ async function sendMessage() {
   if (!text) return;
 
   const msg = await api(`/api/campsites/${campId}/messages`, {
-    method : 'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body : JSON.stringify({ body_md: text })
+    body: JSON.stringify({ body_md: text })
   });
 
   msg.media_ids = await uploadMedia({ messageId: msg.id, files });
@@ -289,7 +285,7 @@ document.addEventListener('click', e => {
   modal.classList.remove('hidden');
 });
 document.querySelector('#modalOverlay').onclick = () =>
-document.querySelector('#mediaModal').classList.add('hidden');
+  document.querySelector('#mediaModal').classList.add('hidden');
 
 async function fetchWeather(lat, lon, startDate, endDate) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`;
@@ -322,13 +318,13 @@ function renderWeather(daily) {
   });
 }
 document.getElementById('checkinDate').addEventListener('change', () => {
-       updateWeather();  
+  updateWeather();
 });
-document.getElementById('checkoutDate').addEventListener('change',  () => {
-       updateWeather(); 
+document.getElementById('checkoutDate').addEventListener('change', () => {
+  updateWeather();
 });
 async function updateWeather() {
-  const checkin  = document.getElementById('checkinDate').value;
+  const checkin = document.getElementById('checkinDate').value;
   const checkout = document.getElementById('checkoutDate').value;
 
   if (!checkin || !checkout || checkin >= checkout) return;
@@ -340,15 +336,28 @@ async function updateWeather() {
   if (weather) renderWeather(weather);
 }
 const form = document.getElementById('bookingForm');
-                                  
-async function postBooking({ campsite_id, checkin, checkout, guests }) {
-  return api('/api/bookings', {
-    method : 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body   : JSON.stringify({ campsite_id, checkin, checkout, guests })
-  });
-}
 
+async function postBooking(data){
+  const res = await fetch('/api/bookings',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data),
+    credentials:'include'
+  });
+  if (res.ok) return res.json();
+  const { errors = [res.statusText] } = await res.json().catch(()=>({}));
+  const err = new Error(errors.join(', '));
+  err.status = res.status;
+  throw err;
+}
+const banner = document.getElementById('bookingBanner');
+const showBanner = (text, kind = 'success') => {
+  banner.textContent = text;
+  banner.className = `banner ${kind}`;
+  banner.classList.remove('hidden');
+  clearTimeout(showBanner.t);
+  showBanner.t = setTimeout(() => banner.classList.add('hidden'), 4000);
+};
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -357,18 +366,22 @@ form.addEventListener('submit', async (e) => {
   const guests = +document.getElementById('guestCount').value;
 
   const err =
-    !checkin || !checkout  ? 'Pick both dates' :
-    checkin >= checkout  ? 'Checkout must be after check-in' :
-    !Number.isInteger(guests) || guests<1 ? 'Invalid guest count' : '';
+    !checkin || !checkout ? 'Pick both dates' :
+      checkin >= checkout ? 'Checkout must be after check-in' :
+        !Number.isInteger(guests) || guests < 1 ? 'Invalid guest count' : '';
 
   if (err) { alert(err); return; }
 
   try {
     await postBooking({ campsite_id: campId, checkin, checkout, guests });
     form.reset();
-    alert('Booking confirmed! 🎉');
+    showBanner('🎉 Booking confirmed! Payment at the site. See you soon.', 'success');
   } catch (ex) {
-    alert(`Booking failed: ${ex.message}`);
+    if (ex.status === 409) {
+      showBanner('⚠️ Those dates are already taken – choose others.', 'warn');
+    } else {
+      showBanner(`❌ ${ex.message}`, 'error');
+    }
   }
 });
 (async () => {
@@ -393,4 +406,4 @@ form.addEventListener('submit', async (e) => {
 })();
 
 window.submitReview = submitReview;
-window.sendMessage  = sendMessage;
+window.sendMessage = sendMessage;

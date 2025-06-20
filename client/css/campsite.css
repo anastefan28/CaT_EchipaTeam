@@ -326,7 +326,6 @@ body {
   border: 2px solid #e8f5e8;
   border-radius: 15px;
   resize: vertical;
-  font: 16px/1.5 inherit;
   margin-bottom: 20px;
   background: #fff;
   transition: all 0.3s ease;
@@ -618,7 +617,15 @@ select:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, .1);
 }
-
+.banner{
+  margin-top:1rem;padding:.75rem 1rem;
+  border-radius:6px;font-weight:600;text-align:center;
+  color:#fff;
+}
+.banner.success{background:#2e7d32;}
+.banner.warn   {background:#f57c00;}
+.banner.error  {background:#c62828;}
+.hidden{display:none;}
 .book-btn {
   background: linear-gradient(135deg, #4caf50, #2e7d32);
   color: #fff;

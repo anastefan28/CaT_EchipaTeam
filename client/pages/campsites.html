@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Campsites - CampSpot</title>
     <link
       rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <link rel="stylesheet" href="../css/campsites.css" />
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../css/campsites.css">
   </head>
 
   <body>
@@ -39,8 +38,7 @@
             type="text"
             class="filter-input"
             id="locationFilter"
-            placeholder="Search by location..."
-          />
+            placeholder="Search by location...">
         </div>
 
         <div class="filter-group">
@@ -52,7 +50,7 @@
               id="minPrice"
               placeholder="Min"
               min="0"
-            />
+            >
             <span>-</span>
             <input
               type="number"
@@ -60,7 +58,7 @@
               id="maxPrice"
               placeholder="Max"
               min="0"
-            />
+    >
           </div>
         </div>
 
@@ -68,15 +66,15 @@
           <label class="filter-label">Campsite Type</label>
           <div class="checkbox-group">
             <div class="checkbox-item">
-              <input type="checkbox" id="tent" name="type" value="tent" />
+              <input type="checkbox" id="tent" name="type" value="tent" >
               <label for="tent">🏕️ Tent Sites</label>
             </div>
             <div class="checkbox-item">
-              <input type="checkbox" id="rv" name="type" value="rv" />
+              <input type="checkbox" id="rv" name="type" value="rv" >
               <label for="rv">🚐 RV Sites</label>
             </div>
             <div class="checkbox-item">
-              <input type="checkbox" id="cabin" name="type" value="cabin" />
+              <input type="checkbox" id="cabin" name="type" value="cabin" >
               <label for="cabin">🏠 Cabins</label>
             </div>
             <div class="checkbox-item">
@@ -85,7 +83,7 @@
                 id="glamping"
                 name="type"
                 value="glamping"
-              />
+              >
               <label for="glamping">✨ Glamping</label>
             </div>
           </div>
@@ -155,15 +153,15 @@
           <label class="filter-label">Minimum Rating</label>
           <div class="rating-filter">
             <div class="rating-option">
-              <input type="radio" id="rating-any" name="rating" value="" />
+              <input type="radio" id="rating-any" name="rating" value="" >
               <label for="rating-any">Any Rating</label>
             </div>
             <div class="rating-option">
-              <input type="radio" id="rating-4" name="rating" value="4" />
+              <input type="radio" id="rating-4" name="rating" value="4" >
               <label for="rating-4">⭐⭐⭐⭐ 4.0+</label>
             </div>
             <div class="rating-option">
-              <input type="radio" id="rating-45" name="rating" value="4.5" />
+              <input type="radio" id="rating-45" name="rating" value="4.5" >
               <label for="rating-45">⭐⭐⭐⭐⭐ 4.5+</label>
             </div>
           </div>
@@ -178,7 +176,7 @@
                 id="fire-pit"
                 name="amenities"
                 value="Fire Pit"
-              />
+              >
               <label for="fire-pit">🔥 Fire Pit</label>
             </div>
             <div class="checkbox-item">
@@ -187,7 +185,7 @@
                 id="shower"
                 name="amenities"
                 value="Shower"
-              />
+              >
               <label for="shower">🚿 Shower</label>
             </div>
             <div class="checkbox-item">
@@ -196,11 +194,11 @@
                 id="electric"
                 name="amenities"
                 value="Electric Hook-up"
-              />
+              >
               <label for="electric">⚡ Electric Hook-up</label>
             </div>
             <div class="checkbox-item">
-              <input type="checkbox" id="wifi" name="amenities" value="Wi-Fi" />
+              <input type="checkbox" id="wifi" name="amenities" value="Wi-Fi" >
               <label for="wifi">📶 Wi-Fi</label>
             </div>
             <div class="checkbox-item">
@@ -209,7 +207,7 @@
                 id="pet-friendly"
                 name="amenities"
                 value="Pet Friendly"
-              />
+              >
               <label for="pet-friendly">🐕 Pet Friendly</label>
             </div>
             <div class="checkbox-item">
@@ -218,7 +216,7 @@
                 id="wheelchair"
                 name="amenities"
                 value="Wheelchair Access"
-              />
+              >
               <label for="wheelchair">♿ Wheelchair Access</label>
             </div>
             <div class="checkbox-item">
@@ -227,7 +225,7 @@
                 id="picnic"
                 name="amenities"
                 value="Picnic Tables"
-              />
+            >
               <label for="picnic">🪑 Picnic Tables</label>
             </div>
           </div>

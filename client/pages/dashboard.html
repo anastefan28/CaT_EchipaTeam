@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CampSpot - Discover Your Next Adventure</title>
     <link
       rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <link rel="stylesheet" href="../css/dashboard.css" />
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
   </head>
 
   <body>
@@ -34,7 +33,7 @@
       </div>
     </section>
 
-    <section class="search-section">
+    <div class="search-section">
       <form class="search-form" id="searchForm">
         <div class="search-group">
           <label for="location">Where</label>
@@ -42,16 +41,15 @@
             type="text"
             id="location"
             name="location"
-            placeholder="City, county, or park name"
-          />
+            placeholder="City, county, or park name">
         </div>
         <div class="search-group">
           <label for="checkin">Check-in</label>
-          <input type="date" id="checkin" name="checkin" />
+          <input type="date" id="checkin" name="checkin">
         </div>
         <div class="search-group">
           <label for="checkout">Check-out</label>
-          <input type="date" id="checkout" name="checkout" />
+          <input type="date" id="checkout" name="checkout">
         </div>
         <div class="search-group">
           <label for="guests">Guests</label>
@@ -65,7 +63,7 @@
         </div>
         <button type="submit" class="search-btn">🔍 Search</button>
       </form>
-    </section>
+    </div>
 
     <div class="content-container">
       <main class="main-content">

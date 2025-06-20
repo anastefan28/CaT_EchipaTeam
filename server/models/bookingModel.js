@@ -69,3 +69,5 @@ export async function getBookings() {
   const result = await pool.query(query);
   return result.rows;
 }
+
+}

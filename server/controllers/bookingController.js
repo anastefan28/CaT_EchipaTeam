@@ -9,6 +9,7 @@ import {
   getBookings,
   getBooking,
   updateBooking,
+  isBookingOwnedByUser
 } from "../models/bookingModel.js";
 
 
@@ -74,7 +75,14 @@ export async function handleBookedRanges(req, res) {
 }
 export async function handleDeleteBooking(req, res) {
   const id = req.params?.id || req.url.split("/").pop();
-
+  if (!isValidId(id)) {
+    throw new AppError("Invalid booking id", 400);    
+  }
+  const userId = req.user?.id;
+  const userRole = req.user?.role;
+  if(!userRole=== 'admin' && !isBookingOwnedByUser(id,userId)) {
+    throw new AppError("You are not authorized to delete this booking", 403);
+  }
   try {
     const deleted = await deleteBookingById(id);
 

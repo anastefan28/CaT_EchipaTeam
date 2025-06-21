@@ -62,7 +62,6 @@ body {
     background: #f0f8f0;
 }
 
-/* Main Container */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -76,13 +75,14 @@ body {
     gap: 30px;
 }
 
-/* Filters Sidebar */
 .filters-sidebar {
     background: white;
     padding: 25px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     height: fit-content;
+    max-height: calc(100vh - 120px); 
+    overflow-y: auto;
     position: sticky;
     top: 90px;
     grid-area: filters;
@@ -353,7 +353,7 @@ body {
 
 .amenity-tag {
     background: #f0f8f0;
-    color: #2e7d32;
+    color: #3c8f40;
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -364,7 +364,7 @@ body {
     display: block;
     margin: 30px auto 0;
     padding: 15px 40px;
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    background: #3c8f40;
     color: white;
     border: none;
     border-radius: 25px;
@@ -399,10 +399,12 @@ body {
 .map-title {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #2e7d32;
+    color: #3c8f40;
 }
 
 .map-toggle {
+    background-color: #3c8f40;
+    color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 25px;

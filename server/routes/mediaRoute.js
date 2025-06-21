@@ -1,6 +1,10 @@
 import { parse }    from 'url';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { handleGetMedia, handlePostMedia } from '../controllers/mediaController.js';
+import {
+  handleGetMedia,
+  handlePostMedia,
+  handleDeleteMedia,
+} from "../controllers/mediaController.js";
 import { sendJson } from '../utils/json.js';
 import { protectRoute } from '../middlewares/protect.js';
 export async function mediaRoute(req, res) {
@@ -12,5 +16,10 @@ export async function mediaRoute(req, res) {
   if(req.method==='POST') {
     return asyncHandler(protectRoute(handlePostMedia))(req, res);
   }
+
+  if (req.method === "DELETE" && parts.length === 4 && parts[3]) {
+    return asyncHandler(protectRoute(handleDeleteMedia))(req, res);
+  }
+
   sendJson(res, 405, { error: 'Method Not Allowed' });
 }

@@ -23,3 +23,11 @@ export async function createMedia({ campsiteId, reviewId, messageId,
   return rows[0].id;                 
 }
 
+
+export async function deleteMediaById(id) {
+  const { rowCount } = await pool.query(
+    'DELETE FROM media WHERE id = $1',
+    [id]
+  );
+  return rowCount;            
+}

@@ -1,5 +1,9 @@
 import { AppError } from '../utils/appError.js';
-import { getMediaById , createMedia} from '../models/mediaModel.js';
+import {
+  getMediaById,
+  createMedia,
+  deleteMediaById,
+} from "../models/mediaModel.js";
 import { parse }    from 'url';
 import { isValidId } from '../utils/valid.js';
 import {sendJson} from '../utils/json.js'
@@ -63,4 +67,21 @@ export async function handlePostMedia(req, res) {
     media_ids.push(id);
   }
   return sendJson(res, 201, { media_ids });
+}
+
+export async function handleDeleteMedia(req, res) {
+  const { pathname } = parse(req.url, true);
+  const parts = pathname.split("/"); // ['', 'api', 'media', ':id']
+  const id = parts[3];
+
+  if (!isValidId(id)) {
+    throw new AppError("Invalid media id", 400);
+  }
+
+  const removed = await deleteMediaById(id);
+  if (!removed) {
+    throw new AppError("Media not found", 404);
+  }
+
+  return sendJson(res, 200, { success: true, id });
 }

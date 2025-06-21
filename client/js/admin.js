@@ -1,6 +1,7 @@
 let currentTab = "users";
 let currentEditType = null;
 let currentEditId = null;
+let uploadedMediaIds = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -44,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("campsiteCountyFilter")
     .addEventListener("change", filterCampsites);
 
+    document
+      .getElementById("campsiteMedia")
+      .addEventListener("change", handleMediaUpload);
+  
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       document.querySelectorAll(".modal").forEach((modal) => {
@@ -77,6 +82,8 @@ function closeModal(id) {
   document.getElementById(id).style.display = "none";
   currentEditType = null;
   currentEditId = null;
+  uploadedMediaIds = [];
+  clearMediaPreview();
 }
 
 function openUserModal(mode = "create", userId = null) {
@@ -86,7 +93,6 @@ function openUserModal(mode = "create", userId = null) {
   if (mode === "create") {
     document.getElementById("userModalTitle").textContent = "Add New User";
     document.getElementById("userForm").reset();
-
     document.getElementById("userPassword").required = true;
   } else {
     document.getElementById("userModalTitle").textContent = "Edit User";
@@ -100,13 +106,25 @@ function openUserModal(mode = "create", userId = null) {
 function openCampsiteModal(mode = "create", campsiteId = null) {
   currentEditType = "campsite";
   currentEditId = campsiteId;
+  uploadedMediaIds = [];
+
+  const currentMediaGroup = document.getElementById("currentMediaGroup");
+  const uploadGroup = document.getElementById("uploadMediaGroup");
 
   if (mode === "create") {
     document.getElementById("campsiteModalTitle").textContent =
       "Add New Campsite";
     document.getElementById("campsiteForm").reset();
+    clearMediaPreview();
+
+    if (currentMediaGroup) currentMediaGroup.style.display = "none";
+    if (uploadGroup) uploadGroup.style.display = "none";
   } else {
     document.getElementById("campsiteModalTitle").textContent = "Edit Campsite";
+
+    if (currentMediaGroup) currentMediaGroup.style.display = "block";
+    if (uploadGroup) uploadGroup.style.display = "block";
+
     loadCampsiteData(campsiteId);
   }
 
@@ -145,7 +163,6 @@ async function loadUserData(userId) {
 async function loadCampsiteData(campsiteId) {
   try {
     const res = await fetch(`/api/campsites/${campsiteId}`);
-
     if (!res.ok) {
       const errData = await res.json();
       throw new Error(errData.error || "Failed to fetch campsite data.");
@@ -162,9 +179,129 @@ async function loadCampsiteData(campsiteId) {
     document.getElementById("campsitePrice").value = campsite.price || "";
     document.getElementById("campsiteCounty").value = campsite.county || "";
     document.getElementById("campsiteType").value = campsite.type || "tent";
+    uploadedMediaIds = Array.isArray(campsite.media_ids) ? [...campsite.media_ids] : [];
+
+    loadExistingMedia(uploadedMediaIds);
+
   } catch (err) {
     console.error("Error loading campsite data:", err.message);
     alert("Error loading campsite data: " + err.message);
+  }
+}
+
+function loadExistingMedia(mediaIds) {
+  const container = document.getElementById("mediaPreviewContainer");
+  clearElement(container); 
+  mediaIds.forEach((id) => {
+    const item = createMediaPreviewItem(`/api/media/${id}`, id, true);
+    container.appendChild(item);
+  });
+}
+
+function createMediaPreviewItem(src, id, isExisting = false) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "media-preview-item";
+  wrapper.dataset.mediaId = id; 
+  wrapper.style.position = "relative";
+  wrapper.style.display = "inline-block";
+  wrapper.style.margin = "5px";
+
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = "Media preview";
+  img.style.width = "100px";
+  img.style.height = "100px";
+  img.style.objectFit = "cover";
+  img.style.borderRadius = "8px";
+  wrapper.appendChild(img);
+
+  const del = document.createElement("button");
+  del.type = "button";
+  del.innerHTML = "×";
+  del.className = "media-delete-btn";
+  del.style.cssText = `
+    position: absolute;
+    top: 5px; right: 5px;
+    width: 24px; height: 24px;
+    border: none; border-radius: 50%;
+    background: rgba(255,0,0,0.8);
+    color: #fff; font-size: 16px; line-height: 1;
+    cursor: pointer;
+  `;
+  wrapper.appendChild(del);
+
+  del.addEventListener("click", async () => {
+    if (!confirm("Delete this image?")) return;
+
+    try {
+      if (isExisting) {
+        const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete media");
+      }
+      uploadedMediaIds = uploadedMediaIds.filter((mid) => mid !== id);
+
+      wrapper.remove(); 
+    } catch (err) {
+      alert("Error deleting media: " + err.message);
+    }
+  });
+
+  return wrapper;
+}
+
+function clearMediaPreview() {
+  const box = document.getElementById("mediaPreviewContainer");
+  if (box) clearElement(box);
+  uploadedMediaIds = [];
+}
+
+async function updateMediaCampsiteId(mediaIds, campsiteId) {
+  if (!mediaIds.length) return;
+  await fetch("/api/media/update-campsite", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ media_ids: mediaIds, campsite_id: campsiteId }),
+  });
+}
+
+async function handleMediaUpload(event) {
+  const files = event.target.files;
+  if (!files?.length) return;
+
+  const formData = new FormData();
+
+
+  formData.append("campsite_id", currentEditId || "0");
+
+  for (const file of files) formData.append("data", file);
+
+  try {
+    const res = await fetch("/api/media", { method: "POST", body: formData });
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || "Upload failed");
+
+    const newIds = result.media_ids || [];
+    uploadedMediaIds = [...new Set([...uploadedMediaIds, ...newIds])];
+
+    const container = document.getElementById("mediaPreviewContainer");
+    newIds.forEach((id) => {
+      const thumb = createMediaPreviewItem(`/api/media/${id}`, id, false);
+      container.appendChild(thumb);
+    });
+
+    event.target.value = "";
+
+    alert(
+      `Successfully uploaded ${newIds.length} image${
+        newIds.length > 1 ? "s" : ""
+      }`
+    );
+
+
+  } catch (err) {
+    console.error("Media upload error:", err);
+    alert("Error uploading media: " + err.message);
   }
 }
 
@@ -729,7 +866,6 @@ async function editBooking(id) {
     console.error("Error loading booking:", err.message);
     alert("Error loading booking: " + err.message);
   }
-
 }
 
 async function deleteBooking(id) {
@@ -753,4 +889,8 @@ async function deleteBooking(id) {
     console.error("Error deleting booking:", err);
     alert("Error deleting booking: " + err.message);
   }
+}
+
+function clearElement(el) {
+  while (el.firstChild) el.removeChild(el.firstChild);
 }

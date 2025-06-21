@@ -47,7 +47,7 @@ export async function createUser({ username, email, password, role }) {
 
 export async function getUserById(id) {
   const query = `
-    SELECT id, email, username, role, created_at
+    SELECT id, email, username, role, created_at, oauth_provider, password_hash
     FROM users WHERE id = $1
   `;
   const result = await pool.query(query, [id]);

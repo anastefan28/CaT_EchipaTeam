@@ -70,8 +70,7 @@ async function loadBookings() {
 
     if (!bookings.length) {
       box.append(emptyState(
-        'No bookings yet',
-        'Ready for a camping adventure? Browse our amazing campsites!',
+        'No bookings yet','Ready for a camping adventure? Browse our amazing campsites!',
         '/campsites', 'Explore Campsites'));
       return;
     }

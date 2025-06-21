@@ -119,7 +119,7 @@ export async function handleGetAllUsers(req, res) {
 
 export async function handlePatchMe(req, res) {
   const userId = req.user?.id;
-  const user = await getUserById(payload.id);
+  const user = await getUserById(userId);
   if (!user) {
     throw new AppError('User not found', 404);
   }
@@ -132,7 +132,8 @@ export async function handlePatchMe(req, res) {
   if (currentPassword || newPassword) {
     if (!currentPassword || !newPassword)
       throw new  AppError('Both current and new passwords are required.', 400);
-
+    if(user.oauth_provider)
+      throw new AppError('Cannot change password for OAuth users.', 403);
     const match = await bcrypt.compare(currentPassword, user.password_hash);
     if (!match)
       throw new AppError('Current password is incorrect.', 401);

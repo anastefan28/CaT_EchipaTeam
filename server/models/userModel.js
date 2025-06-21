@@ -48,8 +48,7 @@ export async function createUser({ username, email, password, role }) {
 export async function getUserById(id) {
   const query = `
     SELECT id, email, username, role, created_at
-    FROM users
-    WHERE id = $1
+    FROM users WHERE id = $1
   `;
   const result = await pool.query(query, [id]);
   return result.rows[0] || null;
@@ -70,19 +69,26 @@ export async function deleteUserById(id) {
   return result.rowCount > 0;
 }
 
+export async function updateUserById(id, fields, role) {
+  let allowed;
+  if( role !== 'admin') {
+    allowed = ['username', 'password'];
+  }
+  else {
+    allowed = ['username', 'email', 'password', 'role'];
+  }
+  const updates = [];
+  const values = [];
 
-export async function updateUserById(id, { username, email, password, role }) {
-  const query = `
-    UPDATE users
-    SET username = $1,
-        email = $2,
-        ${password ? "password_hash = $3," : ""}
-        role = $${password ? 4 : 3}
-    WHERE id = $${password ? 5 : 4}
-  `;
-  const values = password
-    ? [username, email, password, role, id]
-    : [username, email, role, id];
+  for (const key of allowed) {
+    if (fields[key] !== undefined) {
+      values.push(fields[key]);
+      updates.push(`${key === 'password' ? 'password_hash' : key} = $${values.length}`);
+    }
+  }
+  if (updates.length === 0) return;
 
+  values.push(id);
+  const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${values.length}`;
   await pool.query(query, values);
 }

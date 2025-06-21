@@ -75,11 +75,15 @@ async function loadBookings() {
     box.querySelector('.cta').addEventListener('click', loadBookings);
   }
 }
-
-document.querySelector('#logoutBtn').addEventListener('click', async e => {
+document.getElementById('logoutBtn').addEventListener('click', async (e) => {
   e.preventDefault();
-  try { await fetch('/api/auth/logout', { method:'POST' }); } catch {}
-  location.href = '/index';
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (!res.ok) throw new Error('Logout failed');
+  } catch (err) {
+    console.warn('Logout request failed:', err);
+  }
+  window.location.href = '/index';
 });
 
 loadBookings();

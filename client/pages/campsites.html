@@ -1,241 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Campsites - CampSpot</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="../css/campsites.css">
-  </head>
 
-  <body>
-    <header class="header">
-      <nav class="nav">
-        <a href="/dashboard" class="logo">CampSpot</a>
-        <div class="nav-links">
-          <a href="/bookings" class="nav-item">📅 My Bookings</a>
-          <a href="/profile" class="nav-item">👤 Account Details</a>
-          <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
-          <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Campsites - CampSpot</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="../css/campsites.css">
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="/dashboard" class="logo">CampSpot</a>
+      <div class="nav-links">
+        <a href="/bookings" class="nav-item">📅 My Bookings</a>
+        <a href="/profile" class="nav-item">👤 Account Details</a>
+        <a href="/campsites" class="nav-item">🗺️ Browse Campsites</a>
+        <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <aside class="filters-sidebar">
+      <div class="filters-title">
+        Filters
+        <button class="clear-filters" onclick="clearAllFilters()">
+          Clear all
+        </button>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Location/Name</label>
+        <input type="text" class="filter-input" id="locationFilter" placeholder="Search by location or name...">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Price Range (per night)</label>
+        <div class="price-range">
+          <input type="number" class="filter-input" id="minPrice" placeholder="Min" min="0">
+          <span>-</span>
+          <input type="number" class="filter-input" id="maxPrice" placeholder="Max" min="0">
         </div>
-      </nav>
-    </header>
+      </div>
 
-    <div class="container">
-      <aside class="filters-sidebar">
-        <div class="filters-title">
-          Filters
-          <button class="clear-filters" onclick="clearAllFilters()">
-            Clear all
+      <div class="filter-group">
+        <label class="filter-label">Campsite Type</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="tent" name="type" value="tent">
+            <label for="tent">🏕️ Tent Sites</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="rv" name="type" value="rv">
+            <label for="rv">🚐 RV Sites</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="cabin" name="type" value="cabin">
+            <label for="cabin">🏠 Cabins</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="glamping" name="type" value="glamping">
+            <label for="glamping">✨ Glamping</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">County</label>
+        <select class="filter-input" id="countyFilter">
+          <option value="">All Counties</option>
+          <option value="Alba">Alba</option>
+          <option value="Arad">Arad</option>
+          <option value="Argeș">Argeș</option>
+          <option value="Bacău">Bacău</option>
+          <option value="Bihor">Bihor</option>
+          <option value="Bistrița-Năsăud">Bistrița-Năsăud</option>
+          <option value="Botoșani">Botoșani</option>
+          <option value="Brăila">Brăila</option>
+          <option value="Brașov">Brașov</option>
+          <option value="București">București</option>
+          <option value="Buzău">Buzău</option>
+          <option value="Caraș-Severin">Caraș-Severin</option>
+          <option value="Călărași">Călărași</option>
+          <option value="Cluj">Cluj</option>
+          <option value="Constanța">Constanța</option>
+          <option value="Covasna">Covasna</option>
+          <option value="Dâmbovița">Dâmbovița</option>
+          <option value="Dolj">Dolj</option>
+          <option value="Galați">Galați</option>
+          <option value="Giurgiu">Giurgiu</option>
+          <option value="Gorj">Gorj</option>
+          <option value="Harghita">Harghita</option>
+          <option value="Hunedoara">Hunedoara</option>
+          <option value="Ialomița">Ialomița</option>
+          <option value="Iași">Iași</option>
+          <option value="Ilfov">Ilfov</option>
+          <option value="Maramureș">Maramureș</option>
+          <option value="Mehedinți">Mehedinți</option>
+          <option value="Mureș">Mureș</option>
+          <option value="Neamț">Neamț</option>
+          <option value="Olt">Olt</option>
+          <option value="Prahova">Prahova</option>
+          <option value="Sălaj">Sălaj</option>
+          <option value="Satu Mare">Satu Mare</option>
+          <option value="Sibiu">Sibiu</option>
+          <option value="Suceava">Suceava</option>
+          <option value="Teleorman">Teleorman</option>
+          <option value="Timiș">Timiș</option>
+          <option value="Tulcea">Tulcea</option>
+          <option value="Vaslui">Vaslui</option>
+          <option value="Vâlcea">Vâlcea</option>
+          <option value="Vrancea">Vrancea</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Capacity</label>
+        <select class="filter-input" id="capacityFilter">
+          <option value="">Any Size</option>
+          <option value="1-2">1-2 people</option>
+          <option value="3-4">3-4 people</option>
+          <option value="5-6">5-6 people</option>
+          <option value="7+">7+ people</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Minimum Rating</label>
+        <div class="rating-filter">
+          <div class="rating-option">
+            <input type="radio" id="rating-any" name="rating" value="">
+            <label for="rating-any">Any Rating</label>
+          </div>
+          <div class="rating-option">
+            <input type="radio" id="rating-45" name="rating" value="1.5">
+            <label for="rating-45">⭐⭐</label>
+          </div>
+          <div class="rating-option">
+            <input type="radio" id="rating-45" name="rating" value="2.5">
+            <label for="rating-45">⭐⭐⭐</label>
+          </div>
+          <div class="rating-option">
+            <input type="radio" id="rating-4" name="rating" value="3.5">
+            <label for="rating-4">⭐⭐⭐⭐</label>
+          </div>
+          <div class="rating-option">
+            <input type="radio" id="rating-45" name="rating" value="4.5">
+            <label for="rating-45">⭐⭐⭐⭐⭐</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Amenities</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="fire-pit" name="amenities" value="Fire Pit">
+            <label for="fire-pit">🔥 Fire Pit</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="shower" name="amenities" value="Shower">
+            <label for="shower">🚿 Shower</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="electric" name="amenities" value="Electric Hook-up">
+            <label for="electric">⚡ Electric Hook-up</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="wifi" name="amenities" value="Wi-Fi" />
+            <label for="wifi">📶 Wi-Fi</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="pet-friendly" name="amenities" value="Pet Friendly" />
+            <label for="pet-friendly">🐕 Pet Friendly</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="wheelchair" name="amenities" value="Wheelchair Access" />
+            <label for="wheelchair">♿ Wheelchair Access</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="picnic" name="amenities" value="Picnic Tables" />
+            <label for="picnic">🪑 Picnic Tables</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="map-container hidden" id="mapContainer">
+      <div class="map-header">
+        <div class="map-title">📍 Campsite Locations</div>
+        <button class="map-toggle" id="expandMapBtn">
+          Expand Map
+        </button>
+      </div>
+      <div id="map"></div>
+    </div>
+    <main class="main-content">
+      <div class="content-header">
+        <div class="results-info">
+          <span id="resultsCount">0</span> campsites found
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <button class="map-toggle" id="toggleMapBtn">
+            📍 View on Map
           </button>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Location</label>
-          <input
-            type="text"
-            class="filter-input"
-            id="locationFilter"
-            placeholder="Search by location...">
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Price Range (per night)</label>
-          <div class="price-range">
-            <input
-              type="number"
-              class="filter-input"
-              id="minPrice"
-              placeholder="Min"
-              min="0"
-            >
-            <span>-</span>
-            <input
-              type="number"
-              class="filter-input"
-              id="maxPrice"
-              placeholder="Max"
-              min="0"
-    >
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Campsite Type</label>
-          <div class="checkbox-group">
-            <div class="checkbox-item">
-              <input type="checkbox" id="tent" name="type" value="tent" >
-              <label for="tent">🏕️ Tent Sites</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="rv" name="type" value="rv" >
-              <label for="rv">🚐 RV Sites</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="cabin" name="type" value="cabin" >
-              <label for="cabin">🏠 Cabins</label>
-            </div>
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="glamping"
-                name="type"
-                value="glamping"
-              >
-              <label for="glamping">✨ Glamping</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">County</label>
-          <select class="filter-input" id="countyFilter">
-            <option value="">All Counties</option>
-            <option value="Alba">Alba</option>
-            <option value="Arad">Arad</option>
-            <option value="Argeș">Argeș</option>
-            <option value="Bacău">Bacău</option>
-            <option value="Bihor">Bihor</option>
-            <option value="Bistrița-Năsăud">Bistrița-Năsăud</option>
-            <option value="Botoșani">Botoșani</option>
-            <option value="Brăila">Brăila</option>
-            <option value="Brașov">Brașov</option>
-            <option value="București">București</option>
-            <option value="Buzău">Buzău</option>
-            <option value="Caraș-Severin">Caraș-Severin</option>
-            <option value="Călărași">Călărași</option>
-            <option value="Cluj">Cluj</option>
-            <option value="Constanța">Constanța</option>
-            <option value="Covasna">Covasna</option>
-            <option value="Dâmbovița">Dâmbovița</option>
-            <option value="Dolj">Dolj</option>
-            <option value="Galați">Galați</option>
-            <option value="Giurgiu">Giurgiu</option>
-            <option value="Gorj">Gorj</option>
-            <option value="Harghita">Harghita</option>
-            <option value="Hunedoara">Hunedoara</option>
-            <option value="Ialomița">Ialomița</option>
-            <option value="Iași">Iași</option>
-            <option value="Ilfov">Ilfov</option>
-            <option value="Maramureș">Maramureș</option>
-            <option value="Mehedinți">Mehedinți</option>
-            <option value="Mureș">Mureș</option>
-            <option value="Neamț">Neamț</option>
-            <option value="Olt">Olt</option>
-            <option value="Prahova">Prahova</option>
-            <option value="Sălaj">Sălaj</option>
-            <option value="Satu Mare">Satu Mare</option>
-            <option value="Sibiu">Sibiu</option>
-            <option value="Suceava">Suceava</option>
-            <option value="Teleorman">Teleorman</option>
-            <option value="Timiș">Timiș</option>
-            <option value="Tulcea">Tulcea</option>
-            <option value="Vaslui">Vaslui</option>
-            <option value="Vâlcea">Vâlcea</option>
-            <option value="Vrancea">Vrancea</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Capacity</label>
-          <select class="filter-input" id="capacityFilter">
-            <option value="">Any Size</option>
-            <option value="1-2">1-2 people</option>
-            <option value="3-4">3-4 people</option>
-            <option value="5-6">5-6 people</option>
-            <option value="7+">7+ people</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Minimum Rating</label>
-          <div class="rating-filter">
-            <div class="rating-option">
-              <input type="radio" id="rating-any" name="rating" value="" >
-              <label for="rating-any">Any Rating</label>
-            </div>
-            <div class="rating-option">
-              <input type="radio" id="rating-4" name="rating" value="4" >
-              <label for="rating-4">⭐⭐⭐⭐ 4.0+</label>
-            </div>
-            <div class="rating-option">
-              <input type="radio" id="rating-45" name="rating" value="4.5" >
-              <label for="rating-45">⭐⭐⭐⭐⭐ 4.5+</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Amenities</label>
-          <div class="checkbox-group">
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="fire-pit"
-                name="amenities"
-                value="Fire Pit"
-              >
-              <label for="fire-pit">🔥 Fire Pit</label>
-            </div>
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="shower"
-                name="amenities"
-                value="Shower"
-              >
-              <label for="shower">🚿 Shower</label>
-            </div>
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="electric"
-                name="amenities"
-                value="Electric Hook-up"
-              >
-              <label for="electric">⚡ Electric Hook-up</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="wifi" name="amenities" value="Wi-Fi" >
-              <label for="wifi">📶 Wi-Fi</label>
-            </div>
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="pet-friendly"
-                name="amenities"
-                value="Pet Friendly"
-              >
-              <label for="pet-friendly">🐕 Pet Friendly</label>
-            </div>
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="wheelchair"
-                name="amenities"
-                value="Wheelchair Access"
-              >
-              <label for="wheelchair">♿ Wheelchair Access</label>
-            </div>
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="picnic"
-                name="amenities"
-                value="Picnic Tables"
-            >
-              <label for="picnic">🪑 Picnic Tables</label>
-            </div>
-          </div>
-        </div>
-      </aside>
-      <main class="main-content">
-        <div class="content-header">
-          <div class="results-info">
-            <span id="resultsCount">0</span> campsites found
-          </div>
           <select class="sort-select" id="sortSelect">
             <option value="popular">Most Popular</option>
             <option value="price-low">Price: Low to High</option>
@@ -244,15 +213,18 @@
             <option value="newest">Newest</option>
           </select>
         </div>
+      </div>
 
-        <div class="campsites-container">
-          <div class="campsites-grid" id="campsitesGrid"></div>
-          <button class="load-more" id="loadMoreBtn">
-            Load More Campsites
-          </button>
-        </div>
-      </main>
-    </div>
-    <script src="../js/campsites.js"></script>
-  </body>
+      <div class="campsites-container">
+        <div class="campsites-grid" id="campsitesGrid"></div>
+        <button class="load-more" id="loadMoreBtn">
+          Load More Campsites
+        </button>
+      </div>
+    </main>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../js/campsites.js"></script>
+</body>
+
 </html>

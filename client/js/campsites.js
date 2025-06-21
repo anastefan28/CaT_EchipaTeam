@@ -1,16 +1,128 @@
 let allCampsites = [];
 let filteredCampsites = [];
 let displayedCount = 6;
+let map;
+let isMapVisible = false;
+let isMapExpanded = false;
+let mapMarkers = [];
+
+function initializeMap() {
+  if (!map) {
+    map = L.map('map').setView([46.0, 25.0], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+  }
+}
+function toggleMapVisibility() {
+  const mapContainer = document.getElementById('mapContainer');
+  const toggleBtn = document.getElementById('toggleMapBtn');
+  const container = document.querySelector('.container');
+
+  isMapVisible = !isMapVisible;
+
+  if (isMapVisible) {
+    mapContainer.classList.remove('hidden');
+    container.classList.add('with-map');
+    toggleBtn.textContent = '❌ Hide Map';
+    initializeMap();
+
+    setTimeout(() => {
+      map.invalidateSize();
+      updateMapMarkers();
+    }, 100);
+  } else {
+    mapContainer.classList.add('hidden');
+    container.classList.remove('with-map');
+    toggleBtn.textContent = '📍 View on Map';
+  }
+}
+
+function toggleMapExpansion() {
+  const mapElement = document.getElementById('map');
+  const expandBtn = document.getElementById('expandMapBtn');
+
+  isMapExpanded = !isMapExpanded;
+  mapElement.classList.toggle('map-expanded', isMapExpanded);
+  expandBtn.textContent = isMapExpanded ? 'Collapse Map' : 'Expand Map';
+
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 300);
+}
+
+function createCampsitePopup(campsite) {
+  const container = document.createElement('div');
+  container.style.textAlign = 'center';
+  container.style.padding = '10px';
+
+  const title = document.createElement('h3');
+  title.textContent = campsite.name;
+  title.style.margin = '0 0 10px 0';
+  title.style.color = '#2E7D32';
+
+  const rating = document.createElement('p');
+  rating.textContent = `⭐ ${campsite.avg_rating}/5`;
+  rating.style.margin = '5px 0';
+
+  const price = document.createElement('p');
+  const numericPrice = parseFloat(campsite.price);
+  price.textContent = isNaN(numericPrice)
+    ? 'Price not available'
+    : `${numericPrice.toFixed(2)} RON/night`;
+  price.style.margin = '5px 0';
+  price.style.fontWeight = 'bold';
+  price.style.color = '#4CAF50';
+
+  const button = document.createElement('button');
+  button.textContent = 'View Details';
+  button.onclick = () => goToCampsite(campsite.id);
+  button.style.background = '#4CAF50';
+  button.style.color = 'white';
+  button.style.border = 'none';
+  button.style.padding = '8px 16px';
+  button.style.borderRadius = '5px';
+  button.style.cursor = 'pointer';
+  button.style.marginTop = '10px';
+
+  container.appendChild(title);
+  container.appendChild(rating);
+  container.appendChild(price);
+  container.appendChild(button);
+
+  return container;
+}
+
+function updateMapMarkers() {
+  if (!map) return;
+  mapMarkers.forEach(marker => map.removeLayer(marker));
+  mapMarkers = [];
+
+  filteredCampsites.forEach(campsite => {
+    if (campsite.lat && campsite.lon) {
+      const marker = L.marker([campsite.lat, campsite.lon]).addTo(map);
+      marker.bindPopup(createCampsitePopup(campsite));
+      mapMarkers.push(marker);
+    }
+  });
+  if (mapMarkers.length > 0) {
+    const group = new L.featureGroup(mapMarkers);
+    map.fitBounds(group.getBounds().pad(0.1));
+  }
+}
+document.getElementById('toggleMapBtn').addEventListener('click', toggleMapVisibility);
+document.getElementById('expandMapBtn').addEventListener('click', toggleMapExpansion);
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const qs  = new URLSearchParams(window.location.search);
+    const qs = new URLSearchParams(window.location.search);
     const res = await fetch(`/api/campsites?${qs}`);
     switch (res.status) {
-      case 200:                          
+      case 200:
         allCampsites = await res.json();
         break;
-      case 400: {                        
+      case 400: {
         const { errors = [] } = await res.json();
         throw new Error(`Bad Request: ${errors.join(', ')}`);
       }
@@ -19,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw new Error('Unauthorized');
       case 500:
         throw new Error('Server had an issue, try again');
-      default:                            
+      default:
         throw new Error(`Unexpected status ${res.status}`);
     }
     initFiltersFromURL(qs);
@@ -35,7 +147,6 @@ function initFiltersFromURL(params) {
   if (params.get('location')) {
     document.getElementById('locationFilter').value = params.get('location');
   }
-
   if (params.get('minPrice')) document.getElementById('minPrice').value = params.get('minPrice');
   if (params.get('maxPrice')) document.getElementById('maxPrice').value = params.get('maxPrice');
   if (params.get('county')) document.getElementById('countyFilter').value = params.get('county');
@@ -83,11 +194,14 @@ function setupEventListeners() {
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     displayedCount += 6;
     renderCampsites();
+    if (isMapVisible) {
+      updateMapMarkers();
+    }
   });
 }
 
 function applyFilters() {
-  updateURLParams(); 
+  updateURLParams();
   const loc = document.getElementById('locationFilter').value.toLowerCase();
   const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
   const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
@@ -101,22 +215,22 @@ function applyFilters() {
     .map(cb => cb.value);
 
   filteredCampsites = allCampsites.filter(c => {
-    if (loc && !c.name.toLowerCase().includes(loc) && !c.description.toLowerCase().includes(loc)) return false;
+    if (loc && !c.name.toLowerCase().includes(loc) && !c.description.toLowerCase().includes(loc)
+       && !c.county.toLowerCase().includes(loc)) return false;
     if (c.price < minPrice || c.price > maxPrice) return false;
     if (county && c.county !== county) return false;
     if (selectedTypes.length && !selectedTypes.includes(c.type)) return false;
-    if (capacity) {
-      const [minCap, maxCap] = capacity.includes('+') ? [7, Infinity] : capacity.split('-').map(Number);
-      if (c.capacity < minCap || c.capacity > maxCap) return false;
-    }
-    if (c.rating < rating) return false;
+    if (capacity && c.capacity < capacity) return false;
+    if (c.avg_rating < rating) return false;
     if (selectedAmenities.length && !selectedAmenities.every(a => c.amenities.includes(a))) return false;
-
     return true;
   });
 
   displayedCount = 6;
   renderCampsites();
+  if (isMapVisible) {
+    updateMapMarkers();
+  }
 }
 
 function sortCampsites() {
@@ -126,8 +240,8 @@ function sortCampsites() {
     switch (sort) {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
-      case 'rating': return b.rating - a.rating;
-      case 'newest': return b.id - a.id;
+      case 'rating': return b.avg_rating - a.avg_rating;
+      case 'newest': return b.created_at - a.created_at;
       default: return b.reviewCount - a.reviewCount;
     }
   });
@@ -137,7 +251,7 @@ function sortCampsites() {
 
 function renderCampsites() {
   const grid = document.getElementById('campsitesGrid');
-  grid.replaceChildren(); 
+  grid.replaceChildren();
 
   const toShow = filteredCampsites.slice(0, displayedCount);
   toShow.forEach(campsite => {
@@ -146,16 +260,16 @@ function renderCampsites() {
     card.onclick = () => goToCampsite(campsite.id);
 
     const image = document.createElement('div');
-    image.className = 'campsite-image'; 
+    image.className = 'campsite-image';
     if (campsite.media_ids[0]) {
       const img = document.createElement('img');
-      img.src= `/api/media/${campsite.media_ids[0]}`;
-      img.alt= campsite.name;
-      img.loading= 'lazy';             
+      img.src = `/api/media/${campsite.media_ids[0]}`;
+      img.alt = campsite.name;
+      img.loading = 'lazy';
       image.appendChild(img);
     } else {
-    image.textContent = '🏕️';              
-}
+      image.textContent = '🏕️';
+    }
 
     const type = document.createElement('div');
     type.className = 'campsite-type';
@@ -313,10 +427,10 @@ async function clearAllFilters() {
   try {
     const res = await fetch(`/api/campsites`);
     switch (res.status) {
-      case 200:                          
+      case 200:
         allCampsites = await res.json();
         break;
-      case 400: {                        
+      case 400: {
         const { errors = [] } = await res.json();
         throw new Error(`Bad Request: ${errors.join(', ')}`);
       }
@@ -325,7 +439,7 @@ async function clearAllFilters() {
         throw new Error('Unauthorized');
       case 500:
         throw new Error('Server had an issue, try again');
-      default:                            
+      default:
         throw new Error(`Unexpected status ${res.status}`);
     }
   } catch (err) {

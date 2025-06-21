@@ -69,6 +69,10 @@ body {
     padding: 20px;
     display: grid;
     grid-template-columns: 300px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "filters map"
+        "filters content";
     gap: 30px;
 }
 
@@ -81,6 +85,7 @@ body {
     height: fit-content;
     position: sticky;
     top: 90px;
+    grid-area: filters;
 }
 
 .filters-title {
@@ -372,7 +377,78 @@ body {
 .load-more:hover {
     transform: translateY(-2px);
 }
+.map-container {
+    background: white;
+    grid-area: map;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
 
+.map-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #e1e1e1;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.map-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.map-toggle {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.map-toggle:hover {
+    transform: translateY(-2px);
+}
+
+#map {
+    height: 300px;
+    width: 100%;
+    transition: height 0.3s ease;
+}
+
+#map.map-expanded {
+    height: 500px;
+}
+
+.map-container.hidden {
+    display: none;
+}
+
+.container.with-map {
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "filters map"
+        "filters content";
+}
+
+.filters-sidebar {
+    grid-area: filters;
+}
+
+.map-container {
+    grid-area: map;
+}
+
+.main-content {
+    grid-area: content;
+}
 @media (max-width: 1024px) {
     .container {
         grid-template-columns: 1fr;
@@ -381,6 +457,13 @@ body {
 
     .filters-sidebar {
         position: static;
+    }
+    .container.with-map {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "filters"
+            "map"
+            "content";
     }
 }
 

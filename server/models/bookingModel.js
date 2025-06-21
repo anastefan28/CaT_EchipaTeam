@@ -117,3 +117,11 @@ export async function updateBooking(id, updates) {
 
   return rows[0];
 }
+
+export async function isBookingOwnedByUser(bookingId, userId) {
+  const { rowCount } = await pool.query(
+    `SELECT 1 FROM bookings WHERE id = $1 AND user_id = $2 LIMIT 1`,
+    [bookingId, userId]
+  );
+  return rowCount === 1;
+}

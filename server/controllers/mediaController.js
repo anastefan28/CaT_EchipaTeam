@@ -3,7 +3,7 @@ import { getMediaById , createMedia} from '../models/mediaModel.js';
 import { parse }    from 'url';
 import { isValidId } from '../utils/valid.js';
 import {sendJson} from '../utils/json.js'
-
+import { MAX_SIZE } from '../utils/valid.js';
 
 export async function handleGetMedia(req, res) {
     const { pathname } = parse(req.url, true);
@@ -40,7 +40,10 @@ export async function handlePostMedia(req, res) {
   const files = form.getAll('data');   
   if (!files.length) 
     errors.push('no files uploaded');
-
+  for (const f of files) {
+    if (f.size > MAX_SIZE)
+      errors.push(`${f.name || 'file'} exceeds ${Math.round(MAX_SIZE/1_048_576)} MB`);
+  }
   if (errors.length) 
     throw new AppError(errors.join(', '), 400);
 

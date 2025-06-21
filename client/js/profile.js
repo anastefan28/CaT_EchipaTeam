@@ -47,16 +47,35 @@ document.getElementById('logoutBtn').addEventListener('click', async (e) => {
   window.location.href = '/index';
 });
 
-document.getElementById('profileForm').addEventListener('submit', (e) => {
+document.getElementById('profileForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 
 	const formData = {
 		username: document.getElementById('username').value
 	};
 
-	 //TO DO 
-	console.log('Profile update:', formData);
-	showMessage('Profile updated successfully!', 'success');
+	try {
+		const res = await fetch('/api/me', {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			credentials: 'include', 
+			body: JSON.stringify(formData)
+		});
+
+		if (!res.ok) {
+			const err = await res.json();
+			throw new Error(err.error || 'Update failed');
+		}
+
+		const result = await res.json();
+		console.log('Profile update:', result);
+		showMessage('Profile updated successfully!', 'success');
+	} catch (err) {
+		console.error('Error updating profile:', err.message);
+		showMessage(`⚠️ ${err.message}`, 'error');
+	}
 });
 
 function showMessage(message, type) {

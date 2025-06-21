@@ -583,22 +583,20 @@ body {
   color: #333;
 }
 
-.date-inputs {                       /* the wrapper that already exists   */
-  grid-template-columns: repeat(2, 130px);   /* 130-px wide columns      */
+.date-inputs {                       
+  grid-template-columns: repeat(2, 130px);  
 }
 
-/* make the boxes a little taller & give them a nicer look */
 .date-inputs input[type="text"],
-.date-inputs input[type="date"] {    /* flatpickr turns them into [type=text] */
-  width : 100%;                      /* fill the 130 px column              */
-  height: 38px;                      /* ↕ taller line                       */
+.date-inputs input[type="date"] {   
+  width : 100%;                     
+  height: 38px;                      
   padding: 0 8px;
   border : 2px solid #e1e1e1;
   border-radius: 8px;
   font-size: 14px;
 }
 
-/* keep focus style consistent with the rest of the form */
 .date-inputs input:focus {
   outline: none;
   border-color: #4caf50;

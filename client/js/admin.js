@@ -124,7 +124,6 @@ function openBookingModal() {
 async function loadUserData(userId) {
   try {
     const res = await fetch(`/api/users/${userId}`);
-
     if (!res.ok) {
       const errData = await res.json();
       throw new Error(errData.error || "Failed to fetch user data.");

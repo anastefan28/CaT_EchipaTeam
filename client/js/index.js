@@ -99,7 +99,4 @@ registerForm?.addEventListener("submit", async (e) => {
   }
 });
 
-document.getElementById("forgotPassword").addEventListener("click", (e) => {
-  e.preventDefault();
-  alert("Password reset functionality would be implemented here.");
-});
+

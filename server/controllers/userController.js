@@ -1,5 +1,5 @@
 import { verifyJWT , getJWT} from "../utils/jwt.js";
-import { getAllUsers, getUserById, updateUserById, findUserByEmail, deleteUserById, createUser} from "../models/userModel.js";
+import { getUserById, updateUserById, findUserByEmail, deleteUserById, createUser, getAllUsers} from "../models/userModel.js";
 import { sendJson, json } from "../utils/json.js";
 import { AppError } from "../utils/appError.js";
 import bcrypt from "bcrypt";
@@ -40,7 +40,7 @@ export async function handleUpdateUser(req, res) {
     if (password) {
       updatedUser.password = await bcrypt.hash(password, 10);
     }
-    await updateUserById(id, updatedUser);
+    await updateUserById(id, updatedUser, 'admin');
     return sendJson(res, 200, {
       success: true,
       message: "User updated successfully.",
@@ -115,4 +115,19 @@ export async function handleDeleteUser(req, res) {
 export async function handleGetAllUsers(req, res) {
   const users = await getAllUsers();
   sendJson(res, 200, users);
+}
+
+export async function handlePatchMe(req, res) {
+  const token = getJWT(req);
+  const payload = verifyJWT(token);
+  const user = await getUserById(payload.id);
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+  const { username } = await json(req);
+  if (!username || username.trim() === '')
+    return sendJson(res, 400, { error: "Valid username required." });
+
+  await updateUserById(user.id, { username }, 'member');
+  return sendJson(res, 200, { success: true, message: "Username updated." });
 }

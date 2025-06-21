@@ -8,8 +8,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 async function loadPopularCampsitesOnMap() {
   try {
     const res = await fetch('/api/campsites?sort=popular');
-   switch (res.status) {
-      case 200:                          
+    switch (res.status) {
+      case 200:
         campsites = await res.json();
         break;
       case 401:
@@ -114,13 +114,29 @@ document.getElementById('logoutBtn').addEventListener('click', async (e) => {
 
 document.getElementById('checkin').setAttribute('min', new Date().toISOString().split('T')[0]);
 
+const checkIn = document.getElementById('checkin');
+const checkOut = document.getElementById('checkout');
+updateMinDate();
+checkIn.addEventListener('input', updateMinDate);
+function updateMinDate() {
+  if (!checkIn.value) {
+    checkOut.min = '';
+    return;
+  }
+  checkOut.min = checkIn.value;
+
+  if (checkOut.value && checkOut.value < checkIn.value) {
+    checkOut.value = checkIn.value;
+  }
+}
+
 loadPopularCampsitesOnMap();
 
 async function loadPopularCampsitesList() {
   try {
     const res = await fetch('/api/campsites?sort=popular');
     switch (res.status) {
-      case 200:                          
+      case 200:
         campsites = await res.json();
         break;
       case 400:
@@ -141,15 +157,15 @@ async function loadPopularCampsitesList() {
       card.onclick = () => goToCampsite(campsite.id);
 
       const image = document.createElement('div');
-      image.className = 'campsite-image'; 
+      image.className = 'campsite-image';
       if (campsite.media_ids[0]) {
-          const img = document.createElement('img');
-          img.src= `/api/media/${campsite.media_ids[0]}`;
-          img.alt= campsite.name;
-          img.loading= 'lazy';             
-          image.appendChild(img);
-        } else {
-        image.textContent = '🏕️';     
+        const img = document.createElement('img');
+        img.src = `/api/media/${campsite.media_ids[0]}`;
+        img.alt = campsite.name;
+        img.loading = 'lazy';
+        image.appendChild(img);
+      } else {
+        image.textContent = '🏕️';
       }
       const content = document.createElement('div');
       content.className = 'campsite-content';

@@ -1,4 +1,4 @@
-import { handleMe } from "../controllers/userController.js";
+import { handleMe, handlePatchMe } from "../controllers/userController.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { protectRoute } from "../middlewares/protect.js";
 import { sendJson } from "../utils/json.js";
@@ -11,6 +11,9 @@ export async function userRoute(req, res) {
 
   if (method === "GET" && pathname === "/api/me") {
     return asyncHandler(protectRoute(handleMe))(req, res);
+  }
+  if (method === "PATCH" && pathname==="/api/me") {
+    return asyncHandler(protectRoute(handlePatchMe))(req, res);
   }
   if (method === 'GET' && pathname === '/api/me/bookings') {
     return asyncHandler(protectRoute(handleGetMyBookings))(req, res);
@@ -28,7 +31,7 @@ export async function userRoute(req, res) {
     return asyncHandler(protectRoute(handleDeleteUser))(req, res, 'admin');
   }
   if (method === "PUT" && pathname.startsWith("/api/users/")) {
-      return asyncHandler(protectRoute(handleUpdateUser))(req, res, 'admin');
+      return asyncHandler(protectRoute(handleUpdateUser))(req, res);
     }
   sendJson(res, 405, { error: "Method Not Allowed" });
 }

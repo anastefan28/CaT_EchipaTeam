@@ -15,6 +15,17 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchCampsites();
   fetchBookings();
 
+  document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/auth/logout", { method: "POST" });
+      if (!res.ok) throw new Error("Logout failed");
+    } catch (err) {
+      console.warn("Logout request failed:", err);
+    }
+    window.location.href = "/index";
+  });
+
   document.getElementById("userForm").addEventListener("submit", saveUser);
   document
     .getElementById("campsiteForm")
@@ -893,3 +904,409 @@ async function deleteBooking(id) {
 function clearElement(el) {
   while (el.firstChild) el.removeChild(el.firstChild);
 }
+
+(function () {
+  document.addEventListener("DOMContentLoaded", initExportButtons);
+
+  function initExportButtons() {
+    [
+      { tab: "users", table: "usersTableBody" },
+      { tab: "campsites", table: "campsitesTableBody" },
+      { tab: "bookings", table: "bookingsTableBody" },
+    ].forEach(({ tab, table }) => {
+      const host = document.querySelector(`#${tab}-tab .action-header`);
+      if (!host) return;
+
+      const controlBox = document.createElement("div");
+      controlBox.style.display = "flex";
+      controlBox.style.gap = "6px";
+      controlBox.style.marginLeft = "auto";
+      controlBox.style.marginRight = "10px";
+
+      const svgBtn = document.createElement("button");
+      svgBtn.className = "btn-secondary";
+      svgBtn.textContent = "🖼 SVG";
+      svgBtn.addEventListener("click", () =>
+        exportTableToSvg(table, `${tab}.svg`)
+      );
+      controlBox.appendChild(svgBtn);
+
+      const pdfBtn = document.createElement("button");
+      pdfBtn.className = "btn-secondary";
+      pdfBtn.textContent = "📄 PDF";
+      pdfBtn.addEventListener("click", () =>
+        exportTableToPdf(table, `${tab}.pdf`)
+      );
+      controlBox.appendChild(pdfBtn);
+
+      const addBtn = host.querySelector(".btn-primary");
+      if (addBtn) {
+        host.insertBefore(controlBox, addBtn);
+      } else {
+        host.appendChild(controlBox);
+      }
+    });
+  }
+
+  function exportTableToSvg(tbodyId, filename) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return alert("Table not found.");
+
+    const rows = Array.from(tbody.querySelectorAll("tr")).filter(
+      (r) => r.style.display !== "none"
+    );
+    if (!rows.length) return alert("Nothing to export.");
+
+    const cellPadding = 6,
+      fontSize = 12,
+      lineHeight = 25,
+      colWidths = [];
+    rows.forEach((tr) =>
+      Array.from(tr.cells).forEach((td, c) => {
+        const w =
+          td.textContent.trim().length * (fontSize * 0.55) + cellPadding * 2;
+        colWidths[c] = Math.max(colWidths[c] || 0, w);
+      })
+    );
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("xmlns", svgNS);
+    svg.setAttribute(
+      "width",
+      colWidths.reduce((a, b) => a + b, 0)
+    );
+    svg.setAttribute("height", rows.length * lineHeight);
+    svg.setAttribute("font-family", "sans-serif");
+    svg.setAttribute("font-size", fontSize);
+
+    let y = fontSize + cellPadding;
+    rows.forEach((tr) => {
+      let x = 0;
+      Array.from(tr.cells).forEach((td, c) => {
+        const rect = document.createElementNS(svgNS, "rect");
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y - fontSize);
+        rect.setAttribute("width", colWidths[c]);
+        rect.setAttribute("height", lineHeight);
+        rect.setAttribute("fill", "#fff");
+        rect.setAttribute("stroke", "#000");
+        rect.setAttribute("stroke-width", "0.5");
+        svg.appendChild(rect);
+
+        const txt = document.createElementNS(svgNS, "text");
+        txt.setAttribute("x", x + cellPadding);
+        txt.setAttribute("y", y);
+        txt.textContent = td.textContent.trim();
+        svg.appendChild(txt);
+
+        x += colWidths[c];
+      });
+      y += lineHeight;
+    });
+
+    downloadBlob(
+      new Blob([svg.outerHTML], { type: "image/svg+xml" }),
+      filename
+    );
+  }
+
+  function exportTableToPdf(tbodyId, filename) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return alert("Table not found.");
+
+    const rows = Array.from(tbody.querySelectorAll("tr")).filter(
+      (r) => r.style.display !== "none"
+    );
+    if (!rows.length) return alert("Nothing to export.");
+
+    const table = tbody.closest("table");
+    const head = Array.from(table.tHead.rows[0].cells).map((th) =>
+      th.textContent.trim()
+    );
+    const body = rows.map((r) =>
+      Array.from(r.cells).map((td) => td.textContent.trim())
+    );
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "pt",
+      format: "a4",
+    });
+
+    doc.text(filename.replace(".pdf", "").toUpperCase(), 40, 40);
+    doc.autoTable({
+      head: [head],
+      body,
+      startY: 60,
+      styles: { fontSize: 8, cellPadding: 4 },
+      headStyles: { fillColor: [80, 80, 80] },
+    });
+
+    doc.save(filename);
+  }
+
+  function downloadBlob(blob, filename) {
+    const a = Object.assign(document.createElement("a"), {
+      href: URL.createObjectURL(blob),
+      download: filename,
+      style: "display:none",
+    });
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }, 400);
+  }
+
+  document
+    .getElementById("exportPopularBtn")
+    .addEventListener("click", async () => {
+      try {
+        const res = await fetch("/api/campsites?sort=popular&limit=3");
+        if (!res.ok) throw new Error("Failed to fetch popular campsites");
+
+        const campsites = await res.json();
+        if (!campsites.length) {
+          alert("No popular campsites found.");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+        doc.setFontSize(18);
+        doc.text("Top Popular Campsites", 40, 40);
+
+        let y = 70;
+        for (const [i, camp] of campsites.entries()) {
+          doc.setFontSize(14);
+          doc.text(`${i + 1}. ${camp.name}`, 40, y);
+
+          doc.setFontSize(10);
+          doc.text(`County: ${camp.county}`, 40, y + 18);
+          doc.text(`Type: ${camp.type}`, 40, y + 32);
+          doc.text(`Price: ${camp.price} RON`, 200, y + 18);
+          doc.text(`Capacity: ${camp.capacity}`, 200, y + 32);
+          doc.text(`Rating: ${camp.avg_rating || "N/A"}`, 350, y + 18);
+
+          doc.text("Description:", 40, y + 50);
+          doc.setFont("helvetica", "normal");
+          doc.text(camp.description || "No description", 40, y + 65, {
+            maxWidth: 520,
+          });
+
+          if (camp.media_ids && camp.media_ids.length > 0) {
+            const imageUrl = `/api/media/${camp.media_ids[0]}`;
+            const imageData = await fetch(imageUrl)
+              .then((r) => r.blob())
+              .then(blobToBase64);
+
+            if (imageData) {
+              doc.addImage(imageData, "JPEG", 400, y + 40, 140, 100);
+              y += 120;
+            }
+          }
+
+          y += 100;
+          if (y > 700) {
+            doc.addPage();
+            y = 50;
+          }
+        }
+
+        doc.save("top-popular-campsites.pdf");
+      } catch (err) {
+        console.error("Export error:", err);
+        alert("Failed to export popular campsites.");
+      }
+    });
+
+  document
+    .getElementById("exportPopularDatesBtn")
+    .addEventListener("click", async () => {
+      try {
+        const campsitesRes = await fetch("/api/campsites");
+        if (!campsitesRes.ok) throw new Error("Failed to fetch campsites");
+
+        const campsites = await campsitesRes.json();
+        if (!campsites.length) {
+          alert("No campsites found.");
+          return;
+        }
+
+        const allBookingData = [];
+        for (const campsite of campsites) {
+          try {
+            const bookingRes = await fetch(
+              `/api/campsites/${campsite.id}/booked`
+            );
+            if (bookingRes.ok) {
+              const bookingData = await bookingRes.json();
+              if (bookingData && bookingData.length > 0) {
+                allBookingData.push({
+                  campsite: campsite.name,
+                  county: campsite.county,
+                  bookings: bookingData,
+                });
+              }
+            }
+          } catch (err) {
+            console.warn(`Failed to fetch bookings for ${campsite.name}:`, err);
+          }
+        }
+
+        if (!allBookingData.length) {
+          alert("No booking data found.");
+          return;
+        }
+
+        const dateFrequency = {};
+        const monthFrequency = {};
+        const seasonFrequency = { Spring: 0, Summer: 0, Fall: 0, Winter: 0 };
+
+        allBookingData.forEach(({ bookings }) => {
+          bookings.forEach((booking) => {
+            const checkIn = new Date(booking.checkin);
+            const checkOut = new Date(booking.checkout);
+
+            for (
+              let d = new Date(checkIn);
+              d <= checkOut;
+              d.setDate(d.getDate() + 1)
+            ) {
+              const dateStr = d.toISOString().split("T")[0];
+              const monthStr = d.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              });
+
+              dateFrequency[dateStr] = (dateFrequency[dateStr] || 0) + 1;
+              monthFrequency[monthStr] = (monthFrequency[monthStr] || 0) + 1;
+
+              const month = d.getMonth() + 1;
+              if (month >= 3 && month <= 5) seasonFrequency.Spring++;
+              else if (month >= 6 && month <= 8) seasonFrequency.Summer++;
+              else if (month >= 9 && month <= 11) seasonFrequency.Fall++;
+              else seasonFrequency.Winter++;
+            }
+          });
+        });
+
+        const topDates = Object.entries(dateFrequency)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 10);
+
+        const topMonths = Object.entries(monthFrequency)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 6);
+
+        const topSeasons = Object.entries(seasonFrequency).sort(
+          ([, a], [, b]) => b - a
+        );
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+        doc.setFontSize(18);
+        doc.text("Popular Booking Dates Analysis", 40, 40);
+
+        let y = 80;
+
+        doc.setFontSize(14);
+        doc.text("Top 10 Most Popular Booking Dates", 40, y);
+        y += 30;
+
+        doc.setFontSize(10);
+        topDates.forEach(([date, count], index) => {
+          const formattedDate = new Date(date).toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          doc.text(`${index + 1}. ${formattedDate} - ${count} bookings`, 50, y);
+          y += 18;
+        });
+
+        y += 20;
+
+        doc.setFontSize(14);
+        doc.text("Most Popular Booking Months", 40, y);
+        y += 30;
+
+        doc.setFontSize(10);
+        topMonths.forEach(([month, count], index) => {
+          doc.text(`${index + 1}. ${month} - ${count} booked days`, 50, y);
+          y += 18;
+        });
+
+        y += 20;
+
+        doc.setFontSize(14);
+        doc.text("Seasonal Booking Distribution", 40, y);
+        y += 30;
+
+        doc.setFontSize(10);
+        topSeasons.forEach(([season, count], index) => {
+          const percentage = (
+            (count /
+              Object.values(seasonFrequency).reduce((a, b) => a + b, 0)) *
+            100
+          ).toFixed(1);
+          doc.text(
+            `${index + 1}. ${season} - ${count} booked days (${percentage}%)`,
+            50,
+            y
+          );
+          y += 18;
+        });
+
+        if (y > 650) {
+          doc.addPage();
+          y = 50;
+        } else {
+          y += 30;
+        }
+
+        doc.setFontSize(14);
+        doc.text("Booking Activity by Campsite", 40, y);
+        y += 30;
+
+        doc.setFontSize(10);
+        allBookingData
+          .sort((a, b) => b.bookings.length - a.bookings.length)
+          .slice(0, 10)
+          .forEach(({ campsite, county, bookings }, index) => {
+            doc.text(
+              `${index + 1}. ${campsite} (${county}) - ${
+                bookings.length
+              } bookings`,
+              50,
+              y
+            );
+            y += 18;
+
+            if (y > 750) {
+              doc.addPage();
+              y = 50;
+            }
+          });
+
+        doc.save("popular-booking-dates-analysis.pdf");
+      } catch (err) {
+        console.error("Export error:", err);
+        alert("Failed to export popular booking dates.");
+      }
+    });
+
+  async function blobToBase64(blob) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  }
+})();

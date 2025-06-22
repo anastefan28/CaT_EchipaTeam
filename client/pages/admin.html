@@ -6,13 +6,18 @@
     <title>CampSpot Admin Panel</title>
     <link rel="stylesheet" href="../css/admin.css" />
     <script src="../js/admin.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.0/dist/jspdf.plugin.autotable.min.js"></script>
   </head>
   <body>
     <header class="header">
       <nav class="nav">
         <div class="logo">Admin Panel</div>
         <div class="nav-links">
+          <a id="exportPopularBtn" class="nav-item">📊 Export Popular Campsites</a>
+          <a id="exportPopularDatesBtn" class="nav-item">📅 Export Popular Dates</a>
           <a href="/index" class="nav-item" id="logoutBtn">🚪 Logout</a>
+
         </div>
       </nav>
     </header>

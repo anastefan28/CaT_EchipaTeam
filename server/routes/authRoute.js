@@ -1,9 +1,10 @@
 import { generateAuthUrl } from "../config/google.js";
 import {
-	handleGoogleCallback,
-	handleLogin,
-	handleRegister,
-	handleLogout,
+  handleGoogleCallback,
+  handleLogin,
+  handleRegister,
+  handleLogout,
+  handleEmailConfirmation,
 } from "../controllers/authController.js";
 import { parse } from "url";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -29,6 +30,10 @@ export async function authRoute(req, res) {
 
 	if (method === "POST" && pathname === "/api/auth/logout")
 		return asyncHandler(handleLogout)(req, res);
+
+	if (method === "GET" && pathname.startsWith("/api/auth/confirm-email")) {
+    return asyncHandler(handleEmailConfirmation)(req, res);
+  }
 
 	sendJson(res, 405, { error: "Method not allowed" });
 }

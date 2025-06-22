@@ -113,3 +113,5 @@ CREATE TABLE media (
 CREATE INDEX ON media (campsite_id);
 CREATE INDEX ON media (review_id);
 
+ALTER TABLE users ADD COLUMN confirmed BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN confirmation_token TEXT; 

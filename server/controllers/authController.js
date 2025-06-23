@@ -17,6 +17,8 @@ import { AppError } from "../utils/appError.js";
 
 import crypto from "crypto";
 import { sendConfirmationEmail } from "../utils/mailer.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 export async function handleLogin(req, res) {
   const { email, password } = await json(req);
@@ -102,7 +104,7 @@ export function handleLogout(req, res) {
 export async function handleGoogleCallback(req, res) {
   const params = googleClient.callbackParams(req);
   const tokenSet = await googleClient.callback(
-    "http://localhost:8000/api/auth/google/callback",
+    process.env.GOOGLE_REDIRECT_URI,
     params,
     { nonce }
   );

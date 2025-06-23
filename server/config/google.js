@@ -9,7 +9,7 @@ const issuer = await Issuer.discover('https://accounts.google.com');
 export const googleClient = new issuer.Client({
 	client_id: process.env.GOOGLE_CLIENT_ID,
 	client_secret: process.env.GOOGLE_CLIENT_SECRET,
-	redirect_uris: ['http://localhost:8000/api/auth/google/callback'],
+	redirect_uris: [process.env.GOOGLE_REDIRECT_URI],
 	response_types: ['code'],
 });
 

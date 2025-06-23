@@ -3,7 +3,7 @@ import { parse } from 'url';
 import dotenv from 'dotenv';
 import { routes } from './router.js';
 import { serveStatic } from './middlewares/static.js';
-
+	
 dotenv.config();
 
 const server = http.createServer(async (req, res) => {

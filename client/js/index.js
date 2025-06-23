@@ -1,10 +1,11 @@
+//dom elements
 const loginToggle = document.getElementById("loginToggle");
 const registerToggle = document.getElementById("registerToggle");
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const registerError = document.getElementById("registerError");
 const loginError = document.getElementById("loginError");
-
+//helpers
 function showError(el, msg) {
   if (el) {
     el.textContent = msg;
@@ -28,6 +29,7 @@ async function postJSON(url, body) {
   if (!res.ok) throw new Error(data.error || "Unexpected error");
   return data;
 }
+//login/register toggle
 loginToggle.addEventListener("click", () => {
   loginToggle.classList.add("active");
   registerToggle.classList.remove("active");
@@ -41,7 +43,7 @@ registerToggle.addEventListener("click", () => {
   registerForm.classList.remove("hidden");
   loginForm.classList.add("hidden");
 });
-
+//google auth
 document.getElementById("googleLogin").addEventListener("click", () => {
   window.location.href = "/api/auth/google";
 });
@@ -49,7 +51,7 @@ document.getElementById("googleLogin").addEventListener("click", () => {
 document.getElementById("googleRegister").addEventListener("click", () => {
   window.location.href = "/api/auth/google";
 });
-
+//normal login/register
 loginForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   hideError(loginError);

@@ -175,10 +175,10 @@ function initFiltersFromURL(params) {
   const guests = parseInt(params.get('guests'));
   if (guests) {
     const capFilter = document.getElementById('capacityFilter');
-    if (guests <= 2) capFilter.value = '1';
-    else if (guests <= 4) capFilter.value = '3';
-    else if (guests <= 6) capFilter.value = '5';
-    else capFilter.value = '7';
+    if (guests <= 2) capFilter.value = '1-2';
+    else if (guests <= 4) capFilter.value = '3-4';
+    else if (guests <= 6) capFilter.value = '5-6';
+    else capFilter.value = '7+';
   }
 }
 

@@ -2,8 +2,7 @@ import { pool } from "../utils/db.js";
 
 
 export async function getCampsites (filters = {}) {
-  const { id, location, capacity, checkin, checkout, sort } = filters;
-
+  const { id, location, guests, checkin, checkout, sort } = filters;
   const vals = [];
   const conds = [];
 
@@ -18,8 +17,8 @@ export async function getCampsites (filters = {}) {
       `(LOWER(cs.name) LIKE $${idx} OR LOWER(cs.county::text) LIKE $${idx})`
     );
   }
-  if (capacity) {
-    vals.push(capacity);
+  if (guests) {
+    vals.push(guests);
     conds.push(`cs.capacity >= $${vals.length}`);
   }
   if (checkin && checkout) {

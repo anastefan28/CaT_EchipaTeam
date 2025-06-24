@@ -16,20 +16,3 @@ export const validateBody =
     }
     return handler(req, res);
   };
-
-export const validateQuery =
-  (schema) => (handler) => async (req, res) => {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const obj = Object.fromEntries(url.searchParams);  
-    let msg;
-    try {
-      const parsed = schema.parse(obj);    
-      req.query = parsed;
-    } catch (err) {
-      msg = err.errors
-        ? err.errors.map(e => e.message).join(', ')
-        : err.message;
-      throw new AppError(msg, 400);
-    }
-    return handler(req, res);
-  };

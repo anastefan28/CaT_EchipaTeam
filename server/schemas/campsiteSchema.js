@@ -11,18 +11,3 @@ export const campsiteSchema = z.object({
   type : z.enum(['tent','rv','cabin'])
 }).strict();
 
-export const campsiteFilterSchema = z.object({
-  location : z.string().max(100).optional(),
-  capacity : z.coerce.number().int().positive().max(20).optional(),
-  checkin : isoDate.optional(),
-  checkout : isoDate.optional(),
-  sort : z.enum(['popular','price-low','price-high','rating','newest']).optional()
-}).passthrough() 
-.refine(q => !(q.checkin ^ q.checkout), {            
-  message: 'checkin and checkout must be provided together',
-  path: ['checkin']
-})
-.refine(q => !q.checkin || q.checkin < q.checkout, {
-  message: 'checkout must be after checkin',
-  path   : ['checkout']
-});

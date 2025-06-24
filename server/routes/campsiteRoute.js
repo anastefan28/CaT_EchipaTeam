@@ -9,8 +9,8 @@ import { parse } from 'url';
 import { handlePostReview } from '../controllers/reviewController.js';
 import { handlePostMessage } from '../controllers/messageController.js';
 import { handleBookedRanges } from '../controllers/bookingController.js';
-import { validateBody, validateQuery } from '../middlewares/validate.js';
-import { campsiteSchema, campsiteFilterSchema } from '../schemas/campsiteSchema.js';
+import { validateBody} from '../middlewares/validate.js';
+import { campsiteSchema} from '../schemas/campsiteSchema.js';
 import{reviewSchema} from '../schemas/reviewSchema.js';
 import { messageSchema } from '../schemas/messageSchema.js';
 
@@ -19,14 +19,13 @@ export async function campsiteRoute(req, res) {
   const { method } = req;
 
   if (method === 'GET' && pathname === '/api/campsites') {
-    return asyncHandler(protectRoute()(validateQuery(campsiteFilterSchema)(handleGetCampsites)))(req, res);
+    return asyncHandler(protectRoute()(handleGetCampsites))(req, res);
   }
 
   if (method === 'GET' && pathname.startsWith('/api/campsites/')) {
     const parts = pathname.split('/');
     if (parts.length === 4 && parts[3]) {
-      return asyncHandler(protectRoute()(campsiteFilterSchema)
-      (handleGetCampsite))(req, res);
+      return asyncHandler(protectRoute()(handleGetCampsite))(req, res);
     }
     if (parts.length === 5 && parts[3] && parts[4] === 'messages') {
       return asyncHandler(protectRoute()(handleGetMessagesByCampsite))(req, res);

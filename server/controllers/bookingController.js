@@ -1,6 +1,5 @@
 import { AppError } from '../utils/appError.js';
-import { sendJson, json } from '../utils/json.js';
-import { isIso ,isValidId} from '../utils/valid.js';
+import { sendJson } from '../utils/json.js';
 import {
   getBookingsByUserId,
   getBookedRanges,
@@ -11,25 +10,10 @@ import {
   updateBooking,
   isBookingOwnedByUser
 } from "../models/bookingModel.js";
-
+import { isValidId } from '../utils/valid.js';
 
 export async function handlePostBooking(req,res){
-  const { campsite_id, checkin, checkout, guests } = await json(req);
-  if (!campsite_id || !isIso(checkin) || !isIso(checkout))
-    throw new AppError('campsite_id, checkin, checkout required', 400);
-  if (!isValidId(campsite_id))
-    throw new AppError('Invalid campsite id', 400);
-  if (new Date(checkout) <= new Date(checkin))
-    throw new AppError('checkout must be after checkin', 400);
-  if (!Number.isInteger(guests) || guests < 1)
-    throw new AppError('guests must be positive int', 400);
-  console.log('Creating booking', {
-    campsite_id,
-    userId: req.user.id,
-    checkin,
-    checkout,
-    guests
-  });
+  const { campsite_id, checkin, checkout, guests } = req.body;
   try {
     const booking = await createBooking({
       campsiteId : campsite_id,
@@ -47,14 +31,7 @@ export async function handlePostBooking(req,res){
 }
 
 export async function handleGetMyBookings(req, res) {
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const status = url.searchParams.get('status');         
-
-  if (status && !['confirmed', 'cancelled'].includes(status)) {
-    throw new AppError('status must be "confirmed" or "cancelled"', 400);
-  }
-
-  const rows = await getBookingsByUserId(req.user.id, status );
+  const rows = await getBookingsByUserId(req.user.id);
   sendJson(res, 200, rows);
 }
 
@@ -80,16 +57,15 @@ export async function handleDeleteBooking(req, res) {
   }
   const userId = req.user?.id;
   const userRole = req.user?.role;
-  if(!userRole=== 'admin' && !isBookingOwnedByUser(id,userId)) {
+  const owns = await isBookingOwnedByUser(id, userId);
+  if(userRole!== 'admin' && !owns) {
     throw new AppError("You are not authorized to delete this booking", 403);
   }
   try {
     const deleted = await deleteBookingById(id);
-
     if (!deleted) {
       return sendJson(res, 404, { error: "Booking not found" });
     }
-
     return sendJson(res, 200, {
       success: true,
       message: "Booking deleted successfully",
@@ -110,12 +86,10 @@ export async function handleGetBooking(req, res) {
   if (!isValidId(id)) {
     throw new AppError('Invalid booking id', 400);
   }
-
   const booking = await getBooking(id);
   if (!booking) {
     throw new AppError('Booking not found', 404);
   }
-  
   sendJson(res, 200, booking);
 }
 export async function handleUpdateBooking(req, res) {
@@ -123,21 +97,7 @@ export async function handleUpdateBooking(req, res) {
   if (!isValidId(id)) {
     throw new AppError("Invalid booking id", 400);
   }
-
-  const { checkin, checkout, guests } = await json(req);
-
-  if (!isIso(checkin) || !isIso(checkout)) {
-    throw new AppError("checkin and checkout must be valid ISO dates", 400);
-  }
-
-  if (new Date(checkout) <= new Date(checkin)) {
-    throw new AppError("checkout must be after checkin", 400);
-  }
-
-  if (!Number.isInteger(guests) || guests < 1) {
-    throw new AppError("guests must be a positive integer", 400);
-  }
-
+  const { checkin, checkout, guests } = req.body;
   try {
     const updatedBooking = await updateBooking(id, {
       checkin,

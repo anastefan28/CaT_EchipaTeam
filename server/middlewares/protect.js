@@ -2,7 +2,8 @@ import { getJWT, verifyJWT } from '../utils/jwt.js';
 import { AppError }         from '../utils/appError.js';
 import { getUserById }      from '../models/userModel.js';
 
-export const protectRoute = (handler) => async (req, res,requiredRole, next) => {
+export const protectRoute = (requiredRole = 'member') => (handler) =>
+  async (req, res) => {
 
     const token = getJWT(req);
     if (!token) {
@@ -29,6 +30,6 @@ export const protectRoute = (handler) => async (req, res,requiredRole, next) => 
       throw new AppError('Forbidden: You do not have permission to access this resource.', 403);
     }
     req.user = user;
-    return handler(req, res, next);
+    return handler(req, res);
 
 };

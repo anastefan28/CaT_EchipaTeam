@@ -1,38 +1,23 @@
 import { googleClient, nonce } from "../config/google.js";
-import {
-  findUserByOAuthSub,
-  createOAuthUser,
-  confirmUserByToken,
-} from "../models/userModel.js";
+import {findUserByOAuthSub,createOAuthUser,confirmUserByToken} from "../models/userModel.js";
 import { generateJWT } from "../utils/jwt.js";
 import { serialize } from "cookie";
-import {
-  findUserByEmail,
-  validatePassword,
-  createUser,
-} from "../models/userModel.js";
+import {findUserByEmail,validatePassword,createUser} from "../models/userModel.js";
 import { sendJson, json } from "../utils/json.js";
 import bcrypt from "bcrypt";
 import { AppError } from "../utils/appError.js";
-
 import crypto from "crypto";
 import { sendConfirmationEmail } from "../utils/mailer.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
 export async function handleLogin(req, res) {
-  const { email, password } = await json(req);
-  if (!email || !password) {
-    throw new AppError("Email and password are required.", 400);
-  }
-
+  const { email, password } = req.body; 
   const user = await findUserByEmail(email);
   if (!user || user.password_hash === null ||
-    !(await validatePassword(password, user.password_hash))
-  ) {
+    !(await validatePassword(password, user.password_hash))) {
     throw new AppError(
-      "Invalid credentials. If you don’t have an account, please register first.",
-      401
+      "Invalid credentials. If you don’t have an account, please register first.",401
     );
   }
 
@@ -59,11 +44,7 @@ export async function handleLogin(req, res) {
 }
 
 export async function handleRegister(req, res) {
-  const { username, email, password, role } = await json(req);
-
-  if (!username || !email || !password || !role) {
-    throw new AppError("All fields are required.", 400);
-  }
+  const { username, email, password, role } = req.body;
 
   const existing = await findUserByEmail(email);
   if (existing) {
@@ -73,7 +54,7 @@ export async function handleRegister(req, res) {
   const hashed = await bcrypt.hash(password, 10);
   const confirmationToken = crypto.randomUUID();
 
-  const user = await createUser({
+  await createUser({
     username,
     email,
     password: hashed,

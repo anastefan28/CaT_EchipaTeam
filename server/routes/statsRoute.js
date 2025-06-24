@@ -9,7 +9,7 @@ export async function statsRoute(req, res) {
   const { method } = req;
 
   if (method === "GET" && pathname === "/api/stats") {
-    return asyncHandler(protectRoute(handleAdminStats))(req, res, 'admin');
+    return asyncHandler(protectRoute('admin')(handleAdminStats))(req, res);
   }
   sendJson(res, 405, { error: "Method Not Allowed" });
 }

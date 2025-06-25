@@ -866,9 +866,22 @@ async function editBooking(id) {
     }
 
     const booking = await res.json();
-    document.getElementById("bookingCheckin").value = booking.checkin;
-    document.getElementById("bookingCheckout").value = booking.checkout;
+
+    const campRes = await fetch(`/api/campsites/${booking.campsite_id}`);
+    if (!campRes.ok) throw new Error("Failed to fetch campsite details.");
+    const campsite = await campRes.json();
+
+    document.getElementById("bookingCheckin").value = formatDateForInput(
+      booking.start_date
+    );
+    document.getElementById("bookingCheckout").value = formatDateForInput(
+      booking.end_date
+    );
     document.getElementById("bookingGuests").value = booking.guests;
+
+    const guestsInput = document.getElementById("bookingGuests");
+    guestsInput.max = campsite.capacity;
+    guestsInput.setAttribute("title", `Max guests: ${campsite.capacity}`);
 
     document.getElementById("bookingModalTitle").textContent = "Edit Booking";
     document.getElementById("bookingModal").style.display = "block";
@@ -904,7 +917,17 @@ async function deleteBooking(id) {
 function clearElement(el) {
   while (el.firstChild) el.removeChild(el.firstChild);
 }
+function formatDateForInput(dateStr) {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "";
 
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); 
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`; 
+}
 (function () {
   document.addEventListener("DOMContentLoaded", initExportButtons);
 

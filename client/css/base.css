@@ -20,8 +20,10 @@ body {
 .nav {
 	display: flex;
 	justify-content: space-between;
+	flex-wrap: wrap;
 	align-items: center;
-	padding-right: 150px;
+	padding: 0 1rem;
+	padding-right: 6rem;
 	max-width: 1200px;
 	margin: auto;
 	height: 70px;
@@ -53,4 +55,22 @@ body {
 .nav-item:hover {
 	color: #1b5e20;
 	background: #f0f8f0;
+}
+
+@media (max-width: 768px) {
+	.nav {
+		height: auto;
+		flex-direction: column;
+	}
+
+	.nav-links {
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 10px;
+		margin: 8px 0;
+	}
+
+	.nav-item {
+		padding: 10px 12px;
+	}
 }

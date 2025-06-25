@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="schema:accessibilityFeature" content="alternativeText">
+  <meta property="schema:accessibilityFeature" content="MathML">
+  <meta property="schema:accessibilityHazard" content="noFlashingHazard">
+  <meta property="schema:copyrightHolder" content="Stefan Ana-Maria Stefana and Scoban Alin-Gabriel">
+  <title>Camping Reservation Web Tool – CampSpot</title>
+  <link rel="stylesheet" href="scholarly.min.css">
+</head>
+<body prefix="schema: http://schema.org">
+<article resource="#" typeof="schema:ScholarlyArticle">
+  <header>
+    <h1 property="schema:name">Camping Reservation Web Tool – CampSpot</h1>
+  </header>
+  <nav>
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#general-description">General Description</a></li>
+      <li><a href="#application-interface">Application Interface</a></li>
+      <li><a href="#system-features">System Features</a></li>
+      <li><a href="#references">References</a></li>
+    </ol>
+  </nav>
+  <div role="contentinfo">
+    <section typeof="sa:AuthorsList">
+      <h2>Authors</h2>
+      <ul>
+        <li typeof="sa:ContributorRole" property="schema:author">
+          <span typeof="schema:Person">
+            <span property="schema:name">Stefan Ana-Maria Stefana</span>
+          </span>
+        </li>
+        <li typeof="sa:ContributorRole" property="schema:author">
+          <span typeof="schema:Person">
+            <span property="schema:name">Scoban Alin-Gabriel</span>
+          </span>
+        </li>
+      </ul>
+    </section>
+  </div>
+  <section typeof="sa:Abstract" id="abstract" role="doc-abstract">
+    <h2>1. Abstract</h2>
+    <p>
+      <strong>CampSpot</strong> is a modular web tool dedicated to booking and managing camping sites. The platform delivers a complete experience for both campsite administrators and members, integrating stay planning, multimedia review publishing and interactive exploration of locations on a map via <em>OpenStreetMap</em>. The system is built on a <em>Node.js</em>/<em>PostgreSQL</em> backend, features <em>OAuth 2.0</em> authentication and authorisation, and includes analytic modules capable of generating textual, SVG and PDF reports on campsite occupancy and seasonal trends.
+    </p>
+  </section>
+  <section id="introduction" role="doc-introduction">
+    <h2>2. Introduction</h2>
+
+<h3>2.1 Purpose</h3>
+<p>
+  The purpose of the <strong>CampSpot</strong> application is to digitalise the campsite-booking process and facilitate interaction between campsite administrators and tourists. The platform enables quick reservations, real-time availability viewing, publishing of impressions (text, photo, audio, video) and interactive campsite exploration on a map. Administrators can manage campsite content, users and statistical reports in a unified, secure interface.
+</p>
+
+<h3>2.2 Document Conventions</h3>
+<p>
+  This document follows <em>ScholarlyHTML</em> conventions. Major section headings are numbered, and important terms are emphasised in <b>bold</b>. Code samples, endpoints or CLI commands appear in <code>monospace</code>. Measurements are expressed in metres and decimal degrees where relevant.
+</p>
+
+<h3>2.3 Intended Audience &amp; Reading Suggestions</h3>
+<p>
+  This document targets:
+</p>
+<ul>
+  <li><b>Developers &amp; testers:</b> see Sections 3.2 (System Architecture) and 4.3 (Software Interface).</li>
+  <li><b>Campsite administrators:</b> see Section 3.5 (User Documentation) and Section 5 (System Features).</li>
+  <li><b>Project managers:</b> see Sections 2.1 (Purpose) and 3.1 (Product Perspective).</li>
+  <li><b>Tourists / End-users:</b> see Section 4.1 (User Interface).</li>
+  <li><b>Technical writers:</b> see Section 2.2 (Document Conventions).</li>
+</ul>
+
+<h3>2.4 Product Scope</h3>
+<ul>
+  <li>Suitable for both public and private exclusivist campsites seeking online visibility and a modern booking system.</li>
+  <li>Future integration with third-party services (payment processors).</li>
+</ul>
+  </section>
+  <section id="general-description">
+    <h2>3. General Description</h2>
+
+<h3>3.1 Product Perspective</h3>
+<p>
+  The <strong>CampSpot</strong> platform acts as a central hub linking tourists with campsite operators, providing a unified interface for bookings, reviews and resource management. The system adopts a <em>client–server</em> architecture, clearly separating concerns between the <em>frontend</em> (UI &amp; presentation logic), the <em>REST API</em> and the <em>backend</em> (business logic, authentication, data management).
+</p>
+
+<p>Key components:</p>
+<ul>
+  <li><b>Frontend</b> – HTML, CSS and JavaScript (Leaflet for mapping) with dedicated dashboards for users and admins.</li>
+  <li><b>REST API</b> – routes such as <code>/api/campsites</code>, <code>/api/bookings</code>, <code>/api/reviews</code>, <code>/api/users</code>, etc.</li>
+  <li><b>Backend</b> – Node.js <code>http</code>, <code>zod</code> validation, <code>openid-client</code> for OAuth, <code>busboy</code> for media uploads.</li>
+  <li><b>PostgreSQL database</b> – stores campsites, bookings, users, media files and statistics.</li>
+  <li><b>Report generator</b> – produces inline SVG charts and PDF exports.</li>
+  <li><b>Map layer</b> – OpenStreetMap (via Leaflet) for rendering campsite locations.</li>
+</ul>
+
+<h3>3.2 System Architecture – C4 Diagrams</h3>
+<p>
+  The C4 model offers a four-level view of the system. Diagrams (Context, Container, Component, Code) are generated with <em>draw.io</em> and reside in <em>docs/diagrams/</em>.
+</p>
+<div class="diagram-grid">
+  <div class="diagram-item">
+    <h4>Context Diagram (C1)</h4>
+    <div class="imag"><img class="uml" src="diagrams/C1.jpg" alt="Diagram C1 – Context" style="width: 600px;"></div>
+  </div>
+  <div class="diagram-item">
+    <h4>Container Diagram (C2)</h4>
+    <div class="imag"><img class="uml" src="diagrams/C2.jpg" alt="Diagram C2 – Container" style="width: 600px;"></div>
+  </div>
+  <div class="diagram-item">
+    <h4>Component Diagram (C3)</h4>
+    <div class="imag"><img class="uml" src="diagrams/C3.jpg" alt="Diagram C3 – Component" style="width: 600px;"></div>
+  </div>
+</div>
+
+<h3>3.3 User Classes &amp; Characteristics</h3>
+<ul>
+  <li><b>Administrator</b> – creates/edits campsite listings, manages users, moderates reviews, consults statistics.</li>
+  <li><b>Member</b> – books sites, adds multimedia reviews, can save favourite campsites.</li>
+</ul>
+
+<h3>3.4 Design &amp; Implementation Constraints</h3>
+<ul>
+  <li><b>Hardware</b>: server must support light media streaming (files &lt; 5 MB).</li>
+  <li><b>Interoperability</b>: SVG/PDF exports for statistics.</li>
+  <li><b>Security</b>: OAuth 2.0, XSS sanitisation, prepared stmt for SQL Injection.</li>
+</ul>
+
+<h3>3.5 User Documentation</h3>
+<ul>
+  <li><b>OAuth sign-up flow:</b> user authenticates via Google; a local profile is created.</li>
+  <li><b>Booking a campsite:</b> member selects date range and party size, then confirms.</li>
+  <li><b>Adding a review:</b> member uploads media &amp; text to community reviews and chats</li>
+  <li><b>Admin – manage campsite:</b> UI for full power on the database.</li>
+  <li><b>Admin – statistics:</b> the <em>Analytics</em> page shows interactive SVG charts and an “Export PDF” button.</li>
+</ul>
+  </section>
+  <section id="application-interface">
+    <h2>4. Application Interface</h2>
+
+<h3>4.1 User Interface</h3>
+<ul>
+  <li>
+    <h4>“Campsites” page</h4>
+    <ul>
+      <li>Filters by location, price, rating and amenities (shower, Wi-Fi, pets).</li>
+      <li>Embedded Leaflet map with live markers.</li>
+    </ul>
+    <div class="interface"><img src="images/campsites-list.png" alt="Campsites list" style="width: 600px;"></div>
+  </li>
+  <li>
+    <h4>“Campsite” detail page</h4>
+    <ul>
+      <li>Photo/video gallery, description and availability calendar.</li>
+      <li>Weather forecasts during specific calendar dates.</li>
+      <li>Review section with star ratings and comments.</li>
+    </ul>
+    <div class="interface"><img src="images/campsite-detail.png" alt="Campsite detail" style="width: 600px;"></div>
+  </li>
+  <li>
+    <h4>Admin Dashboard</h4>
+    <ul>
+      <li>“Bookings management” tab – chronological list with accept/reject actions.</li>
+      <li>“Campsites management” tab – create/delete listings, edit seasonal prices.</li>
+      <li>“Users management” tab – suspend users, reset passwords.</li>
+      <li>“Export” – analytics relating campsites, users and bookings</li>
+    </ul>
+    <div class="interface"><img src="images/admin-dashboard.png" alt="Admin Dashboard" style="width: 600px;"></div>
+  </li>
+  <li>
+    <h4>Community</h4>
+    <ul>
+      <li>Photo/video reviews, community chat with media.</li>
+      <li>Review section with star ratings and comments.</li>
+    </ul>
+    <div class="interface"><img src="images/reviews.png" alt="Campsite detail" style="width: 600px;"></div>
+  </li>
+</ul>
+
+<h3>4.2 Hardware Interface</h3>
+<p>Compatible with desktop, laptop, tablet and smartphone.</p>
+
+<h3>4.3 Software Interface</h3>
+<ul>
+  <li><b>REST API</b>: JSON over HTTPS (e.g. <code>POST /api/bookings</code> to create a booking).</li>
+  <li><b>OAuth 2.0</b>: Authorization-Code flow via <em>openid-client</em>.</li>
+  <li><b>Leaflet JS</b>: consumes OSM tiles from <code>https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png</code>.</li>
+  <li><b>Media storage</b>: files ≤ 5 MB kept on disk; Cloud bucket storage as a future imporvement.</li>
+</ul>
+
+<h3>4.4 Communications Interface</h3>
+<ul>
+  <li><b>Browser ↔ API</b>: HTTP, JSON</li>
+  <li><b>API ↔ DB</b>: <code>pg</code> connection pool, parameterised queries.</li>
+  <li><b>Browser ↔ Leaflet</b>: HTTP/2 tile fetching from <code>tile.openstreetmap.org</code>.</li>
+</ul>
+  </section>
+  <section id="system-features">
+    <h2>5. System Features</h2>
+    <ul>
+      <li>Book camping sites with live availability checks.</li>
+      <li>Dynamically generated pages for every campsite.</li>
+      <li>Text, photo, audio and video reviews with moderation.</li>
+      <li>Interactive OSM map with filters and campsite.</li>
+      <li>OAuth authentication and role-based access control.</li>
+      <li>Admin dashboard with exportable seasonal statistics (SVG, PDF).</li>
+    </ul>
+  </section>
+  <section id="references" role="doc-bibliography">
+    <h2>7. References</h2>
+    <ul>
+      <li><cite><a href="https://leafletjs.com/">Leaflet JS</a></cite></li>
+      <li><cite><a href="https://www.openstreetmap.org/">OpenStreetMap Project</a></cite></li>
+      <li><cite><a href="https://oauth.net/2/">OAuth 2.0 Specifications</a></cite></li>
+      <li><cite><a href="https://github.com/w3c/scholarly-html">ScholarlyHTML</a></cite></li>
+      <li><cite><a href="https://nodejs.org/en">Node.js Docs</a></cite></li>
+      <li><cite><a href="https://www.postgresql.org/docs/">PostgreSQL Documentation</a></cite></li>
+      <li><cite><a href="https://opensource.org/license/mit">MIT License</a></cite></li>
+    </ul>
+  </section>
+
+  <footer></footer>
+</article>
+</body>
+</html>

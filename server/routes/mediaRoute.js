@@ -17,8 +17,7 @@ export async function mediaRoute(req, res) {
     return asyncHandler(protectRoute()(handleGetMedia))(req, res, parts[3]);
   }
   if(req.method==='POST') {
-    return asyncHandler(protectRoute()( validateBody(mediaSchema)
-          (handlePostMedia)))(req, res);
+    return asyncHandler(protectRoute() (handlePostMedia))(req, res);
   }
 
   if (req.method === "DELETE" && parts.length === 4 && parts[3]) {

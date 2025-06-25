@@ -1,5 +1,5 @@
 const campId = new URLSearchParams(location.search).get('id');
-const MAX_SIZE = 5 * 1024 * 1024; 
+const MAX_SIZE = 5 * 1024 * 1024;
 let getRating;
 async function api(path, opt = {}) {
   const res = await fetch(path, { credentials: 'include', ...opt });
@@ -211,7 +211,7 @@ document.getElementById('reviewMedia').addEventListener('change', e => {
   for (const f of e.target.files) {
     if (f.size > MAX_SIZE) {
       alert(`${f.name} is larger than 5 MB. Please choose a smaller file.`);
-      e.target.value = '';         
+      e.target.value = '';
       return;
     }
   }
@@ -220,7 +220,7 @@ document.getElementById('messageMedia').addEventListener('change', e => {
   for (const f of e.target.files) {
     if (f.size > MAX_SIZE) {
       alert(`${f.name} is larger than 5 MB. Please choose a smaller file.`);
-      e.target.value = '';          
+      e.target.value = '';
       return;
     }
   }
@@ -274,32 +274,32 @@ async function initDatePickers() {
   const booked = await api(`/api/campsites/${campId}/booked`);
   const disabled = booked.map(r => ({
     from: r.checkin,
-    to  : r.checkout           
+    to: r.checkout
   }));
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  let fpOut;   
-  const fpIn=flatpickr('#checkinDate', {
+  let fpOut;
+  const fpIn = flatpickr('#checkinDate', {
     dateFormat: 'Y-m-d',
     minDate: tomorrow,
     disable: disabled,
     onChange: ([d]) => {
       fpOut.set('minDate', d ? new Date(d.getTime() + 86_400_000) : tomorrow);
-      fpOut.open();           
+      fpOut.open();
       updateWeatherIfBoth();
     }
   });
 
-  fpOut=flatpickr('#checkoutDate', {
+  fpOut = flatpickr('#checkoutDate', {
     dateFormat: 'Y-m-d',
-    minDate   : tomorrow,
-    disable   : disabled,
-    onChange  :  updateWeatherIfBoth
+    minDate: tomorrow,
+    disable: disabled,
+    onChange: updateWeatherIfBoth
   });
   function updateWeatherIfBoth() {
     const inVal = document.getElementById('checkinDate').value;
     const outVal = document.getElementById('checkoutDate').value;
-    if (inVal && outVal) updateWeather();      
+    if (inVal && outVal) updateWeather();
   }
 }
 
@@ -328,18 +328,29 @@ async function fetchWeather(lat, lon, startDate, endDate) {
 }
 function renderWeather(daily) {
   const box = document.querySelector('#weatherInfo');
-  box.innerHTML = '';
+  box.replaceChildren(); // This clears old forecast entries
 
   daily.time.forEach((date, i) => {
     const row = document.createElement('div');
     row.className = 'weather-item';
-    row.innerHTML = `
-      <div class="weather-date">${date}</div>
-      <div class="weather-info">
-        🌡️ ${daily.temperature_2m_min[i]}°C → ${daily.temperature_2m_max[i]}°C
-        &nbsp;☔ ${daily.precipitation_sum[i]} mm
-      </div>
-    `;
+
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'weather-date';
+    dateDiv.textContent = date;
+
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'weather-info';
+
+    const tempSpan = document.createElement('span');
+    tempSpan.textContent = `🌡️ ${daily.temperature_2m_min[i]}°C → ${daily.temperature_2m_max[i]}°C`;
+
+    const spacer = document.createTextNode('\u00A0');
+
+    const rainSpan = document.createElement('span');
+    rainSpan.textContent = `☔ ${daily.precipitation_sum[i]} mm`;
+
+    infoDiv.append(tempSpan, spacer, rainSpan);
+    row.append(dateDiv, infoDiv);
     box.append(row);
   });
 }

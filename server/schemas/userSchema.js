@@ -9,7 +9,7 @@ export const userSchema = z.object({
   confirmed : z.boolean().optional()
 }).strict();
 
-export const userUpdateSchema = z.object({
+export const userPatchSchema = z.object({
   username : username.optional(),
   currentPassword : password.optional(),
   newPassword : password.optional()
@@ -24,3 +24,10 @@ export const userUpdateSchema = z.object({
   (!data.currentPassword && !data.newPassword),
   { message: 'currentPassword and newPassword must be provided together'}         
 );
+export const userUpdateSchema = z.object({
+  username : username.optional(),
+  email : email.optional(),
+  password: password.optional(),
+  role : z.enum(['member','admin']).optional(),
+  confirmed : z.boolean().optional()
+}).strict();

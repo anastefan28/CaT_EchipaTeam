@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { isoDate } from './helper.js';
 export const campsiteSchema = z.object({
   name : z.string().min(3).max(100),
   description : z.string().max(10_000),
@@ -8,6 +7,6 @@ export const campsiteSchema = z.object({
   capacity : z.number().int().positive().max(50),
   price : z.number().positive().max(10_000),
   county : z.string().max(100),
-  type : z.enum(['tent','rv','cabin'])
+  type : z.enum(['tent','rv','cabin', 'glamping']),
 }).strict();
 

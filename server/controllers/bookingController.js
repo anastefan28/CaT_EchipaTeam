@@ -12,12 +12,12 @@ import {
 } from "../models/bookingModel.js";
 import { isValidId } from '../utils/valid.js';
 
-export async function handlePostBooking(req,res){
+export async function handlePostBooking(req, res) {
   const { campsite_id, checkin, checkout, guests } = req.body;
   try {
     const booking = await createBooking({
-      campsiteId : campsite_id,
-      userId : req.user.id,
+      campsiteId: campsite_id,
+      userId: req.user.id,
       checkin,
       checkout,
       guests
@@ -53,12 +53,12 @@ export async function handleBookedRanges(req, res) {
 export async function handleDeleteBooking(req, res) {
   const id = req.params?.id || req.url.split("/").pop();
   if (!isValidId(id)) {
-    throw new AppError("Invalid booking id", 400);    
+    throw new AppError("Invalid booking id", 400);
   }
   const userId = req.user?.id;
   const userRole = req.user?.role;
   const owns = await isBookingOwnedByUser(id, userId);
-  if(userRole!== 'admin' && !owns) {
+  if (userRole !== 'admin' && !owns) {
     throw new AppError("You are not authorized to delete this booking", 403);
   }
   try {
@@ -105,8 +105,9 @@ export async function handleUpdateBooking(req, res) {
       guests,
     });
     sendJson(res, 200, updatedBooking);
-  } catch (err) {
-    console.error(err);
-    throw new AppError("Error updating booking", 500);
+  } catch (e) {
+    if (e.code === '23P01')
+      throw new AppError('Selected dates already booked', 409);
+    throw e;
   }
 }

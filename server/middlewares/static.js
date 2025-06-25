@@ -17,7 +17,9 @@ export function serveStatic(req, res) {
 	} else {
 		filePath = path.resolve(`./client${pathname}`);
 	}
-
+	if ((!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) && pathname.startsWith('/docs')) {
+		filePath = path.resolve(`./docs${pathname.replace('/docs', '')}`);
+	}
 	if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
 		const fileContent = fs.readFileSync(filePath);
 		const contentType = getContentType(filePath);

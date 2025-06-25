@@ -10,7 +10,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { protectRoute } from '../middlewares/protect.js';
 import { sendJson } from '../utils/json.js';
 import { validateBody } from '../middlewares/validate.js';
-import { bookingSchema} from '../schemas/bookingSchema.js';
+import { bookingSchema, bookingUpdateSchema} from '../schemas/bookingSchema.js';
 
 export async function bookingRoute(req, res) {
   const { pathname } = parse(req.url, true);
@@ -31,7 +31,7 @@ export async function bookingRoute(req, res) {
   }
 
   if (req.method === "PUT" && pathname.startsWith("/api/bookings/")) {
-    return asyncHandler(protectRoute('admin')(validateBody(bookingSchema)
+    return asyncHandler(protectRoute('admin')(validateBody(bookingUpdateSchema)
           (handleUpdateBooking)))(req, res);
   }
   sendJson(res, 405, { error: 'Method Not Allowed' });

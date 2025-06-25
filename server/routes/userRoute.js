@@ -7,7 +7,7 @@ import { handleGetMyBookings } from '../controllers/bookingController.js';
 import { handleGetRecommendations } from '../controllers/campsiteController.js';
 import { handleGetAllUsers, handleCreateUser, handleDeleteUser, handleGetUserById, handleUpdateUser } from '../controllers/userController.js';
 import { validateBody } from '../middlewares/validate.js';
-import { userSchema, userUpdateSchema } from '../schemas/userSchema.js';
+import { userSchema, userUpdateSchema, userPatchSchema } from '../schemas/userSchema.js';
 export async function userRoute(req, res) {
   const { pathname } = parse(req.url, true);
   const { method } = req;
@@ -16,7 +16,7 @@ export async function userRoute(req, res) {
     return asyncHandler(protectRoute()(handleMe))(req, res);
   }
   if (method === "PATCH" && pathname==="/api/me") {
-    return asyncHandler(protectRoute()(validateBody(userUpdateSchema)(handlePatchMe)))(req, res);
+    return asyncHandler(protectRoute()(validateBody(userPatchSchema)(handlePatchMe)))(req, res);
   }
   if (method === 'GET' && pathname === '/api/me/bookings') {
     return asyncHandler(protectRoute()(handleGetMyBookings))(req, res);
@@ -38,7 +38,7 @@ export async function userRoute(req, res) {
     return asyncHandler(protectRoute('admin')(handleDeleteUser))(req, res);
   }
   if (method === "PUT" && pathname.startsWith("/api/users/")) {
-      return asyncHandler(protectRoute('admin')(validateBody(userSchema)
+      return asyncHandler(protectRoute('admin')(validateBody(userUpdateSchema)
               (handleUpdateUser)))(req, res);
     }
   sendJson(res, 405, { error: "Method Not Allowed" });

@@ -11,4 +11,13 @@ export const bookingSchema = z.object({
         { message: 'checkout must be after checkin', path:['checkout'] })
 .refine(d => new Date(d.checkin) >= new Date().setHours(0,0,0,0),
         { message: 'checkin cannot be in the past', path:['checkin'] });
+export const bookingUpdateSchema = z.object({
+  checkin : isoDate.optional(),
+  checkout : isoDate.optional(),
+  guests : z.number().int().positive().max(20).optional()
+}).strict()
+.refine(d => new Date(d.checkout) > new Date(d.checkin),
+        { message: 'checkout must be after checkin', path:['checkout'] })
+.refine(d => new Date(d.checkin) >= new Date().setHours(0,0,0,0),
+        { message: 'checkin cannot be in the past', path:['checkin'] });
 

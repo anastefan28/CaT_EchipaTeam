@@ -1,14 +1,19 @@
 import { pool } from "../utils/db.js";
 
 
-export async function getCampsites (filters = {}) {
-  const { id, location, guests, checkin, checkout, sort } = filters;
+export async function getCampsites(filters = {}) {
+  const { id, idList, location, guests, checkin, checkout, sort } = filters;
   const vals = [];
   const conds = [];
-
+  let explicitOrder = ''; 
   if (id) {
     vals.push(id);
     conds.push(`cs.id = $${vals.length}`);
+  }
+  if (idList && idList.length) {
+    vals.push(idList);                       
+    conds.push(`cs.id = ANY($${vals.length})`);
+    explicitOrder = ` ORDER BY array_position($${vals.length}::uuid[], cs.id)`;
   }
   if (location) {
     vals.push(`%${location.toLowerCase()}%`);
@@ -25,9 +30,8 @@ export async function getCampsites (filters = {}) {
     vals.push(checkin, checkout);
     conds.push(`
       cs.id NOT IN (SELECT campsite_id FROM bookings WHERE  status = 'confirmed'
-          AND period && daterange($${vals.length - 1}::date,$${
-      vals.length
-    }::date, '[]'))
+          AND period && daterange($${vals.length - 1}::date,$${vals.length
+      }::date, '[]'))
     `);
   }
 
@@ -56,16 +60,18 @@ export async function getCampsites (filters = {}) {
              am.amenities, m.media_ids
   `;
 
-  if(!id) {
+   if (explicitOrder) {
+    q += explicitOrder;
+  } else if (!id) {              
     const SORT_SQL = {
       'popular': 'ORDER BY bookings_count DESC LIMIT 10',
       'price-low' : 'ORDER BY cs.price ASC',
-      'price-high' : 'ORDER BY cs.price DESC',
+      'price-high': 'ORDER BY cs.price DESC',
       'rating' : 'ORDER BY rv.avg_rating DESC',
       'newest': 'ORDER BY cs.created_at DESC'
     };
-    if(!sort) q+= ' ORDER BY cs.created_at DESC';
-    else 
+    if (!sort) q += ' ORDER BY cs.created_at DESC';
+    else
       q += ' ' + SORT_SQL[sort];
   }
 
@@ -136,4 +142,13 @@ export async function updateCampsiteById(
     id,
   ];
   await pool.query(query, values);
+}
+
+export async function getRecommendedCampsites(userId, limit) {
+  const { rows } = await pool.query(
+    'SELECT * FROM fn_recommendations($1, $2)', [userId, 10]
+  );
+  const ids = rows.map(r => r.campsite_id);
+  const campsites = await getCampsites({ idList: ids });
+  return campsites;
 }

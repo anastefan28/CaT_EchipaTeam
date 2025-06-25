@@ -1,6 +1,6 @@
 
 import { getCampsites, deleteCampsiteById, updateCampsiteById,
-   createCampsite, findCampsiteById } from '../models/campsiteModel.js';
+   createCampsite, findCampsiteById, getRecommendedCampsites } from '../models/campsiteModel.js';
 import { AppError } from '../utils/appError.js';
 import { sendJson} from '../utils/json.js';
 import {isValidId, isIso } from '../utils/valid.js';
@@ -148,4 +148,7 @@ export async function handleCreateCampsite(req, res) {
   }
 }
 
-
+export async function handleGetRecommendations(req, res) {
+  const campsites = await getRecommendedCampsites(req.user.id);
+  sendJson(res, 200, campsites);
+}

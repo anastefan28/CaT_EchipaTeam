@@ -7,7 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 async function loadPopularCampsitesOnMap() {
   try {
-    const res = await fetch('/api/campsites?sort=popular');
+    const res = await fetch('/api/me/recommendations');
     switch (res.status) {
       case 200:
         campsites = await res.json();
@@ -118,7 +118,7 @@ loadPopularCampsitesOnMap();
 
 async function loadPopularCampsitesList() {
   try {
-    const res = await fetch('/api/campsites?sort=popular');
+    const res = await fetch('/api/me/recommendations');
     switch (res.status) {
       case 200:
         campsites = await res.json();

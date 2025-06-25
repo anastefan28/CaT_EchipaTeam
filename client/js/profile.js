@@ -114,17 +114,6 @@ document.getElementById("passwordForm").addEventListener("submit", async (e) => 
     }
   });
 
-document.getElementById("logoutBtn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("/api/auth/logout", { method: "POST" });
-    if (!res.ok) throw new Error("Logout failed");
-  } catch (err) {
-    showMessage(`⚠️ ${err.message}`, "error");
-  }
-  window.location.href = "/index";
-});
-
 function showMessage(message, type, containerSelector = ".main-container") {
   const existingMessages = document.querySelectorAll(
     ".success-message, .error-message"
@@ -141,3 +130,14 @@ function showMessage(message, type, containerSelector = ".main-container") {
 
   setTimeout(() => messageDiv.remove(), 5000);
 }
+
+document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch("/api/auth/logout", { method: "POST" });
+    if (!res.ok) throw new Error("Logout failed");
+  } catch (err) {
+    showMessage(`⚠️ ${err.message}`, "error");
+  }
+  window.location.href = "/index";
+});

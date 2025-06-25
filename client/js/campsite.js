@@ -14,7 +14,6 @@ async function mediaNode(id) {
   const url = URL.createObjectURL(blob);
 
   let el;
-  console.log(blob.type);
   if (blob.type.startsWith('image/'))
     el = new Image();
   else if (blob.type.startsWith('video/')) {
@@ -160,7 +159,7 @@ async function renderReviews(arr, append = true) {
   const frag = document.createDocumentFragment();
   for (const r of arr) {
     const card = reviewNode(r);
-    if (r.media_ids?.length) {
+    if (r.media_ids.length) {
       const box = document.createElement('div');
       box.className = 'review-media';
       for (const id of r.media_ids)

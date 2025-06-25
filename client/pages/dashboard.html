@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CampSpot - Discover Your Next Adventure</title>
+  <title>CampSpot - Dashboard</title>
+  <link rel="stylesheet" href="../css/base.css">
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="../css/dashboard.css">
 </head>
@@ -12,7 +14,7 @@
 <body>
   <header class="header">
     <nav class="nav">
-      <div class="logo">CampSpot</div>
+      <div class="logo">🏕️CampExclusive</div>
       <div class="nav-links">
         <a href="/bookings" class="nav-item">📅 My Bookings</a>
         <a href="/profile" class="nav-item">👤 Account Details</a>
@@ -26,8 +28,8 @@
     <div class="hero-content">
       <h1>Find Your Perfect Campsite</h1>
       <p>
-        Discover amazing camping destinations, connect with nature lovers, and
-        create unforgettable memories
+        Discover amazing camping destinations, just for yourself, and
+        create unforgettable memories with loved ones
       </p>
     </div>
   </section>
@@ -40,7 +42,7 @@
       </div>
       <div class="search-group">
         <label for="checkin">Check-in</label>
-        <input type="date" id="checkin" name="checkin" >
+        <input type="date" id="checkin" name="checkin">
       </div>
       <div class="search-group">
         <label for="checkout">Check-out</label>
@@ -70,7 +72,7 @@
         <div class="map-container">
           <div class="map-header">
             <h3>Interactive Campsite Map</h3>
-            <button class="map-toggle" onclick="toggleMap()">
+            <button class="map-toggle">
               Expand Map
             </button>
           </div>
@@ -78,7 +80,7 @@
         </div>
       </section>
       <section class="section">
-        <h2 class="section-title">Most Popular Campsites</h2>
+        <h2 class="section-title">We think you will like these...</h2>
         <div id="popularCampsitesGrid" class="campsites-grid"></div>
       </section>
     </main>

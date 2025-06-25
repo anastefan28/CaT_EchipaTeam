@@ -9,6 +9,8 @@ import {
 import { parse } from "url";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendJson } from "../utils/json.js";
+import { registerSchema, loginSchema } from "../schemas/authSchema.js";
+import { validateBody } from "../middlewares/validate.js";
 
 export async function authRoute(req, res) {
 	const { pathname } = parse(req.url, true);
@@ -21,12 +23,11 @@ export async function authRoute(req, res) {
 	if (pathname === "/api/auth/google/callback") {
 		return handleGoogleCallback(req, res);
 	}
-	if (pathname === "/api/auth/login" && method === "POST") {
-		return asyncHandler(handleLogin)(req, res);
+	if (method === "POST" && pathname === "/api/auth/login") {
+		return asyncHandler(validateBody(loginSchema)(handleLogin))(req, res);
 	}
-
 	if (method === "POST" && pathname === "/api/auth/register")
-		return asyncHandler(handleRegister)(req, res);
+		return asyncHandler(validateBody(registerSchema)(handleRegister))(req, res);
 
 	if (method === "POST" && pathname === "/api/auth/logout")
 		return asyncHandler(handleLogout)(req, res);
@@ -34,6 +35,5 @@ export async function authRoute(req, res) {
 	if (method === "GET" && pathname.startsWith("/api/auth/confirm-email")) {
     return asyncHandler(handleEmailConfirmation)(req, res);
   }
-
 	sendJson(res, 405, { error: "Method not allowed" });
 }

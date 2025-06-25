@@ -1,9 +1,9 @@
 
-import { getCampsites, deleteCampsiteById } from '../models/campsiteModel.js';
+import { getCampsites, deleteCampsiteById, updateCampsiteById,
+   createCampsite, findCampsiteById, getRecommendedCampsites } from '../models/campsiteModel.js';
 import { AppError } from '../utils/appError.js';
-import { sendJson,json} from '../utils/json.js';
-import { isIso, isValidId } from '../utils/valid.js';
-import { updateCampsiteById, createCampsite, findCampsiteById } from '../models/campsiteModel.js';
+import { sendJson} from '../utils/json.js';
+import {isValidId, isIso } from '../utils/valid.js';
 
 export async function handleGetCampsites(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -57,17 +57,16 @@ export async function handleGetCampsites(req, res) {
   sendJson(res, 200, campsites);
 }
 
-
 export async function handleDeleteCampsite(req, res) {
   const id = req.params?.id || req.url.split("/").pop();
-
+  if (!isValidId(id)) {
+    throw new AppError("Invalid campsite id", 400);
+  }
   try {
     const deleted = await deleteCampsiteById(id);
-
     if (!deleted) {
       return sendJson(res, 404, { error: "Campsite not found" });
     }
-
     return sendJson(res, 200, {
       success: true,
       message: "Campsite deleted successfully",
@@ -81,7 +80,7 @@ export async function handleDeleteCampsite(req, res) {
 export async function handleGetCampsite(req, res) {
   const parts = req.url.split('/');
   const id = parts[3];
-  if (isValidId(id) === false) {
+  if (!isValidId(id)) {
     throw new AppError('Invalid campsite id', 400);
   }
   try {
@@ -98,28 +97,15 @@ export async function handleGetCampsite(req, res) {
 
 export async function handleUpdateCampsite(req, res) {
   const id = req.params?.id || req.url.split("/").pop();
-
+  if(!isValidId(id)) {
+    throw new AppError("Invalid campsite id", 400);
+  }
   try {
-    const { name, description, lat, lon, capacity, price, county, type } =
-      await json(req);
-
-    if (
-      !name ||
-      lat === undefined ||
-      lon === undefined ||
-      !capacity ||
-      price === undefined ||
-      !county ||
-      !type
-    ) {
-      return sendJson(res, 400, { error: "Missing required fields." });
-    }
-
+    const { name, description, lat, lon, capacity, price, county, type } =req.body;
     const existing = await findCampsiteById(id);
     if (!existing) {
       return sendJson(res, 404, { error: "Campsite not found." });
     }
-
     await updateCampsiteById(id, {
       name,
       description,
@@ -143,21 +129,7 @@ export async function handleUpdateCampsite(req, res) {
 
 export async function handleCreateCampsite(req, res) {
   try {
-    const { name, description, lat, lon, capacity, price, county, type } =
-      await json(req);
-
-    if (
-      !name ||
-      lat === undefined ||
-      lon === undefined ||
-      !capacity ||
-      price === undefined ||
-      !county ||
-      !type
-    ) {
-      return sendJson(res, 400, { error: "Missing required fields." });
-    }
-
+    const { name, description, lat, lon, capacity, price, county, type } = req.body;
     const campsite = await createCampsite({
       name,
       description,
@@ -176,4 +148,7 @@ export async function handleCreateCampsite(req, res) {
   }
 }
 
-
+export async function handleGetRecommendations(req, res) {
+  const campsites = await getRecommendedCampsites(req.user.id);
+  sendJson(res, 200, campsites);
+}

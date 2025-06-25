@@ -1,1 +1,10 @@
-# CaT_EchipaTeam 1. `npm i` 2. `npm run dev` → http://localhost:8000
+## 📚 Documentation
+
+| File | Description |
+|------|-------------|
+| [docs/srs.html](docs/documentation.html) | IEEE-style Software Requirements Specification |
+| [docs/openapi.yaml](docs/openapi.yaml) | OpenAPI 3.1 contract (importable in Postman) |
+| [docs/diagrams/context.svg](docs/diagrams/context.jpg) | **C4 Context** – big-picture relationships |
+| [docs/diagrams/container.svg](docs/diagrams/container.jpg) | **C4 Container** – major runtime pieces |
+| [docs/diagrams/component.svg](docs/diagrams/component.jpg) | **C4 Component** – Node back-end internals |
+> See **LICENSE** for distribution terms (MIT).

@@ -7,7 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 async function loadPopularCampsitesOnMap() {
   try {
-    const res = await fetch('/api/campsites?sort=popular');
+    const res = await fetch('/api/me/recommendations');
     switch (res.status) {
       case 200:
         campsites = await res.json();
@@ -29,54 +29,38 @@ async function loadPopularCampsitesOnMap() {
     console.error('Error loading campsites:', err);
   }
 }
+//popup rendering
+function createCampsitePopup(cs) {
+  const box = document.createElement('div');
+  box.className = 'popup-box';
 
-function createCampsitePopup(campsite) {
-  const container = document.createElement('div');
-  container.style.textAlign = 'center';
-  container.style.padding = '10px';
-
-  const title = document.createElement('h3');
-  title.textContent = campsite.name;
-  title.style.margin = '0 0 10px 0';
-  title.style.color = '#2E7D32';
+  const h3 = document.createElement('h3');
+  h3.className = 'popup-title';
+  h3.textContent = cs.name;
 
   const rating = document.createElement('p');
-  rating.textContent = `⭐ ${campsite.avg_rating}/5`;
-  rating.style.margin = '5px 0';
+  rating.className = 'popup-rating';
+  rating.textContent = `⭐ ${cs.avg_rating}/5`;
 
   const price = document.createElement('p');
-  const numericPrice = parseFloat(campsite.price);
-  price.textContent = isNaN(numericPrice)
-    ? 'Price not available'
-    : `${numericPrice.toFixed(2)} RON/night`;
-  price.style.margin = '5px 0';
-  price.style.fontWeight = 'bold';
-  price.style.color = '#4CAF50';
+  price.className = 'popup-price';
+  const pNum = Number(cs.price);
+  price.textContent = `${pNum.toFixed(2)} RON/night`;
 
+  const btn = document.createElement('button');
+  btn.className = 'popup-btn';
+  btn.textContent = 'View details';
+  btn.onclick = () => goToCampsite(cs.id);
 
-  const button = document.createElement('button');
-  button.textContent = 'View Details';
-  button.onclick = () => goToCampsite(campsite.id);
-  button.style.background = '#4CAF50';
-  button.style.color = 'white';
-  button.style.border = 'none';
-  button.style.padding = '8px 16px';
-  button.style.borderRadius = '5px';
-  button.style.cursor = 'pointer';
-  button.style.marginTop = '10px';
-
-  container.appendChild(title);
-  container.appendChild(rating);
-  container.appendChild(price);
-  container.appendChild(button);
-
-  return container;
+  box.append(h3, rating, price, btn);
+  return box;
 }
 
 function goToCampsite(id) {
   window.location.href = `/campsite?id=${id}`;
 }
-
+//toggle map expand/collapse
+document.querySelector('.map-toggle').addEventListener('click', toggleMap);
 function toggleMap() {
   const mapElement = document.getElementById('map');
   const toggleBtn = document.querySelector('.map-toggle');
@@ -134,7 +118,7 @@ loadPopularCampsitesOnMap();
 
 async function loadPopularCampsitesList() {
   try {
-    const res = await fetch('/api/campsites?sort=popular');
+    const res = await fetch('/api/me/recommendations');
     switch (res.status) {
       case 200:
         campsites = await res.json();
@@ -149,7 +133,6 @@ async function loadPopularCampsitesList() {
         throw new Error('Server had an issue, try again');
     }
     const grid = document.getElementById('popularCampsitesGrid');
-    grid.replaceChildren();
 
     campsites.slice(0, 6).forEach(campsite => {
       const card = document.createElement('div');

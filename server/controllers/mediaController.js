@@ -7,7 +7,7 @@ import {
 import { parse }    from 'url';
 import { isValidId } from '../utils/valid.js';
 import {sendJson} from '../utils/json.js'
-import { MAX_SIZE } from '../utils/valid.js';
+export const MAX_SIZE = 5 * 1024 * 1024;       
 
 export async function handleGetMedia(req, res) {
     const { pathname } = parse(req.url, true);
@@ -34,13 +34,6 @@ export async function handlePostMedia(req, res) {
   const messageId = form.get('message_id')  || null;
 
   const errors = [];
-  if (!isValidId(campsiteId))          
-    errors.push('bad campsite_id');
-  if (reviewId  && !isValidId(reviewId))  
-    errors.push('bad review_id');
-  if (messageId && !isValidId(messageId))  
-    errors.push('bad message_id');
-
   const files = form.getAll('data');   
   if (!files.length) 
     errors.push('no files uploaded');
@@ -71,17 +64,15 @@ export async function handlePostMedia(req, res) {
 
 export async function handleDeleteMedia(req, res) {
   const { pathname } = parse(req.url, true);
-  const parts = pathname.split("/"); // ['', 'api', 'media', ':id']
+  const parts = pathname.split("/");
   const id = parts[3];
 
   if (!isValidId(id)) {
     throw new AppError("Invalid media id", 400);
   }
-
   const removed = await deleteMediaById(id);
   if (!removed) {
     throw new AppError("Media not found", 404);
   }
-
   return sendJson(res, 200, { success: true, id });
 }

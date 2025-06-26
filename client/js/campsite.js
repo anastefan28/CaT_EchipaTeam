@@ -9,52 +9,6 @@ async function api(path, opt = {}) {
   throw new Error(errors.join(', '));
 }
 
-async function mediaNode(id) {
-  const blob = await fetch(`/api/media/${id}`).then(r => r.blob());
-  const url = URL.createObjectURL(blob);
-
-  let el;
-  if (blob.type.startsWith('image/'))
-    el = new Image();
-  else if (blob.type.startsWith('video/')) {
-    el = Object.assign(document.createElement('video'), { controls: true });
-  }
-  else if (blob.type.startsWith('audio/'))
-    el = Object.assign(document.createElement('audio'), { controls: true });
-  else return null;
-
-  el.src = url;
-  el.className = 'media-preview';
-  return el;
-}
-
-function updateFileLabel() {
-  const inputs = [
-    { id: 'reviewMedia', labelId: 'fileLabel' },
-    { id: 'messageMedia', labelId: 'fileLabelMessage' }
-  ];
-
-  for (const { id, labelId } of inputs) {
-    const input = document.getElementById(id);
-    const label = document.getElementById(labelId);
-    if (input && label) {
-      label.classList.toggle('has-files', input.files.length > 0);
-    }
-  }
-}
-async function uploadMedia({ files, reviewId, messageId }) {
-  if (!files.length) return [];
-
-  const fd = new FormData();
-  fd.append('campsite_id', campId);
-  if (reviewId) fd.append('review_id', reviewId);
-  if (messageId) fd.append('message_id', messageId);
-  [...files].forEach(f => fd.append('data', f));
-
-  const { media_ids } = await api('/api/media', { method: 'POST', body: fd });
-  return media_ids;
-}
-
 const el = {
   name: document.querySelector('#campsiteName'),
   location: document.querySelector('#campsiteRegion'),
@@ -126,6 +80,51 @@ function buildSlider(ids = []) {
   if (ids.length < 2) { el.prev.style.display = el.next.style.display = 'none'; }
 }
 
+async function mediaNode(id) {
+  const blob = await fetch(`/api/media/${id}`).then(r => r.blob());
+  const url = URL.createObjectURL(blob);
+
+  let el;
+  if (blob.type.startsWith('image/'))
+    el = new Image();
+  else if (blob.type.startsWith('video/')) {
+    el = Object.assign(document.createElement('video'), { controls: true });
+  }
+  else if (blob.type.startsWith('audio/'))
+    el = Object.assign(document.createElement('audio'), { controls: true });
+  else return null;
+
+  el.src = url;
+  el.className = 'media-preview';
+  return el;
+}
+
+function updateFileLabel() {
+  const inputs = [
+    { id: 'reviewMedia', labelId: 'fileLabel' },
+    { id: 'messageMedia', labelId: 'fileLabelMessage' }
+  ];
+
+  for (const { id, labelId } of inputs) {
+    const input = document.getElementById(id);
+    const label = document.getElementById(labelId);
+    if (input && label) {
+      label.classList.toggle('has-files', input.files.length > 0);
+    }
+  }
+}
+async function uploadMedia({ files, reviewId, messageId }) {
+  if (!files.length) return [];
+
+  const fd = new FormData();
+  fd.append('campsite_id', campId);
+  if (reviewId) fd.append('review_id', reviewId);
+  if (messageId) fd.append('message_id', messageId);
+  [...files].forEach(f => fd.append('data', f));
+
+  const { media_ids } = await api('/api/media', { method: 'POST', body: fd });
+  return media_ids;
+}
 function reviewNode(r) {
   const card = document.createElement('div');
   card.className = 'review-item';
@@ -270,6 +269,30 @@ async function sendMessage() {
   document.querySelector('#messageText').value = '';
   document.querySelector('#messageMedia').value = '';
 }
+
+document.addEventListener('click', e => {
+  if (!e.target.classList.contains('media-preview')) return;
+  const modal = document.querySelector('#mediaModal');
+  const box = document.querySelector('#modalContent');
+  box.replaceChildren(e.target.cloneNode(true));
+  modal.classList.remove('hidden');
+});
+document.querySelector('#modalOverlay').onclick = () =>
+  document.querySelector('#mediaModal').classList.add('hidden');
+
+async function fetchWeather(lat, lon, startDate, endDate) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Weather fetch failed");
+    const data = await res.json();
+    return data.daily;
+  } catch (err) {
+    console.error("Weather error:", err);
+    return null;
+  }
+}
 async function initDatePickers() {
   const booked = await api(`/api/campsites/${campId}/booked`);
   const disabled = booked.map(r => ({
@@ -302,33 +325,27 @@ async function initDatePickers() {
     if (inVal && outVal) updateWeather();
   }
 }
-
-document.addEventListener('click', e => {
-  if (!e.target.classList.contains('media-preview')) return;
-  const modal = document.querySelector('#mediaModal');
-  const box = document.querySelector('#modalContent');
-  box.replaceChildren(e.target.cloneNode(true));
-  modal.classList.remove('hidden');
+document.getElementById('checkinDate').addEventListener('change', () => {
+  updateWeather();
 });
-document.querySelector('#modalOverlay').onclick = () =>
-  document.querySelector('#mediaModal').classList.add('hidden');
+document.getElementById('checkoutDate').addEventListener('change', () => {
+  updateWeather();
+});
+async function updateWeather() {
+  const checkin = document.getElementById('checkinDate').value;
+  const checkout = document.getElementById('checkoutDate').value;
 
-async function fetchWeather(lat, lon, startDate, endDate) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`;
+  if (!checkin || !checkout || checkin >= checkout) return;
 
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Weather fetch failed");
-    const data = await res.json();
-    return data.daily;
-  } catch (err) {
-    console.error("Weather error:", err);
-    return null;
-  }
+  const lat = el.coords.textContent.split(',')[0].trim();
+  const lon = el.coords.textContent.split(',')[1].trim();
+
+  const weather = await fetchWeather(lat, lon, checkin, checkout);
+  if (weather) renderWeather(weather);
 }
 function renderWeather(daily) {
   const box = document.querySelector('#weatherInfo');
-  box.replaceChildren(); // This clears old forecast entries
+  box.replaceChildren(); 
 
   daily.time.forEach((date, i) => {
     const row = document.createElement('div');
@@ -354,26 +371,8 @@ function renderWeather(daily) {
     box.append(row);
   });
 }
-document.getElementById('checkinDate').addEventListener('change', () => {
-  updateWeather();
-});
-document.getElementById('checkoutDate').addEventListener('change', () => {
-  updateWeather();
-});
-async function updateWeather() {
-  const checkin = document.getElementById('checkinDate').value;
-  const checkout = document.getElementById('checkoutDate').value;
 
-  if (!checkin || !checkout || checkin >= checkout) return;
-
-  const lat = el.coords.textContent.split(',')[0].trim();
-  const lon = el.coords.textContent.split(',')[1].trim();
-
-  const weather = await fetchWeather(lat, lon, checkin, checkout);
-  if (weather) renderWeather(weather);
-}
 const form = document.getElementById('bookingForm');
-
 async function postBooking(data) {
   const res = await fetch('/api/bookings', {
     method: 'POST',
@@ -387,22 +386,6 @@ async function postBooking(data) {
   err.status = res.status;
   throw err;
 }
-const reviewBanner = document.getElementById('reviewBanner');
-const showReviewBanner = (txt, kind = 'success') => {
-  reviewBanner.textContent = txt;
-  reviewBanner.className = `banner ${kind}`;
-  reviewBanner.classList.remove('hidden');
-  clearTimeout(showReviewBanner.t);
-  showReviewBanner.t = setTimeout(() => reviewBanner.classList.add('hidden'), 4000);
-};
-const banner = document.getElementById('bookingBanner');
-const showBanner = (text, kind = 'success') => {
-  banner.textContent = text;
-  banner.className = `banner ${kind}`;
-  banner.classList.remove('hidden');
-  clearTimeout(showBanner.t);
-  showBanner.t = setTimeout(() => banner.classList.add('hidden'), 4000);
-};
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -422,6 +405,22 @@ form.addEventListener('submit', async (e) => {
     }
   }
 });
+const reviewBanner = document.getElementById('reviewBanner');
+const showReviewBanner = (txt, kind = 'success') => {
+  reviewBanner.textContent = txt;
+  reviewBanner.className = `banner ${kind}`;
+  reviewBanner.classList.remove('hidden');
+  clearTimeout(showReviewBanner.t);
+  showReviewBanner.t = setTimeout(() => reviewBanner.classList.add('hidden'), 4000);
+};
+const banner = document.getElementById('bookingBanner');
+const showBanner = (text, kind = 'success') => {
+  banner.textContent = text;
+  banner.className = `banner ${kind}`;
+  banner.classList.remove('hidden');
+  clearTimeout(showBanner.t);
+  showBanner.t = setTimeout(() => banner.classList.add('hidden'), 4000);
+};
 document.getElementById('logoutBtn').addEventListener('click', async (e) => {
   e.preventDefault();
   try {

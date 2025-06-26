@@ -42,12 +42,6 @@ CREATE INDEX idx_campsites_county ON campsites (county);
 CREATE INDEX idx_campsites_type ON campsites (type);
 CREATE INDEX idx_campsites_price ON campsites (price);
 
-CREATE OR REPLACE VIEW campsites_view AS
-SELECT id, name, description,
-       lat, lon,
-       capacity, price, county, type, created_at
-FROM   campsites;
-
 CREATE TABLE amenities (
   id   SERIAL PRIMARY KEY,
   name TEXT UNIQUE NOT NULL
